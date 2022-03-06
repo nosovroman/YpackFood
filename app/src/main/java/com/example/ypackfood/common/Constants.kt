@@ -1,0 +1,10 @@
+package com.example.ypackfood.common
+
+object Constants {
+    val pizza = listOf("Пицца1", "Пицца2", "Пицца3")
+    val roll = listOf("Ролл1", "Ролл2", "Ролл3")
+    val salads = listOf("Салат1", "Салат2", "Салат3")
+    val soups =  listOf("Суп1", "Суп2", "Суп3")
+    val drink = listOf("Напиток1", "Напиток2", "Напиток3", "Напиток4")
+    val mergedList = pizza+roll+salads+soups+drink
+}
