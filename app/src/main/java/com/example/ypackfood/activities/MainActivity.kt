@@ -2,27 +2,23 @@ package com.example.ypackfood.activities
 
 import android.util.Log
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.*
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
-import com.example.ypackfood.enumClasses.MainCategory
+import com.example.ypackfood.common.Constants.mergedList
 import com.example.ypackfood.enumClasses.getAllCategories
+import kotlinx.coroutines.launch
 
 class MvvmViewModel : ViewModel() {
-    var currentCategoryState by mutableStateOf(MainCategory.values()[0].categoryName)
+    lateinit var listState: LazyListState
         private set
 
-    fun setCurrentCategory(chosenCategory: String) {
-        currentCategoryState = chosenCategory
+    fun listStateInit(lazyListState: LazyListState) {
+        listState = lazyListState
     }
 }
 
@@ -34,30 +30,35 @@ fun MainScreen() {
         Spacer(modifier = Modifier.height(10.dp))
         CategoriesRowComponent(mvvmViewModel)
         Spacer(modifier = Modifier.height(10.dp))
-        ContentListComponent()
+        ContentListComponent(mvvmViewModel)
     }
 }
 
 
 @Composable
 fun CategoriesRowComponent(mvvmViewModel: MvvmViewModel) {
+    val limits = listOf(Pair(0,2), Pair(3,5), Pair(6,8), Pair(9,11), Pair(12,14))
     LazyRow {
         itemsIndexed(getAllCategories()) { index, item ->
             Spacer(modifier = Modifier.padding(start = 5.dp))
-            CategoryComponent(categoryName = item.categoryName, mvvmViewModel = mvvmViewModel)
+            CategoryComponent(categoryName = item.categoryName, limit = limits[index], mvvmViewModel = mvvmViewModel)
         }
     }
 }
 
 @Composable
-fun CategoryComponent(categoryName: String, mvvmViewModel: MvvmViewModel) {
+fun CategoryComponent(categoryName: String, limit: Pair<Int, Int>, mvvmViewModel: MvvmViewModel) {
+    val coroutineScope = rememberCoroutineScope()
+    val currentIndex = mvvmViewModel.listState.firstVisibleItemIndex
     Button(
         onClick = {
-            mvvmViewModel.setCurrentCategory(categoryName)
-            Log.d("Hello", mvvmViewModel.currentCategoryState)
+            coroutineScope.launch {
+                mvvmViewModel.listState.animateScrollToItem(limit.first)
+                Log.d("HelloBtn---", currentIndex.toString())
+            }
         },
         colors = ButtonDefaults.buttonColors(
-            backgroundColor = if (categoryName == mvvmViewModel.currentCategoryState)
+            backgroundColor = if (currentIndex in limit.first..limit.second)
                 MaterialTheme.colors.primary else MaterialTheme.colors.background
         )
     ) {
@@ -66,13 +67,11 @@ fun CategoryComponent(categoryName: String, mvvmViewModel: MvvmViewModel) {
 }
 
 @Composable
-fun ContentListComponent() {
-    val pizza = listOf("Пицца1", "Пицца2", "Пицца3")
-    val roll = listOf("Ролл1", "Ролл2", "Ролл3")
-    val watter = listOf("Напиток1", "Напиток2", "Напиток3")
-    val mergedList = pizza+roll+watter
+fun ContentListComponent(mvvmViewModel: MvvmViewModel) {
+    mvvmViewModel.listStateInit(rememberLazyListState())
+    val highPriorityTasks = mvvmViewModel.listState
 
-    LazyColumn {
+    LazyColumn (state = highPriorityTasks) {
         itemsIndexed(mergedList) { index, item ->
             ContentCardComponent(cardName = item)
             if (index < mergedList.size - 1) {
@@ -99,3 +98,12 @@ fun ContentCardComponent(cardName: String) {
         }
     }
 }
+
+
+//    val highPriorityTasks by remember {
+//        derivedStateOf {
+//            mvvmViewModel.setFirstVisibleCardIndex(mvvmViewModel.listState.firstVisibleItemIndex)
+//            Log.d("Hello3", mvvmViewModel.listState.firstVisibleItemIndex.toString())
+//            mvvmViewModel.listState
+//        }
+//    }
