@@ -4,10 +4,15 @@ import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.*
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.outlined.ShoppingCart
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModel
 import com.example.ypackfood.common.Constants.mergedList
 import com.example.ypackfood.enumClasses.MainCategory
@@ -34,7 +39,8 @@ fun MainScreen() {
     mvvmViewModel.listContentStateInit(rememberLazyListState())
     mvvmViewModel.listCategoryStateInit(rememberLazyListState())
 
-    Column (modifier = Modifier.padding(start = 10.dp, end = 10.dp)) {
+    Column {
+        ToolBarComponent()
         Spacer(modifier = Modifier.height(10.dp))
         CategoriesRowComponent(mvvmViewModel)
         Spacer(modifier = Modifier.height(10.dp))
@@ -42,6 +48,16 @@ fun MainScreen() {
     }
 }
 
+@Composable
+fun ToolBarComponent() {
+    TopAppBar {
+        IconButton(onClick = { }) { Icon(Icons.Filled.Menu, contentDescription = "Меню") }
+        Spacer(Modifier.weight(1f, true))
+        Text("Упак.Еда", fontSize = 22.sp)
+        Spacer(Modifier.weight(1f, true))
+        IconButton(onClick = { }) { Icon(Icons.Outlined.ShoppingCart, contentDescription = "Корзина", Modifier.scale(-1.0f, 1.0f) ) }
+    }
+}
 
 @Composable
 fun CategoriesRowComponent(mvvmViewModel: MvvmViewModel) {
@@ -55,8 +71,7 @@ fun CategoriesRowComponent(mvvmViewModel: MvvmViewModel) {
         }
     }
 
-
-    LazyRow(state = mvvmViewModel.listCategoryState)
+    LazyRow(state = mvvmViewModel.listCategoryState, modifier = Modifier.padding(start = 10.dp, end = 10.dp))
     {
         itemsIndexed(getAllCategories()) { index, item ->
             val isChosen = index == chosenCategoryIndex
@@ -90,7 +105,7 @@ fun CategoryComponent(mvvmViewModel: MvvmViewModel, categoryName: MainCategory, 
 
 @Composable
 fun ContentListComponent(mvvmViewModel: MvvmViewModel) {
-    LazyColumn (state = mvvmViewModel.listContentState) {
+    LazyColumn (state = mvvmViewModel.listContentState, modifier = Modifier.padding(start = 10.dp, end = 10.dp)) {
         itemsIndexed(mergedList) { index, item ->
             ContentCardComponent(cardName = item)
             if (index < mergedList.size - 1) {
