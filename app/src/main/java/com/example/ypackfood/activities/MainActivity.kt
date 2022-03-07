@@ -10,21 +10,29 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import com.example.ypackfood.common.Constants.mergedList
+import com.example.ypackfood.enumClasses.MainCategory
 import com.example.ypackfood.enumClasses.getAllCategories
 import kotlinx.coroutines.launch
 
 class MvvmViewModel : ViewModel() {
-    lateinit var listState: LazyListState
+    lateinit var listContentState: LazyListState
+        private set
+    lateinit var listCategoryState: LazyListState
         private set
 
-    fun listStateInit(lazyListState: LazyListState) {
-        listState = lazyListState
+    fun listContentStateInit(newListState: LazyListState) {
+        listContentState = newListState
+    }
+    fun listCategoryStateInit(newListState: LazyListState) {
+        listCategoryState = newListState
     }
 }
 
 @Composable
 fun MainScreen() {
     val mvvmViewModel = MvvmViewModel()
+    mvvmViewModel.listContentStateInit(rememberLazyListState())
+    mvvmViewModel.listCategoryStateInit(rememberLazyListState())
 
     Column (modifier = Modifier.padding(start = 10.dp, end = 10.dp)) {
         Spacer(modifier = Modifier.height(10.dp))
@@ -38,40 +46,51 @@ fun MainScreen() {
 @Composable
 fun CategoriesRowComponent(mvvmViewModel: MvvmViewModel) {
     val limits = listOf(Pair(0,2), Pair(3,5), Pair(6,8), Pair(9,11), Pair(12,14))
-    LazyRow {
+    val coroutineScope2 = rememberCoroutineScope()
+    val chosenCategoryIndex = limits.indexOf(limits.find { mvvmViewModel.listContentState.firstVisibleItemIndex in it.first..it.second })
+    //Log.d("|||her", chosenCategory.toString())
+    LaunchedEffect(chosenCategoryIndex) {
+        coroutineScope2.launch {
+            mvvmViewModel.listCategoryState.animateScrollToItem(chosenCategoryIndex)
+        }
+    }
+
+
+    LazyRow(state = mvvmViewModel.listCategoryState)
+    {
         itemsIndexed(getAllCategories()) { index, item ->
+            val isChosen = index == chosenCategoryIndex
             Spacer(modifier = Modifier.padding(start = 5.dp))
-            CategoryComponent(categoryName = item.categoryName, limit = limits[index], mvvmViewModel = mvvmViewModel)
+            CategoryComponent(mvvmViewModel = mvvmViewModel, categoryName = item, positionInContent = limits[index].first, isChosen = isChosen)
         }
     }
 }
 
 @Composable
-fun CategoryComponent(categoryName: String, limit: Pair<Int, Int>, mvvmViewModel: MvvmViewModel) {
+fun CategoryComponent(mvvmViewModel: MvvmViewModel, categoryName: MainCategory, positionInContent: Int, isChosen: Boolean) {
     val coroutineScope = rememberCoroutineScope()
-    val currentIndex = mvvmViewModel.listState.firstVisibleItemIndex
+
     Button(
         onClick = {
             coroutineScope.launch {
-                mvvmViewModel.listState.animateScrollToItem(limit.first)
-                Log.d("HelloBtn---", currentIndex.toString())
+                mvvmViewModel.listContentState.animateScrollToItem(positionInContent)
+                Log.d("HelloBtn---", positionInContent.toString())
             }
         },
         colors = ButtonDefaults.buttonColors(
-            backgroundColor = if (currentIndex in limit.first..limit.second)
-                MaterialTheme.colors.primary else MaterialTheme.colors.background
+            backgroundColor = if (isChosen) {
+                //Log.d("her $currentIndex: ", chosenCategory.toString())
+                MaterialTheme.colors.primary
+            } else MaterialTheme.colors.background
         )
     ) {
-        Text(text = categoryName)
+        Text(text = categoryName.categoryName)
     }
 }
 
 @Composable
 fun ContentListComponent(mvvmViewModel: MvvmViewModel) {
-    mvvmViewModel.listStateInit(rememberLazyListState())
-    val highPriorityTasks = mvvmViewModel.listState
-
-    LazyColumn (state = highPriorityTasks) {
+    LazyColumn (state = mvvmViewModel.listContentState) {
         itemsIndexed(mergedList) { index, item ->
             ContentCardComponent(cardName = item)
             if (index < mergedList.size - 1) {
