@@ -10,21 +10,28 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import com.example.ypackfood.common.Constants.mergedList
+import com.example.ypackfood.enumClasses.MainCategory
 import com.example.ypackfood.enumClasses.getAllCategories
 import kotlinx.coroutines.launch
 
 class MvvmViewModel : ViewModel() {
     lateinit var listState: LazyListState
         private set
+    lateinit var listState2: LazyListState
+        private set
 
     fun listStateInit(lazyListState: LazyListState) {
         listState = lazyListState
+    }
+    fun listState2Init(lazyListState: LazyListState) {
+        listState2 = lazyListState
     }
 }
 
 @Composable
 fun MainScreen() {
     val mvvmViewModel = MvvmViewModel()
+    mvvmViewModel.listState2Init(rememberLazyListState())
 
     Column (modifier = Modifier.padding(start = 10.dp, end = 10.dp)) {
         Spacer(modifier = Modifier.height(10.dp))
@@ -38,31 +45,40 @@ fun MainScreen() {
 @Composable
 fun CategoriesRowComponent(mvvmViewModel: MvvmViewModel) {
     val limits = listOf(Pair(0,2), Pair(3,5), Pair(6,8), Pair(9,11), Pair(12,14))
-    LazyRow {
+    LazyRow(state = mvvmViewModel.listState2) //(state = mvvmViewModel.listState2)
+    {
         itemsIndexed(getAllCategories()) { index, item ->
             Spacer(modifier = Modifier.padding(start = 5.dp))
-            CategoryComponent(categoryName = item.categoryName, limit = limits[index], mvvmViewModel = mvvmViewModel)
+            CategoryComponent(categoryName = item, limit = limits[index], mvvmViewModel = mvvmViewModel)
         }
     }
 }
 
 @Composable
-fun CategoryComponent(categoryName: String, limit: Pair<Int, Int>, mvvmViewModel: MvvmViewModel) {
+fun CategoryComponent(categoryName: MainCategory, limit: Pair<Int, Int>, mvvmViewModel: MvvmViewModel) {
     val coroutineScope = rememberCoroutineScope()
+    val coroutineScope2 = rememberCoroutineScope()
     val currentIndex = mvvmViewModel.listState.firstVisibleItemIndex
     Button(
         onClick = {
             coroutineScope.launch {
                 mvvmViewModel.listState.animateScrollToItem(limit.first)
-                Log.d("HelloBtn---", currentIndex.toString())
+//                mvvmViewModel.listState2.animateScrollToItem(
+//                    MainCategory.values().indexOf(categoryName))
+                Log.d("HelloBtn---", limit.first.toString())
+            }
+            coroutineScope2.launch {
+                mvvmViewModel.listState2.animateScrollToItem(
+                    MainCategory.values().indexOf(categoryName))
             }
         },
         colors = ButtonDefaults.buttonColors(
-            backgroundColor = if (currentIndex in limit.first..limit.second)
-                MaterialTheme.colors.primary else MaterialTheme.colors.background
+            backgroundColor = if (currentIndex in limit.first..limit.second) {
+                MaterialTheme.colors.primary
+            } else MaterialTheme.colors.background
         )
     ) {
-        Text(text = categoryName)
+        Text(text = categoryName.categoryName)
     }
 }
 
