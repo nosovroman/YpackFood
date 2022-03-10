@@ -37,6 +37,8 @@ class MvvmViewModel : ViewModel() {
         private set
     lateinit var scaffoldState: ScaffoldState
         private set
+    var toolbarOffsetState by mutableStateOf(0f)
+        private set
 
     fun listContentStateInit(newListState: LazyListState) {
         listContentState = newListState
@@ -46,6 +48,9 @@ class MvvmViewModel : ViewModel() {
     }
     fun scaffoldStateInit(newScaffoldState: ScaffoldState) {
         scaffoldState = newScaffoldState
+    }
+    fun setToolbarOffset(newOffsetPx: Float) {
+        toolbarOffsetState = newOffsetPx
     }
 
 }
@@ -58,14 +63,12 @@ fun MainScreen() {
     mvvmViewModel.scaffoldStateInit(rememberScaffoldState())
 
     val toolbarHeightPx = with(LocalDensity.current) { TOOLBAR_HEIGHT.roundToPx().toFloat() }
-    val toolbarOffsetHeightPx = remember { mutableStateOf(0f) }
-
     val nestedScrollConnection = remember {
         object : NestedScrollConnection {
             override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
                 val delta = available.y
-                val newOffset = toolbarOffsetHeightPx.value + delta
-                toolbarOffsetHeightPx.value = newOffset.coerceIn(-toolbarHeightPx, 0f)
+                val newOffset = mvvmViewModel.toolbarOffsetState + delta
+                mvvmViewModel.setToolbarOffset(newOffset.coerceIn(-toolbarHeightPx, 0f))
                 return Offset.Zero
             }
         }
@@ -74,7 +77,6 @@ fun MainScreen() {
     Scaffold(
         scaffoldState = mvvmViewModel.scaffoldState,
         drawerContent = { Drawer() },
-        //topBar = { ToolBarComponent(mvvmViewModel, toolbarHeight, toolbarOffsetHeightPx) },
         content = {
             Box(
                 Modifier
@@ -82,17 +84,10 @@ fun MainScreen() {
                     .nestedScroll(nestedScrollConnection)
             ) {
 
-                ContentListComponent(mvvmViewModel, toolbarOffsetHeightPx)
-                CategoriesRowComponent(mvvmViewModel, toolbarOffsetHeightPx)
-                ToolBarComponent(mvvmViewModel, toolbarOffsetHeightPx)
+                ContentListComponent(mvvmViewModel)
+                CategoriesRowComponent(mvvmViewModel)
+                ToolBarComponent(mvvmViewModel)
             }
-//            Column (Modifier.nestedScroll(nestedScrollConnection)) {
-//                ToolBarComponent(mvvmViewModel, toolbarHeight, toolbarOffsetHeightPx)
-//                //Spacer(modifier = Modifier.height(10.dp))
-//                CategoriesRowComponent(mvvmViewModel)
-//                //Spacer(modifier = Modifier.height(10.dp))
-//                ContentListComponent(mvvmViewModel, toolbarOffsetHeightPx)
-//            }
         }
     )
 }
@@ -112,12 +107,12 @@ fun Drawer() {
 }
 
 @Composable
-fun ToolBarComponent(mvvmViewModel: MvvmViewModel, toolbarOffsetHeightPx: MutableState<Float>) {
+fun ToolBarComponent(mvvmViewModel: MvvmViewModel) {
     val scope = rememberCoroutineScope()
 
     TopAppBar (modifier = Modifier
         .height(TOOLBAR_HEIGHT)
-        .offset { IntOffset(x = 0, y = toolbarOffsetHeightPx.value.roundToInt()) }) {
+        .offset { IntOffset(x = 0, y = mvvmViewModel.toolbarOffsetState.roundToInt()) }) {
         IconButton(
             onClick = {
                 scope.launch {
@@ -143,7 +138,7 @@ fun ToolBarComponent(mvvmViewModel: MvvmViewModel, toolbarOffsetHeightPx: Mutabl
 }
 
 @Composable
-fun CategoriesRowComponent(mvvmViewModel: MvvmViewModel, toolbarOffsetHeightPx: MutableState<Float>) {
+fun CategoriesRowComponent(mvvmViewModel: MvvmViewModel) {
     var limits = listOf(Pair(-1,2), Pair(3,5), Pair(6,8), Pair(9,11), Pair(12,14))
     limits = limits.map { each -> Pair(each.first+1, each.second+1) }
     Log.d("her", limits.toString())
@@ -161,8 +156,7 @@ fun CategoriesRowComponent(mvvmViewModel: MvvmViewModel, toolbarOffsetHeightPx: 
         state = mvvmViewModel.listCategoryState,
         modifier = Modifier
             .padding(start = 10.dp, end = 10.dp)
-            .offset { IntOffset(x = 0, y = toolbarOffsetHeightPx.value.roundToInt()) },
-            //.background(color = MaterialTheme.colors.background), //contentPadding = PaddingValues(top = toolbarHeight),
+            .offset { IntOffset(x = 0, y = mvvmViewModel.toolbarOffsetState.roundToInt()) },
         contentPadding = PaddingValues(top = TOOLBAR_HEIGHT),
         content = {
             itemsIndexed(getAllCategories()) { index, item ->
@@ -198,8 +192,8 @@ fun CategoryComponent(mvvmViewModel: MvvmViewModel, categoryName: MainCategory, 
 }
 
 @Composable
-fun ContentListComponent(mvvmViewModel: MvvmViewModel, toolbarOffsetHeightPx: MutableState<Float>) {
-    val offset = with(LocalDensity.current) { -toolbarOffsetHeightPx.value.roundToInt().toDp() }
+fun ContentListComponent(mvvmViewModel: MvvmViewModel) {
+    val offset = with(LocalDensity.current) { -mvvmViewModel.toolbarOffsetState.roundToInt().toDp() }
     Log.d("her padding: ", "${TOOLBAR_HEIGHT - offset}")
     LazyColumn (
         state = mvvmViewModel.listContentState,
