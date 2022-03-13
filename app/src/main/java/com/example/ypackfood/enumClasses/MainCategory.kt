@@ -15,6 +15,6 @@ fun getAllCategories():  List<MainCategory> {
 }
 
 fun getCategory(value: String): MainCategory? {
-    val map = MainCategory.values().associateBy(MainCategory::categoryName)
+    val map = values().associateBy(MainCategory::categoryName)
     return map[value]
 }

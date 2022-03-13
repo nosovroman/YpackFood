@@ -3,6 +3,7 @@ package com.example.ypackfood.activities
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.*
 import androidx.compose.material.*
@@ -19,14 +20,18 @@ import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModel
+import androidx.navigation.NavHostController
 import com.example.ypackfood.common.Constants.TOOLBAR_HEIGHT
 import com.example.ypackfood.common.Constants.mergedList
 import com.example.ypackfood.enumClasses.MainCategory
+import com.example.ypackfood.enumClasses.MainDrawer
 import com.example.ypackfood.enumClasses.getAllCategories
+import com.example.ypackfood.enumClasses.getDrawerItems
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
@@ -56,7 +61,7 @@ class MainViewModel : ViewModel() {
 }
 
 @Composable
-fun MainScreen() {
+fun MainScreen(navController: NavHostController) {
     val mainViewModel = MainViewModel()
     mainViewModel.listContentStateInit(rememberLazyListState())
     mainViewModel.listCategoryStateInit(rememberLazyListState())
@@ -76,7 +81,7 @@ fun MainScreen() {
 
     Scaffold(
         scaffoldState = mainViewModel.scaffoldState,
-        drawerContent = { Drawer() },
+        drawerContent = { Drawer(navController) },
         content = {
             Box(
                 Modifier
@@ -93,17 +98,40 @@ fun MainScreen() {
 }
 
 @Composable
-fun Drawer() {
+fun Drawer(navController: NavHostController) {
+    val itemsDrawer = getDrawerItems()
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(start = 24.dp, top = 48.dp),
         content = {
-            Text("Пункт меню 1", fontSize = 28.sp)
-            Text("Пункт меню 2", fontSize = 28.sp)
-            Text("Пункт меню 3", fontSize = 28.sp)
+            itemsDrawer.forEach { currentItem ->
+                DrawerItem(item = currentItem) {
+                    // переход к нужной странице
+                    navController.navigate(route = currentItem.route)
+                }
+            }
         }
     )
+}
+
+@Composable
+fun DrawerItem(item: MainDrawer, onItemClick: () -> Unit) {
+    Row (
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(45.dp)
+            .clickable { onItemClick() }
+            .padding(start = 0.dp)
+    ) {
+        Icon(
+            painterResource(item.icon),
+            contentDescription = item.itemName
+        )
+        Spacer(modifier = Modifier.width(8.dp))
+        Text(text = item.itemName, fontSize = 18.sp)
+    }
 }
 
 @Composable
