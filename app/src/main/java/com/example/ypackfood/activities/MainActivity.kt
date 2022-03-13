@@ -30,7 +30,7 @@ import com.example.ypackfood.enumClasses.getAllCategories
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
-class MvvmViewModel : ViewModel() {
+class MainViewModel : ViewModel() {
     lateinit var listContentState: LazyListState
         private set
     lateinit var listCategoryState: LazyListState
@@ -57,25 +57,25 @@ class MvvmViewModel : ViewModel() {
 
 @Composable
 fun MainScreen() {
-    val mvvmViewModel = MvvmViewModel()
-    mvvmViewModel.listContentStateInit(rememberLazyListState())
-    mvvmViewModel.listCategoryStateInit(rememberLazyListState())
-    mvvmViewModel.scaffoldStateInit(rememberScaffoldState())
+    val mainViewModel = MainViewModel()
+    mainViewModel.listContentStateInit(rememberLazyListState())
+    mainViewModel.listCategoryStateInit(rememberLazyListState())
+    mainViewModel.scaffoldStateInit(rememberScaffoldState())
 
     val toolbarHeightPx = with(LocalDensity.current) { TOOLBAR_HEIGHT.roundToPx().toFloat() }
     val nestedScrollConnection = remember {
         object : NestedScrollConnection {
             override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
                 val delta = available.y
-                val newOffset = mvvmViewModel.toolbarOffsetState + delta
-                mvvmViewModel.setToolbarOffset(newOffset.coerceIn(-toolbarHeightPx, 0f))
+                val newOffset = mainViewModel.toolbarOffsetState + delta
+                mainViewModel.setToolbarOffset(newOffset.coerceIn(-toolbarHeightPx, 0f))
                 return Offset.Zero
             }
         }
     }
 
     Scaffold(
-        scaffoldState = mvvmViewModel.scaffoldState,
+        scaffoldState = mainViewModel.scaffoldState,
         drawerContent = { Drawer() },
         content = {
             Box(
@@ -84,9 +84,9 @@ fun MainScreen() {
                     .nestedScroll(nestedScrollConnection)
             ) {
 
-                ContentListComponent(mvvmViewModel)
-                CategoriesRowComponent(mvvmViewModel)
-                ToolBarComponent(mvvmViewModel)
+                ContentListComponent(mainViewModel)
+                CategoriesRowComponent(mainViewModel)
+                ToolBarComponent(mainViewModel)
             }
         }
     )
@@ -107,7 +107,7 @@ fun Drawer() {
 }
 
 @Composable
-fun ToolBarComponent(mvvmViewModel: MvvmViewModel) {
+fun ToolBarComponent(mvvmViewModel: MainViewModel) {
     val scope = rememberCoroutineScope()
 
     TopAppBar (modifier = Modifier
@@ -138,7 +138,7 @@ fun ToolBarComponent(mvvmViewModel: MvvmViewModel) {
 }
 
 @Composable
-fun CategoriesRowComponent(mvvmViewModel: MvvmViewModel) {
+fun CategoriesRowComponent(mvvmViewModel: MainViewModel) {
     var limits = listOf(Pair(-1,2), Pair(3,5), Pair(6,8), Pair(9,11), Pair(12,14))
     limits = limits.map { each -> Pair(each.first+1, each.second+1) }
     Log.d("her", limits.toString())
@@ -169,7 +169,7 @@ fun CategoriesRowComponent(mvvmViewModel: MvvmViewModel) {
 }
 
 @Composable
-fun CategoryComponent(mvvmViewModel: MvvmViewModel, categoryName: MainCategory, positionInContent: Int, isChosen: Boolean) {
+fun CategoryComponent(mvvmViewModel: MainViewModel, categoryName: MainCategory, positionInContent: Int, isChosen: Boolean) {
     val scope = rememberCoroutineScope()
 
     Button(
@@ -192,7 +192,7 @@ fun CategoryComponent(mvvmViewModel: MvvmViewModel, categoryName: MainCategory, 
 }
 
 @Composable
-fun ContentListComponent(mvvmViewModel: MvvmViewModel) {
+fun ContentListComponent(mvvmViewModel: MainViewModel) {
     val offset = with(LocalDensity.current) { -mvvmViewModel.toolbarOffsetState.roundToInt().toDp() }
     Log.d("her padding: ", "${TOOLBAR_HEIGHT - offset}")
     LazyColumn (
