@@ -238,15 +238,20 @@ fun ContentListComponent(mvvmViewModel: MainViewModel) {
             LazyRow {
                 items(count = 10) {
                     Row(
-                        modifier = Modifier
-                            .width(120.dp)
-                            .height(170.dp)
-                            .border(width = 2.dp, color = MaterialTheme.colors.onBackground),
+//                        modifier = Modifier
+//                            .border(width = 2.dp, color = MaterialTheme.colors.onBackground),
                         content = {
-                            Text(
-                                text = "Акция $it",
-                                color = MaterialTheme.colors.onBackground,
+                            Image(
+                                painter = rememberImagePainter(
+                                    "https://sun9-26.userapi.com/impf/c849020/v849020562/12056a/xOiO0cHdtkk.jpg?size=604x604&quality=96&sign=2c11f0e48c64e290d0bde943da845fd6&type=album"
+                                ),
+                                contentDescription = "Вкусняха",
+                                contentScale = ContentScale.FillBounds,
+                                modifier = Modifier
+                                    .size(200.dp)
+                                    .clip(RoundedCornerShape(15.dp))
                             )
+                            if (it != 9) Spacer(modifier = Modifier.width(10.dp))
                         }
                     )
                 }
@@ -255,7 +260,7 @@ fun ContentListComponent(mvvmViewModel: MainViewModel) {
         itemsIndexed(mergedList) { index, item ->
             ContentCardComponent(cardName = item)
             if (index < mergedList.size - 1) {
-                Spacer(modifier = Modifier.height(20.dp))
+                Spacer(modifier = Modifier.height(5.dp))
                 //Divider(color = MaterialTheme.colors.onBackground, thickness = 1.dp)
             }
         }
@@ -266,7 +271,7 @@ fun ContentListComponent(mvvmViewModel: MainViewModel) {
 fun ContentCardComponent(cardName: String) {
     Row(
         modifier = Modifier
-            .padding(top = 8.dp)
+            .padding(top = 25.dp)
             .fillMaxWidth(),
         content = {
             Image(
@@ -281,7 +286,7 @@ fun ContentCardComponent(cardName: String) {
             )
             Spacer(modifier = Modifier.width(15.dp))
             Column {
-                Text(text = "Мегавкусная пицца", fontSize = 16.sp)
+                Text(text = "Мегавкусное блюдо $cardName", fontSize = 16.sp)
                 Text(text = "30 см / 540 г", fontSize = 12.sp, color = Color.Gray)
                 Text(
                     text = "Картошечка, смесь сыров чеддер и пармезан, моцарелла, бекон, соус альфредо, томаты, берем пучок укропу и пицца готова, оцарелла, бекон, соус альфредо, томаты, берем пучок укропу и пицца готова",
