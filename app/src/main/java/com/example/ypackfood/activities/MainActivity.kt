@@ -1,11 +1,13 @@
 package com.example.ypackfood.activities
 
 import android.util.Log
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
@@ -13,19 +15,23 @@ import androidx.compose.material.icons.outlined.ShoppingCart
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavHostController
+import coil.compose.rememberImagePainter
 import com.example.ypackfood.common.Constants.TOOLBAR_HEIGHT
 import com.example.ypackfood.common.Constants.mergedList
 import com.example.ypackfood.enumClasses.MainCategory
@@ -225,7 +231,7 @@ fun ContentListComponent(mvvmViewModel: MainViewModel) {
     Log.d("her padding: ", "${TOOLBAR_HEIGHT - offset}")
     LazyColumn (
         state = mvvmViewModel.listContentState,
-        modifier = Modifier.padding(start = 10.dp, end = 10.dp, top = TOOLBAR_HEIGHT+TOOLBAR_HEIGHT-offset),// top = TOOLBAR_HEIGHT
+        modifier = Modifier.padding(start = 15.dp, end = 15.dp, top = TOOLBAR_HEIGHT+TOOLBAR_HEIGHT-offset),// top = TOOLBAR_HEIGHT
         //contentPadding = PaddingValues(top = TOOLBAR_HEIGHT+TOOLBAR_HEIGHT-offset),
     ) {
         item {
@@ -249,8 +255,8 @@ fun ContentListComponent(mvvmViewModel: MainViewModel) {
         itemsIndexed(mergedList) { index, item ->
             ContentCardComponent(cardName = item)
             if (index < mergedList.size - 1) {
-                Spacer(modifier = Modifier.padding(start = 5.dp))
-                Divider(color = MaterialTheme.colors.onBackground, thickness = 1.dp)
+                Spacer(modifier = Modifier.height(20.dp))
+                //Divider(color = MaterialTheme.colors.onBackground, thickness = 1.dp)
             }
         }
     }
@@ -261,18 +267,30 @@ fun ContentCardComponent(cardName: String) {
     Row(
         modifier = Modifier
             .padding(top = 8.dp)
-            .background(color = Color.Gray)
             .fillMaxWidth(),
         content = {
-            Box(
+            Image(
+                painter = rememberImagePainter(
+                    "https://i09.fotocdn.net/s116/8d62d46b0c71620f/public_pin_l/2635032180.jpg"
+                ),
+                contentDescription = "Вкусняха",
+                contentScale = ContentScale.FillBounds,
                 modifier = Modifier
-                    .width(120.dp)
-                    .height(170.dp),
-                contentAlignment = Alignment.Center,
-                content = {
-                    Text(text = cardName, color = MaterialTheme.colors.onBackground)
-                }
+                    .size(120.dp)
+                    .clip(RoundedCornerShape(15.dp))
             )
+            Spacer(modifier = Modifier.width(15.dp))
+            Column {
+                Text(text = "Мегавкусная пицца", fontSize = 16.sp)
+                Text(text = "30 см / 540 г", fontSize = 12.sp, color = Color.Gray)
+                Text(
+                    text = "Картошечка, смесь сыров чеддер и пармезан, моцарелла, бекон, соус альфредо, томаты, берем пучок укропу и пицца готова, оцарелла, бекон, соус альфредо, томаты, берем пучок укропу и пицца готова",
+                    fontSize = 14.sp
+                )
+                OutlinedButton(onClick = {  }) {
+                    Text(text = "от 369 ₽")
+                }
+            }
         }
     )
 }

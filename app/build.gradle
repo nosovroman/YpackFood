@@ -65,4 +65,7 @@ dependencies {
 
         // navigation
     implementation("androidx.navigation:navigation-compose:$nav_version")
+
+        // imageLoader
+    implementation("io.coil-kt:coil-compose:1.4.0")
 }
