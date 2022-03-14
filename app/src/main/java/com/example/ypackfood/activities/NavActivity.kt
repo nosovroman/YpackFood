@@ -27,9 +27,10 @@ fun Navigator() {
 
     NavHost(
         navController = navController,
-        startDestination = Screens.Main.route
+        startDestination = Screens.Offers.route
     ) {
         composable(route = Screens.Main.route) { MainScreen(navController) }
         composable(route = Screens.SignInUp.route) { SignInUpScreen() }
+        composable(route = Screens.Offers.route) { OffersScreen() }
     }
 }

@@ -34,6 +34,7 @@ import androidx.navigation.NavHostController
 import coil.compose.rememberImagePainter
 import com.example.ypackfood.common.Constants.TOOLBAR_HEIGHT
 import com.example.ypackfood.common.Constants.mergedList
+import com.example.ypackfood.components.ContentCardComponent
 import com.example.ypackfood.enumClasses.MainCategory
 import com.example.ypackfood.enumClasses.MainDrawer
 import com.example.ypackfood.enumClasses.getAllCategories
@@ -267,38 +268,38 @@ fun ContentListComponent(mvvmViewModel: MainViewModel) {
     }
 }
 
-@Composable
-fun ContentCardComponent(cardName: String) {
-    Row(
-        modifier = Modifier
-            .padding(top = 25.dp)
-            .fillMaxWidth(),
-        content = {
-            Image(
-                painter = rememberImagePainter(
-                    "https://i09.fotocdn.net/s116/8d62d46b0c71620f/public_pin_l/2635032180.jpg"
-                ),
-                contentDescription = "Вкусняха",
-                contentScale = ContentScale.FillBounds,
-                modifier = Modifier
-                    .size(120.dp)
-                    .clip(RoundedCornerShape(15.dp))
-            )
-            Spacer(modifier = Modifier.width(15.dp))
-            Column {
-                Text(text = "Мегавкусное блюдо $cardName", fontSize = 16.sp)
-                Text(text = "30 см / 540 г", fontSize = 12.sp, color = Color.Gray)
-                Text(
-                    text = "Картошечка, смесь сыров чеддер и пармезан, моцарелла, бекон, соус альфредо, томаты, берем пучок укропу и пицца готова, оцарелла, бекон, соус альфредо, томаты, берем пучок укропу и пицца готова",
-                    fontSize = 14.sp
-                )
-                OutlinedButton(onClick = {  }) {
-                    Text(text = "от 369 ₽")
-                }
-            }
-        }
-    )
-}
+//@Composable
+//fun ContentCardComponent(cardName: String) {
+//    Row(
+//        modifier = Modifier
+//            .padding(top = 25.dp)
+//            .fillMaxWidth(),
+//        content = {
+//            Image(
+//                painter = rememberImagePainter(
+//                    "https://i09.fotocdn.net/s116/8d62d46b0c71620f/public_pin_l/2635032180.jpg"
+//                ),
+//                contentDescription = "Вкусняха",
+//                contentScale = ContentScale.FillBounds,
+//                modifier = Modifier
+//                    .size(120.dp)
+//                    .clip(RoundedCornerShape(15.dp))
+//            )
+//            Spacer(modifier = Modifier.width(15.dp))
+//            Column {
+//                Text(text = "Мегавкусное блюдо $cardName", fontSize = 16.sp)
+//                Text(text = "30 см / 540 г", fontSize = 12.sp, color = Color.Gray)
+//                Text(
+//                    text = "Картошечка, смесь сыров чеддер и пармезан, моцарелла, бекон, соус альфредо, томаты, берем пучок укропу и пицца готова, оцарелла, бекон, соус альфредо, томаты, берем пучок укропу и пицца готова",
+//                    fontSize = 14.sp
+//                )
+//                OutlinedButton(onClick = {  }) {
+//                    Text(text = "от 369 ₽")
+//                }
+//            }
+//        }
+//    )
+//}
 
 
 //    val highPriorityTasks by remember {
