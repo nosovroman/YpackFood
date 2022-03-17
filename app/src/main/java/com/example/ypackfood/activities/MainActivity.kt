@@ -1,9 +1,10 @@
 package com.example.ypackfood.activities
 
+import android.app.Activity
+import android.app.Application
+import android.content.Context
 import android.util.Log
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.*
@@ -18,18 +19,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelStoreOwner
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
 import coil.compose.rememberImagePainter
 import com.example.ypackfood.common.Constants.TOOLBAR_HEIGHT
@@ -39,37 +43,22 @@ import com.example.ypackfood.enumClasses.MainCategory
 import com.example.ypackfood.enumClasses.MainDrawer
 import com.example.ypackfood.enumClasses.getAllCategories
 import com.example.ypackfood.enumClasses.getDrawerItems
+import com.example.ypackfood.repository.Repository
+import com.example.ypackfood.retrofit.RetrofitBuilder
+import com.example.ypackfood.viewModels.MainViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.lang.Exception
 import kotlin.math.roundToInt
 
-class MainViewModel : ViewModel() {
-    lateinit var listContentState: LazyListState
-        private set
-    lateinit var listCategoryState: LazyListState
-        private set
-    lateinit var scaffoldState: ScaffoldState
-        private set
-    var toolbarOffsetState by mutableStateOf(0f)
-        private set
 
-    fun listContentStateInit(newListState: LazyListState) {
-        listContentState = newListState
-    }
-    fun listCategoryStateInit(newListState: LazyListState) {
-        listCategoryState = newListState
-    }
-    fun scaffoldStateInit(newScaffoldState: ScaffoldState) {
-        scaffoldState = newScaffoldState
-    }
-    fun setToolbarOffset(newOffsetPx: Float) {
-        toolbarOffsetState = newOffsetPx
-    }
-
-}
 
 @Composable
-fun MainScreen(navController: NavHostController) {
-    val mainViewModel = MainViewModel()
+fun MainScreen(navController: NavHostController, mainViewModel: MainViewModel) {
+//    val mainViewModel: MainViewModel by lazy {
+//        ViewModelProvider(ViewModelStoreOwner()).get(MainViewModel::class.java)
+//    }
+    //val mainViewModel = ViewModelProvider(this).get(MainViewModel::class.java) //MainViewModel(Repository(RetrofitBuilder.apiService))
     mainViewModel.listContentStateInit(rememberLazyListState())
     mainViewModel.listCategoryStateInit(rememberLazyListState())
     mainViewModel.scaffoldStateInit(rememberScaffoldState())

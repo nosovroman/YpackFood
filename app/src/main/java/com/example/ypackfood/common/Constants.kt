@@ -11,4 +11,5 @@ object Constants {
     val mergedList = pizza+roll+salads+soups+drink
 
     val TOOLBAR_HEIGHT = 48.dp
+    const val BASE_URL = "https://bironix17-test-connect.herokuapp.com/"
 }
