@@ -2,17 +2,11 @@ package com.example.ypackfood.activities
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.FloatingActionButton
-import androidx.compose.material.Icon
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -21,6 +15,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberImagePainter
+import com.example.ypackfood.components.BackFABComponent
 import com.example.ypackfood.components.ContentCardComponent
 
 @Composable
@@ -36,12 +31,7 @@ fun OffersScreen() {
             OfferPicture()
             OfferDescription()
         }
-        FloatingActionButton(
-            modifier = Modifier.padding(start = 10.dp, top = 10.dp),
-            onClick = { }
-        ) {
-            Icon(Icons.Filled.ArrowBack, contentDescription = "Добавить")
-        }
+        BackFABComponent()
     }
 
 }

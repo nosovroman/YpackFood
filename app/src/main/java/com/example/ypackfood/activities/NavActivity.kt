@@ -11,12 +11,14 @@ import androidx.navigation.compose.rememberNavController
 import com.example.ypackfood.sealedClasses.Screens
 import com.example.ypackfood.ui.theme.YpackFoodTheme
 import com.example.ypackfood.viewModels.MainViewModel
+import com.example.ypackfood.viewModels.ShoppingCartViewModel
 
 class NavActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         val mainViewModel = ViewModelProvider(this).get(MainViewModel::class.java)
+        val shoppingCartViewModel = ViewModelProvider(this).get(ShoppingCartViewModel::class.java)
 
         setContent {
             YpackFoodTheme {
@@ -24,11 +26,12 @@ class NavActivity : ComponentActivity() {
 
                 NavHost(
                     navController = navController,
-                    startDestination = Screens.Main.route
+                    startDestination = Screens.ShoppingCart.route
                 ) {
                     composable(route = Screens.Main.route) { MainScreen(navController, mainViewModel) }
                     composable(route = Screens.SignInUp.route) { SignInUpScreen() }
                     composable(route = Screens.Offers.route) { OffersScreen() }
+                    composable(route = Screens.ShoppingCart.route) { ShoppingCartScreen(shoppingCartViewModel) }
                 }
             }
         }

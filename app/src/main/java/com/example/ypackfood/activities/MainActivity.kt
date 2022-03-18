@@ -1,14 +1,9 @@
 package com.example.ypackfood.activities
 
-import android.app.Activity
-import android.app.Application
-import android.content.Context
 import android.util.Log
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.*
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
@@ -16,49 +11,34 @@ import androidx.compose.material.icons.outlined.ShoppingCart
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelStoreOwner
-import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
-import coil.compose.rememberImagePainter
 import com.example.ypackfood.common.Constants.TOOLBAR_HEIGHT
+import com.example.ypackfood.common.Constants.baseUrlPictureCategory
 import com.example.ypackfood.common.Constants.mergedList
 import com.example.ypackfood.components.ContentCardComponent
+import com.example.ypackfood.components.PictureOneComponent
 import com.example.ypackfood.enumClasses.MainCategory
 import com.example.ypackfood.enumClasses.MainDrawer
 import com.example.ypackfood.enumClasses.getAllCategories
 import com.example.ypackfood.enumClasses.getDrawerItems
-import com.example.ypackfood.repository.Repository
-import com.example.ypackfood.retrofit.RetrofitBuilder
 import com.example.ypackfood.viewModels.MainViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.lang.Exception
 import kotlin.math.roundToInt
 
 
 
 @Composable
 fun MainScreen(navController: NavHostController, mainViewModel: MainViewModel) {
-//    val mainViewModel: MainViewModel by lazy {
-//        ViewModelProvider(ViewModelStoreOwner()).get(MainViewModel::class.java)
-//    }
-    //val mainViewModel = ViewModelProvider(this).get(MainViewModel::class.java) //MainViewModel(Repository(RetrofitBuilder.apiService))
     mainViewModel.listContentStateInit(rememberLazyListState())
     mainViewModel.listCategoryStateInit(rememberLazyListState())
     mainViewModel.scaffoldStateInit(rememberScaffoldState())
@@ -221,26 +201,14 @@ fun ContentListComponent(mvvmViewModel: MainViewModel) {
     Log.d("her padding: ", "${TOOLBAR_HEIGHT - offset}")
     LazyColumn (
         state = mvvmViewModel.listContentState,
-        modifier = Modifier.padding(start = 15.dp, end = 15.dp, top = TOOLBAR_HEIGHT+TOOLBAR_HEIGHT-offset),// top = TOOLBAR_HEIGHT
-        //contentPadding = PaddingValues(top = TOOLBAR_HEIGHT+TOOLBAR_HEIGHT-offset),
+        modifier = Modifier.padding(start = 15.dp, end = 15.dp, top = TOOLBAR_HEIGHT+TOOLBAR_HEIGHT-offset)
     ) {
         item {
             LazyRow {
                 items(count = 10) {
                     Row(
-//                        modifier = Modifier
-//                            .border(width = 2.dp, color = MaterialTheme.colors.onBackground),
                         content = {
-                            Image(
-                                painter = rememberImagePainter(
-                                    "https://sun9-26.userapi.com/impf/c849020/v849020562/12056a/xOiO0cHdtkk.jpg?size=604x604&quality=96&sign=2c11f0e48c64e290d0bde943da845fd6&type=album"
-                                ),
-                                contentDescription = "Вкусняха",
-                                contentScale = ContentScale.FillBounds,
-                                modifier = Modifier
-                                    .size(200.dp)
-                                    .clip(RoundedCornerShape(15.dp))
-                            )
+                            PictureOneComponent(size = 200.dp, corner = 15.dp, description = "Вкусняха", url = baseUrlPictureCategory)
                             if (it != 9) Spacer(modifier = Modifier.width(10.dp))
                         }
                     )
@@ -251,50 +219,7 @@ fun ContentListComponent(mvvmViewModel: MainViewModel) {
             ContentCardComponent(cardName = item)
             if (index < mergedList.size - 1) {
                 Spacer(modifier = Modifier.height(5.dp))
-                //Divider(color = MaterialTheme.colors.onBackground, thickness = 1.dp)
             }
         }
     }
 }
-
-//@Composable
-//fun ContentCardComponent(cardName: String) {
-//    Row(
-//        modifier = Modifier
-//            .padding(top = 25.dp)
-//            .fillMaxWidth(),
-//        content = {
-//            Image(
-//                painter = rememberImagePainter(
-//                    "https://i09.fotocdn.net/s116/8d62d46b0c71620f/public_pin_l/2635032180.jpg"
-//                ),
-//                contentDescription = "Вкусняха",
-//                contentScale = ContentScale.FillBounds,
-//                modifier = Modifier
-//                    .size(120.dp)
-//                    .clip(RoundedCornerShape(15.dp))
-//            )
-//            Spacer(modifier = Modifier.width(15.dp))
-//            Column {
-//                Text(text = "Мегавкусное блюдо $cardName", fontSize = 16.sp)
-//                Text(text = "30 см / 540 г", fontSize = 12.sp, color = Color.Gray)
-//                Text(
-//                    text = "Картошечка, смесь сыров чеддер и пармезан, моцарелла, бекон, соус альфредо, томаты, берем пучок укропу и пицца готова, оцарелла, бекон, соус альфредо, томаты, берем пучок укропу и пицца готова",
-//                    fontSize = 14.sp
-//                )
-//                OutlinedButton(onClick = {  }) {
-//                    Text(text = "от 369 ₽")
-//                }
-//            }
-//        }
-//    )
-//}
-
-
-//    val highPriorityTasks by remember {
-//        derivedStateOf {
-//            mvvmViewModel.setFirstVisibleCardIndex(mvvmViewModel.listState.firstVisibleItemIndex)
-//            Log.d("Hello3", mvvmViewModel.listState.firstVisibleItemIndex.toString())
-//            mvvmViewModel.listState
-//        }
-//    }
