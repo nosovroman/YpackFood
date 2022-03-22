@@ -208,7 +208,7 @@ fun ContentListComponent(mvvmViewModel: MainViewModel) {
                 items(count = 10) {
                     Row(
                         content = {
-                            PictureOneComponent(size = 200.dp, corner = 15.dp, description = "Вкусняха", url = baseUrlPictureCategory)
+                            PictureOneComponent(size = 200.dp, url = baseUrlPictureCategory)
                             if (it != 9) Spacer(modifier = Modifier.width(10.dp))
                         }
                     )

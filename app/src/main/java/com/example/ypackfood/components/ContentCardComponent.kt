@@ -16,7 +16,7 @@ fun ContentCardComponent(cardName: String) {
             .padding(top = 25.dp)
             .fillMaxWidth(),
         content = {
-            PictureOneComponent(size = 120.dp, corner = 15.dp, description = "Вкусняха", url = "https://i09.fotocdn.net/s116/8d62d46b0c71620f/public_pin_l/2635032180.jpg")
+            PictureOneComponent()
             Spacer(modifier = Modifier.width(15.dp))
             Column {
                 Text(text = "Мегавкусное блюдо $cardName", fontSize = 16.sp)

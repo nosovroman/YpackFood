@@ -3,7 +3,6 @@ package com.example.ypackfood.activities
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.runtime.Composable
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -26,12 +25,14 @@ class NavActivity : ComponentActivity() {
 
                 NavHost(
                     navController = navController,
-                    startDestination = Screens.ShoppingCart.route
+                    startDestination = Screens.Profile.route
                 ) {
                     composable(route = Screens.Main.route) { MainScreen(navController, mainViewModel) }
                     composable(route = Screens.SignInUp.route) { SignInUpScreen() }
                     composable(route = Screens.Offers.route) { OffersScreen() }
                     composable(route = Screens.ShoppingCart.route) { ShoppingCartScreen(shoppingCartViewModel) }
+                    composable(route = Screens.History.route) { HistoryScreen() }
+                    composable(route = Screens.Profile.route) { ProfileScreen() }
                 }
             }
         }

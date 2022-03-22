@@ -43,7 +43,7 @@ fun ShoppingCartCardComponent(cardName: String, cost: Int, ind: Int, shoppingCar
             .padding(top = 25.dp)
             .fillMaxWidth(),
         content = {
-            PictureOneComponent(size = 120.dp, corner = 15.dp, description = "Вкусняха", url = Constants.baseUrlPictureContent)
+            PictureOneComponent()
             Spacer(modifier = Modifier.width(15.dp))
             Column {
                 Text(text = "Мегавкусное блюдо $cardName", fontSize = 16.sp)
