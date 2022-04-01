@@ -1,11 +1,15 @@
 package com.example.ypackfood.retrofit
 
+import com.example.ypackfood.dataClasses.mainContent2.Categories
 import retrofit2.http.GET
 import retrofit2.Response
 import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface ApiService {
+    @GET("dishes")
+    suspend fun getMainContent(): Response<Categories>
+
     @GET("hello")
     suspend fun getHello(): Response<String>
 

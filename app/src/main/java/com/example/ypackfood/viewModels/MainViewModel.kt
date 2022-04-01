@@ -8,6 +8,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.ypackfood.dataClasses.mainContent2.Category
 import com.example.ypackfood.repository.Repository
 import com.example.ypackfood.retrofit.RetrofitBuilder
 import kotlinx.coroutines.Dispatchers
@@ -45,13 +46,67 @@ class MainViewModel : ViewModel() {
         toolbarOffsetState = newOffsetPx
     }
 
+//    var categoriesContentState: List<Category> by mutableStateOf(listOf())
+//        private set
+
+    var categoriesContentState by mutableStateOf(mutableListOf<Category>())
+        private set
+
+//    var categorylimits by mutableStateOf(mutableListOf<Pair<Int, Int>>())
+//        private set
+
+    private fun setCategoriesContent(newCategoriesContent: MutableList<Category>) {
+        categoriesContentState = newCategoriesContent
+        //categorylimits = calculateCategoryLimits(newCategoriesContent)
+    }
+
+//    private fun calculateCategoryLimits(categories: MutableList<Category>): MutableList<Pair<Int, Int>> {
+//        var lastIndex = 0
+//        val limits: MutableList<Pair<Int, Int>> = mutableListOf()
+//        for (category in categories) {
+//            if (categories.indexOf(category) == 0) { // учет списка акций
+//                limits.add(Pair(lastIndex, lastIndex + category.dishes.size))
+//                lastIndex += 1
+//            }
+//            else
+//                limits.add(Pair(lastIndex, lastIndex + category.dishes.size - 1))
+//            lastIndex += category.dishes.size
+//        }
+////        var limits = categories.mapIndexed {
+////                index, each -> {
+////                    Pair(lastIndex, each.dishes.size - 1)
+////                    lastIndex += each.dishes.size
+////                }
+////        }
+//        //var limits2 = mutableListOf(Pair(-1,2), Pair(3,5), Pair(6,8), Pair(9,11), Pair(12,14))
+//
+//        return limits
+//    }
+
     init {
-        getHello()
-        getCard()
-        getPath()
-        getBody()
-        getTea()
-        getError()
+        getMainContent()
+//        getHello()
+//        getCard()
+//        getPath()
+//        getBody()
+//        getTea()
+//        getError()
+    }
+
+    private fun getMainContent() {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val response = mainRepository.getMainContent()
+                if (response.isSuccessful) {
+                    setCategoriesContent(response.body()!!.categories)
+                    //Log.d("getMainContent ok ", categoriesContentState.toString())
+                }
+                else
+                    Log.d("getMainContent not ok ", response.message().toString())
+            } catch (e: Exception) {
+                Log.d("getMainContent error ", e.toString())
+            }
+        }
     }
 
     private fun getHello() {

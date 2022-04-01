@@ -8,7 +8,7 @@ import retrofit2.converter.scalars.ScalarsConverterFactory
 object RetrofitBuilder {
     private fun getRetrofit(): Retrofit {
         return Retrofit.Builder()
-            .baseUrl(Constants.BASE_URL).addConverterFactory(ScalarsConverterFactory.create())
+            .baseUrl(Constants.BASE_URL)//.addConverterFactory(ScalarsConverterFactory.create())
             .addConverterFactory(MoshiConverterFactory.create())
             .build()
     }

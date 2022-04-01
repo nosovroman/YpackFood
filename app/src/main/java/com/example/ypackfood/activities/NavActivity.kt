@@ -25,7 +25,7 @@ class NavActivity : ComponentActivity() {
 
                 NavHost(
                     navController = navController,
-                    startDestination = Screens.Profile.route
+                    startDestination = Screens.Main.route
                 ) {
                     composable(route = Screens.Main.route) { MainScreen(navController, mainViewModel) }
                     composable(route = Screens.SignInUp.route) { SignInUpScreen() }

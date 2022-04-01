@@ -27,14 +27,11 @@ import com.example.ypackfood.common.Constants.baseUrlPictureCategory
 import com.example.ypackfood.common.Constants.mergedList
 import com.example.ypackfood.components.ContentCardComponent
 import com.example.ypackfood.components.PictureOneComponent
-import com.example.ypackfood.enumClasses.MainCategory
 import com.example.ypackfood.enumClasses.MainDrawer
-import com.example.ypackfood.enumClasses.getAllCategories
 import com.example.ypackfood.enumClasses.getDrawerItems
 import com.example.ypackfood.viewModels.MainViewModel
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
-
 
 
 @Composable
@@ -143,12 +140,8 @@ fun ToolBarComponent(mvvmViewModel: MainViewModel) {
 
 @Composable
 fun CategoriesRowComponent(mvvmViewModel: MainViewModel) {
-    var limits = listOf(Pair(-1,2), Pair(3,5), Pair(6,8), Pair(9,11), Pair(12,14))
-    limits = limits.map { each -> Pair(each.first+1, each.second+1) }
-    Log.d("her", limits.toString())
     val scope = rememberCoroutineScope()
-    var chosenCategoryIndex = limits.indexOf(limits.find { mvvmViewModel.listContentState.firstVisibleItemIndex in it.first..it.second })
-    if (chosenCategoryIndex < 0) chosenCategoryIndex = 0
+    val chosenCategoryIndex = mvvmViewModel.listContentState.firstVisibleItemIndex
 
     LaunchedEffect(chosenCategoryIndex) {
         scope.launch {
@@ -163,40 +156,39 @@ fun CategoriesRowComponent(mvvmViewModel: MainViewModel) {
             .offset { IntOffset(x = 0, y = mvvmViewModel.toolbarOffsetState.roundToInt()) },
         contentPadding = PaddingValues(top = TOOLBAR_HEIGHT),
         content = {
-            itemsIndexed(getAllCategories()) { index, item ->
+            itemsIndexed(listOf("Акции") + mvvmViewModel.categoriesContentState.map { it.categoryType }) { index, item ->
                 val isChosen = index == chosenCategoryIndex
                 Spacer(modifier = Modifier.padding(start = 5.dp))
-                CategoryComponent(mvvmViewModel = mvvmViewModel, categoryName = item, positionInContent = limits[index].first, isChosen = isChosen)
+                CategoryComponent(mvvmViewModel = mvvmViewModel, categoryName = item, positionInContent = index, isChosen = isChosen)
             }
         }
     )
 }
 
 @Composable
-fun CategoryComponent(mvvmViewModel: MainViewModel, categoryName: MainCategory, positionInContent: Int, isChosen: Boolean) {
+fun CategoryComponent(mvvmViewModel: MainViewModel, categoryName: String, positionInContent: Int, isChosen: Boolean) {
     val scope = rememberCoroutineScope()
 
     Button(
         onClick = {
             scope.launch {
                 mvvmViewModel.listContentState.animateScrollToItem(positionInContent)
-                Log.d("HelloBtn---", positionInContent.toString())
             }
         },
         colors = ButtonDefaults.buttonColors(
             backgroundColor = if (isChosen) {
-                //Log.d("her $currentIndex: ", chosenCategory.toString())
                 MaterialTheme.colors.primary
             } else MaterialTheme.colors.background
         ),
         content = {
-            Text(text = categoryName.categoryName)
+            Text(text = categoryName)
         }
     )
 }
 
 @Composable
 fun ContentListComponent(mvvmViewModel: MainViewModel) {
+    Log.d("getMainContent ", mvvmViewModel.categoriesContentState.toString())
     val offset = with(LocalDensity.current) { -mvvmViewModel.toolbarOffsetState.roundToInt().toDp() }
     Log.d("her padding: ", "${TOOLBAR_HEIGHT - offset}")
     LazyColumn (
@@ -215,8 +207,20 @@ fun ContentListComponent(mvvmViewModel: MainViewModel) {
                 }
             }
         }
-        itemsIndexed(mergedList) { index, item ->
-            ContentCardComponent(cardName = item)
+        itemsIndexed(mvvmViewModel.categoriesContentState) { index, item ->
+            //val countCategoryDishes = item.dishes.size
+            for (content in item.dishes) {
+                with (content) {
+                    ContentCardComponent(
+                        cardName = name + id,
+                        hint = basePortion.size,
+                        description = composition,
+                        price = basePortion.price,
+                        urlPicture = picturePaths.large
+                    )
+                }
+            }
+
             if (index < mergedList.size - 1) {
                 Spacer(modifier = Modifier.height(5.dp))
             }
