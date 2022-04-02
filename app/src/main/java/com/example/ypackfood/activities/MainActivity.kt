@@ -1,18 +1,22 @@
 package com.example.ypackfood.activities
 
 import android.util.Log
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.outlined.ShoppingCart
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -27,8 +31,10 @@ import com.example.ypackfood.common.Constants.baseUrlPictureCategory
 import com.example.ypackfood.common.Constants.mergedList
 import com.example.ypackfood.components.ContentCardComponent
 import com.example.ypackfood.components.PictureOneComponent
+import com.example.ypackfood.dataClasses.mainContent2.Category
 import com.example.ypackfood.enumClasses.MainDrawer
 import com.example.ypackfood.enumClasses.getDrawerItems
+import com.example.ypackfood.sealedClasses.NetworkResult
 import com.example.ypackfood.viewModels.MainViewModel
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
@@ -52,6 +58,8 @@ fun MainScreen(navController: NavHostController, mainViewModel: MainViewModel) {
         }
     }
 
+    val x = mainViewModel.contentResp.observeAsState().value
+
     Scaffold(
         scaffoldState = mainViewModel.scaffoldState,
         drawerContent = { Drawer(navController) },
@@ -61,13 +69,43 @@ fun MainScreen(navController: NavHostController, mainViewModel: MainViewModel) {
                     .fillMaxSize()
                     .nestedScroll(nestedScrollConnection)
             ) {
+                if (!mainViewModel.contentResp.value?.data.isNullOrEmpty()) {
+                    Log.d("twer", "Display data")
+                    ContentListComponent(navController, mainViewModel)
+                    CategoriesRowComponent(mainViewModel)
+                }
 
-                ContentListComponent(mainViewModel)
-                CategoriesRowComponent(mainViewModel)
+                when (x) {
+                    is NetworkResult.Loading<*> -> {
+                        Log.d("twer", "Loading data")
+
+                        Column {
+                            Spacer(modifier = Modifier.height(TOOLBAR_HEIGHT + 15.dp))
+                            LoadingBar()
+                        }
+                    }
+                    is NetworkResult.Success<*> -> {
+                        Log.d("twer", "Success data")
+                    }
+                    is NetworkResult.Error<*> -> {
+                        Log.d("twer", "Error loading data: " + x.message + " ||| " + x.data)
+                        ShowErrorDialog(mainViewModel)
+                    }
+                    null -> TODO()
+                }
+
                 ToolBarComponent(mainViewModel)
             }
         }
     )
+}
+
+@Composable
+fun LoadingBar() {
+    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+        //LinearProgressIndicator(color = MaterialTheme.colors.primary)
+        CircularProgressIndicator(color = MaterialTheme.colors.primary)
+    }
 }
 
 @Composable
@@ -156,7 +194,7 @@ fun CategoriesRowComponent(mvvmViewModel: MainViewModel) {
             .offset { IntOffset(x = 0, y = mvvmViewModel.toolbarOffsetState.roundToInt()) },
         contentPadding = PaddingValues(top = TOOLBAR_HEIGHT),
         content = {
-            itemsIndexed(listOf("Акции") + mvvmViewModel.categoriesContentState.map { it.categoryType }) { index, item ->
+            itemsIndexed(listOf("Акции") + mvvmViewModel.contentResp.value!!.data!!.map { it.categoryType }) { index, item ->
                 val isChosen = index == chosenCategoryIndex
                 Spacer(modifier = Modifier.padding(start = 5.dp))
                 CategoryComponent(mvvmViewModel = mvvmViewModel, categoryName = item, positionInContent = index, isChosen = isChosen)
@@ -187,8 +225,8 @@ fun CategoryComponent(mvvmViewModel: MainViewModel, categoryName: String, positi
 }
 
 @Composable
-fun ContentListComponent(mvvmViewModel: MainViewModel) {
-    Log.d("getMainContent ", mvvmViewModel.categoriesContentState.toString())
+fun ContentListComponent(navController: NavHostController, mvvmViewModel: MainViewModel) {
+    Log.d("getMainContent ", mvvmViewModel.contentResp.toString())
     val offset = with(LocalDensity.current) { -mvvmViewModel.toolbarOffsetState.roundToInt().toDp() }
     Log.d("her padding: ", "${TOOLBAR_HEIGHT - offset}")
     LazyColumn (
@@ -207,16 +245,18 @@ fun ContentListComponent(mvvmViewModel: MainViewModel) {
                 }
             }
         }
-        itemsIndexed(mvvmViewModel.categoriesContentState) { index, item ->
+        itemsIndexed(mvvmViewModel.contentResp.value!!.data as MutableList<Category>) { index, item ->
             //val countCategoryDishes = item.dishes.size
             for (content in item.dishes) {
                 with (content) {
                     ContentCardComponent(
+                        contentCardId = id,
                         cardName = name + id,
                         hint = basePortion.size,
                         description = composition,
                         price = basePortion.price,
-                        urlPicture = picturePaths.large
+                        urlPicture = picturePaths.large,
+                        navController = navController
                     )
                 }
             }
@@ -226,4 +266,61 @@ fun ContentListComponent(mvvmViewModel: MainViewModel) {
             }
         }
     }
+}
+
+@Composable
+private fun ShowErrorDialog(mvvmViewModel: MainViewModel) {
+    Column(
+        modifier = Modifier.fillMaxHeight(),
+        verticalArrangement = Arrangement.Bottom
+    ) {
+        //Spacer(modifier = Modifier.height(TOOLBAR_HEIGHT))
+        SnackBar(mvvmViewModel)
+    }
+}
+
+// всплывающее сообщение
+@Composable
+fun SnackBar(mvvmViewModel: MainViewModel) {
+
+//    Column(
+//        horizontalAlignment = Alignment.CenterHorizontally,
+//        modifier = Modifier.fillMaxWidth()
+//    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween,
+            modifier = Modifier
+                .fillMaxWidth()
+                .border(
+                    width = 2.dp,
+                    color = Color.Red,
+                    shape = RoundedCornerShape(10.dp)
+                )
+                .padding(5.dp),
+            content = {
+                Text(
+                    text = "Ошибка",//stringResource(R.string.error),
+                    color = MaterialTheme.colors.onBackground,
+                )
+                TextButton(
+                    modifier = Modifier
+                        .border(
+                            width = 2.dp,
+                            color = Color.Blue,
+                            shape = RoundedCornerShape(10.dp),
+                        ),
+                    onClick = {
+                        mvvmViewModel.getMainContent()
+                    },
+                    content = {
+                        Text(
+                            text = "Обновить", //stringResource("Обновить"),
+                            color = MaterialTheme.colors.onBackground,
+                        )
+                    }
+                )
+            }
+        )
+   // }
 }

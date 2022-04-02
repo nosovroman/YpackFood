@@ -14,4 +14,6 @@ object Constants {
     const val BASE_URL = "https://super-food17.herokuapp.com/"
     val baseUrlPictureCategory = "https://sun9-26.userapi.com/impf/c849020/v849020562/12056a/xOiO0cHdtkk.jpg?size=604x604&quality=96&sign=2c11f0e48c64e290d0bde943da845fd6&type=album"
     val baseUrlPictureContent = "https://i09.fotocdn.net/s116/8d62d46b0c71620f/public_pin_l/2635032180.jpg"
+
+    const val NAV_KEY__CONTENT_ID = "contentId"
 }

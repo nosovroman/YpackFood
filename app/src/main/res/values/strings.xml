@@ -6,4 +6,6 @@
     <string name="sign_in_btn">Войти</string>
     <string name="sign_up_lbl">Регистрация</string>
     <string name="sign_in_lbl">Вход</string>
+
+    <string name="NAV_KEY__CONTENT_ID">contentId</string>
 </resources>

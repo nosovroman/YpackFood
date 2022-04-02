@@ -28,7 +28,7 @@ fun OffersScreen() {
                 .verticalScroll(scrollState)
         ) {
 
-            OfferPicture()
+            OfferPicture() // PictureTwoComponent
             OfferDescription()
         }
         BackFABComponent()
@@ -56,6 +56,6 @@ fun OfferDescription() {
     Spacer(modifier = Modifier.height(20.dp))
     Text(text = "Описание", fontSize = 16.sp)
     Text(text = "Мега выгодное предложение от мегавыгодной сети ресторанов: 500 пицц по цене 1000 роллов", fontSize = 14.sp, color = Color.Gray)
-    ContentCardComponent(cardName = "Акция1")
-    ContentCardComponent(cardName = "Акция2")
+    //ContentCardComponent(cardName = "Акция1")
+    //ContentCardComponent(cardName = "Акция2")
 }
