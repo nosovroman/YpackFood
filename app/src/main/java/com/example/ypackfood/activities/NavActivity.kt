@@ -14,6 +14,7 @@ import com.example.ypackfood.R
 import com.example.ypackfood.common.Constants
 import com.example.ypackfood.sealedClasses.Screens
 import com.example.ypackfood.ui.theme.YpackFoodTheme
+import com.example.ypackfood.viewModels.DetailViewModel
 import com.example.ypackfood.viewModels.MainViewModel
 import com.example.ypackfood.viewModels.ShoppingCartViewModel
 
@@ -22,6 +23,7 @@ class NavActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         val mainViewModel = ViewModelProvider(this).get(MainViewModel::class.java)
+        val detailViewModel = ViewModelProvider(this).get(DetailViewModel::class.java)
         val shoppingCartViewModel = ViewModelProvider(this).get(ShoppingCartViewModel::class.java)
 
         setContent {
@@ -40,7 +42,7 @@ class NavActivity : ComponentActivity() {
                         )
                     ) { backStackEntry ->
                         backStackEntry.arguments?.getInt(Constants.NAV_KEY__CONTENT_ID)?.let { contentId ->
-                            DetailContentScreen(contentId = contentId)
+                            DetailContentScreen(navController, detailViewModel, contentId)
                         }
                     }
                     composable(route = Screens.SignInUp.route) { SignInUpScreen() }

@@ -11,7 +11,8 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.ypackfood.common.Constants
-import com.example.ypackfood.dataClasses.mainContent2.Category
+import com.example.ypackfood.dataClasses.mainContent.Category
+import com.example.ypackfood.sealedClasses.Screens
 import com.example.ypackfood.viewModels.MainViewModel
 import kotlin.math.roundToInt
 
@@ -19,7 +20,6 @@ import kotlin.math.roundToInt
 fun ContentListComponent(navController: NavHostController, mvvmViewModel: MainViewModel) {
     Log.d("getMainContent ", mvvmViewModel.contentResp.toString())
     val offset = with(LocalDensity.current) { -mvvmViewModel.toolbarOffsetState.roundToInt().toDp() }
-    Log.d("her padding: ", "${Constants.TOOLBAR_HEIGHT - offset}")
     LazyColumn (
         state = mvvmViewModel.listContentState,
         modifier = Modifier.padding(start = 15.dp, end = 15.dp, top = Constants.TOOLBAR_HEIGHT + Constants.TOOLBAR_HEIGHT -offset)
@@ -37,17 +37,17 @@ fun ContentListComponent(navController: NavHostController, mvvmViewModel: MainVi
             }
         }
         itemsIndexed(mvvmViewModel.contentResp.value!!.data as MutableList<Category>) { index, item ->
-            //val countCategoryDishes = item.dishes.size
             for (content in item.dishes) {
                 with (content) {
                     ContentCardComponent(
-                        contentCardId = id,
+                        //contentCardId = id,
                         cardName = name + id,
                         hint = basePortion.size,
                         description = composition,
                         price = basePortion.price,
                         urlPicture = picturePaths.large,
-                        navController = navController
+                        //navController = navController,
+                        onCardClick = { navController.navigate(route = Screens.DetailContent.createRoute(id)) }
                     )
                 }
             }

@@ -18,6 +18,4 @@ class ShoppingCartViewModel : ViewModel() {
     fun decrementCount(ind: Int) {
         count[ind] = count[ind] - 1
     }
-
-
 }

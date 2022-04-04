@@ -15,20 +15,21 @@ import com.example.ypackfood.sealedClasses.Screens
 
 @Composable
 fun ContentCardComponent(
-    contentCardId: Int = -1,
+    //contentCardId: Int = -1,
     cardName: String,
     hint: String = "",
     description: String = "",
     price: Int = -1,
     urlPicture: String = baseUrlPictureContent,
-    navController: NavHostController,
+    //navController: NavHostController,
+    onCardClick: () -> Unit = {}
 ) {
     Row(
         modifier = Modifier
             .padding(top = 25.dp)
             .fillMaxWidth()
             .clickable {
-                navController.navigate(route = Screens.DetailContent.createRoute(contentCardId))
+                onCardClick()
             },
         content = {
             PictureOneComponent(url = urlPicture)
@@ -37,8 +38,10 @@ fun ContentCardComponent(
                 Text(text = cardName, fontSize = 16.sp)
                 Text(text = hint, fontSize = 12.sp, color = Color.Gray)
                 Text(text = description, fontSize = 14.sp)
-                OutlinedButton(onClick = {  }) {
-                    Text(text = "от $price ₽")
+                if (price != -1) {
+                    OutlinedButton(onClick = {  }) {
+                        Text(text = "от $price ₽")
+                    }
                 }
             }
         }

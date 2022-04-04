@@ -22,7 +22,7 @@ import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
 @Composable
-fun ToolBarComponent(mvvmViewModel: MainViewModel) {
+fun ToolbarScrollComponent(mvvmViewModel: MainViewModel) {
     val scope = rememberCoroutineScope()
 
     TopAppBar (modifier = Modifier

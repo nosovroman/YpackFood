@@ -38,7 +38,7 @@ fun MainScreen(navController: NavHostController, mainViewModel: MainViewModel) {
         }
     }
 
-    val x = mainViewModel.contentResp.observeAsState().value
+    val requestState = mainViewModel.contentResp.observeAsState().value
 
     Scaffold(
         scaffoldState = mainViewModel.scaffoldState,
@@ -55,7 +55,7 @@ fun MainScreen(navController: NavHostController, mainViewModel: MainViewModel) {
                     CategoriesRowComponent(mainViewModel)
                 }
 
-                when (x) {
+                when (requestState) {
                     is NetworkResult.Loading<*> -> {
                         Log.d("networkAnswer", "Loading data")
 
@@ -68,13 +68,13 @@ fun MainScreen(navController: NavHostController, mainViewModel: MainViewModel) {
                         Log.d("networkAnswer", "Success data")
                     }
                     is NetworkResult.Error<*> -> {
-                        Log.d("networkAnswer", "Error loading data: " + x.message + " ||| " + x.data)
-                        ShowErrorComponent(mainViewModel)
+                        Log.d("networkAnswer", "Error loading data: " + requestState.message + " ||| " + requestState.data)
+                        ShowErrorComponent(onButtonClick = { mainViewModel.getMainContent() })
                     }
-                    null -> TODO()
+                    else -> {}
                 }
 
-                ToolBarComponent(mainViewModel)
+                ToolbarScrollComponent(mainViewModel)
             }
         }
     )

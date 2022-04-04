@@ -51,28 +51,28 @@ fun ShoppingCartCardComponent(cardName: String, cost: Int, ind: Int, shoppingCar
                     text = "${cost*shoppingCartViewModel.count[ind]} ₽",
                     fontSize = 14.sp
                 )
-                CounterComponent(ind, shoppingCartViewModel)
+                    //CounterComponent(ind, shoppingCartViewModel)
             }
         }
     )
 }
 
-@Composable
-fun CounterComponent(ind: Int, shoppingCartViewModel: ShoppingCartViewModel) {
-    Row() {
-        Button(
-            onClick = { shoppingCartViewModel.decrementCount(ind) },
-            enabled = shoppingCartViewModel.count[ind] != 1,
-            content = { Text("-") },
-        )
-        Text(text = "${shoppingCartViewModel.count[ind]}", modifier = Modifier.align(alignment = Alignment.CenterVertically))
-        Button(
-            onClick = { shoppingCartViewModel.incrementCount(ind) },
-            enabled = shoppingCartViewModel.count[ind] != 5,
-            content = { Text("+") }
-        )
-    }
-}
+//@Composable
+//fun CounterComponent(ind: Int, shoppingCartViewModel: ShoppingCartViewModel) {
+//    Row() {
+//        Button(
+//            onClick = { shoppingCartViewModel.decrementCount(ind) },
+//            enabled = shoppingCartViewModel.count[ind] != 1,
+//            content = { Text("-") },
+//        )
+//        Text(text = "${shoppingCartViewModel.count[ind]}", modifier = Modifier.align(alignment = Alignment.CenterVertically))
+//        Button(
+//            onClick = { shoppingCartViewModel.incrementCount(ind) },
+//            enabled = shoppingCartViewModel.count[ind] != 5,
+//            content = { Text("+") }
+//        )
+//    }
+//}
 
 @Composable
 fun OrderButtonComponent(totalCost: Int) {

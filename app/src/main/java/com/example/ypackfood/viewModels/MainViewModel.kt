@@ -9,7 +9,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.ypackfood.dataClasses.mainContent2.Category
+import com.example.ypackfood.dataClasses.mainContent.Category
 import com.example.ypackfood.repository.Repository
 import com.example.ypackfood.retrofit.RetrofitBuilder
 import com.example.ypackfood.sealedClasses.NetworkResult
@@ -48,13 +48,6 @@ class MainViewModel : ViewModel() {
         toolbarOffsetState = newOffsetPx
     }
 
-
-//    var categoriesContentState by mutableStateOf(mutableListOf<Category>())
-//        private set
-//
-//    private fun setCategoriesContent(newCategoriesContent: MutableList<Category>) {
-//        categoriesContentState = newCategoriesContent
-//    }
 
     var contentResp: MutableLiveData<NetworkResult<MutableList<Category>>> = MutableLiveData()
 
