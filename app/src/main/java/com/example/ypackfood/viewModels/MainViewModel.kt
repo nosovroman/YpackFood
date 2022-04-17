@@ -9,6 +9,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.ypackfood.dataClasses.actionsContent.ActionsItem
 import com.example.ypackfood.dataClasses.mainContent.Category
 import com.example.ypackfood.repository.Repository
 import com.example.ypackfood.retrofit.RetrofitBuilder
@@ -50,8 +51,10 @@ class MainViewModel : ViewModel() {
 
 
     var contentResp: MutableLiveData<NetworkResult<MutableList<Category>>> = MutableLiveData()
+    var contentResp2: MutableLiveData<NetworkResult<MutableList<ActionsItem>>> = MutableLiveData()
 
     init {
+        getActionsContent()
         getMainContent()
     }
 
@@ -74,6 +77,29 @@ class MainViewModel : ViewModel() {
             } catch (e: Exception) {
                 Log.d("getMainContent error ", e.toString())
                 contentResp.postValue(NetworkResult.Error(e.message, oldData))
+            }
+        }
+    }
+
+    fun getActionsContent() {
+        Log.d("twer", "getActionsContent")
+        val oldData = contentResp2.value?.data ?: mutableListOf()
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                contentResp2.postValue(NetworkResult.Loading(oldData))
+                val response = mainRepository.getActions()
+                if (response.isSuccessful) {
+                    contentResp2.postValue(NetworkResult.Success(response.body()!!.actions))
+                    //setCategoriesContent(response.body()!!.categories)
+                    Log.d("getActionsContent ok ", response.body().toString())
+                }
+                else {
+                    Log.d("getActionsContent not ok ", response.message().toString())
+                    contentResp2.postValue(NetworkResult.Error(response.message(), oldData))
+                }
+            } catch (e: Exception) {
+                Log.d("getActionsContent error ", e.toString())
+                contentResp2.postValue(NetworkResult.Error(e.message, oldData))
             }
         }
     }

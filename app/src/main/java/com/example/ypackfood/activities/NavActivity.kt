@@ -3,20 +3,16 @@ package com.example.ypackfood.activities
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.example.ypackfood.R
 import com.example.ypackfood.common.Constants
 import com.example.ypackfood.sealedClasses.Screens
 import com.example.ypackfood.ui.theme.YpackFoodTheme
-import com.example.ypackfood.viewModels.DetailViewModel
-import com.example.ypackfood.viewModels.MainViewModel
-import com.example.ypackfood.viewModels.ShoppingCartViewModel
+import com.example.ypackfood.viewModels.*
 
 class NavActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -24,7 +20,10 @@ class NavActivity : ComponentActivity() {
 
         val mainViewModel = ViewModelProvider(this).get(MainViewModel::class.java)
         val detailViewModel = ViewModelProvider(this).get(DetailViewModel::class.java)
+        val offerViewModel = ViewModelProvider(this).get(OfferViewModel::class.java)
         val shoppingCartViewModel = ViewModelProvider(this).get(ShoppingCartViewModel::class.java)
+
+        val roomViewModel = ViewModelProvider(this).get(RoomViewModel::class.java)
 
         setContent {
             YpackFoodTheme {
@@ -42,14 +41,23 @@ class NavActivity : ComponentActivity() {
                         )
                     ) { backStackEntry ->
                         backStackEntry.arguments?.getInt(Constants.NAV_KEY__CONTENT_ID)?.let { contentId ->
-                            DetailContentScreen(navController, detailViewModel, contentId)
+                            DetailContentScreen(navController, detailViewModel, roomViewModel, contentId)
                         }
                     }
                     composable(route = Screens.SignInUp.route) { SignInUpScreen() }
-                    composable(route = Screens.Offers.route) { OffersScreen() }
-                    composable(route = Screens.ShoppingCart.route) { ShoppingCartScreen(shoppingCartViewModel) }
+                    composable(
+                        route = Screens.Offers.route,
+                        arguments = listOf(
+                            navArgument(Constants.NAV_KEY__OFFER_ID) { type = NavType.IntType }
+                        )
+                    ) { backStackEntry ->
+                        backStackEntry.arguments?.getInt(Constants.NAV_KEY__OFFER_ID)?.let { offerId ->
+                            OffersScreen(navController, offerViewModel, offerId)
+                        }
+                    }
+                    composable(route = Screens.ShoppingCart.route) { ShoppingCartScreen(navController, shoppingCartViewModel) }
                     composable(route = Screens.History.route) { HistoryScreen() }
-                    composable(route = Screens.Profile.route) { ProfileScreen() }
+                    composable(route = Screens.Profile.route) { ProfileScreen(navController) }
                 }
             }
         }

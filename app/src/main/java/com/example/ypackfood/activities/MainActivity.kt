@@ -16,7 +16,6 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.ypackfood.common.Constants.TOOLBAR_HEIGHT
 import com.example.ypackfood.components.*
-import com.example.ypackfood.sealedClasses.NetworkResult
 import com.example.ypackfood.viewModels.MainViewModel
 
 
@@ -39,6 +38,7 @@ fun MainScreen(navController: NavHostController, mainViewModel: MainViewModel) {
     }
 
     val requestState = mainViewModel.contentResp.observeAsState().value
+    val requestState2 = mainViewModel.contentResp2.observeAsState().value
 
     Scaffold(
         scaffoldState = mainViewModel.scaffoldState,
@@ -49,32 +49,28 @@ fun MainScreen(navController: NavHostController, mainViewModel: MainViewModel) {
                     .fillMaxSize()
                     .nestedScroll(nestedScrollConnection)
             ) {
-                if (!mainViewModel.contentResp.value?.data.isNullOrEmpty()) {
+                if (!mainViewModel.contentResp.value?.data.isNullOrEmpty()
+                    //&& !mainViewModel.contentResp2.value?.data.isNullOrEmpty()
+                ) {
                     Log.d("networkAnswer", "Display data")
                     ContentListComponent(navController, mainViewModel)
                     CategoriesRowComponent(mainViewModel)
                 }
 
-                when (requestState) {
-                    is NetworkResult.Loading<*> -> {
-                        Log.d("networkAnswer", "Loading data")
-
+                RequestStateComponent(
+                    requestState = requestState,
+                    byLoading = {
                         Column {
                             Spacer(modifier = Modifier.height(TOOLBAR_HEIGHT + 15.dp))
                             LoadingBarComponent()
                         }
-                    }
-                    is NetworkResult.Success<*> -> {
-                        Log.d("networkAnswer", "Success data")
-                    }
-                    is NetworkResult.Error<*> -> {
-                        Log.d("networkAnswer", "Error loading data: " + requestState.message + " ||| " + requestState.data)
+                    },
+                    byError = {
                         ShowErrorComponent(onButtonClick = { mainViewModel.getMainContent() })
                     }
-                    else -> {}
-                }
+                )
 
-                ToolbarScrollComponent(mainViewModel)
+                ToolbarScrollComponent(navController, mainViewModel)
             }
         }
     )

@@ -11,7 +11,6 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.example.ypackfood.components.BackFABComponent
 import com.example.ypackfood.components.PictureOneComponent
 
 @Composable
@@ -28,7 +27,6 @@ fun HistoryScreen() {
             HistoryCardComponent("3", 2100, "Курьер в пути")
             HistoryCardComponent("4", 850, "Готовится")
         }
-        BackFABComponent()
     }
 }
 

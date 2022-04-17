@@ -1,6 +1,7 @@
 package com.example.ypackfood.components
 
 import android.util.Log
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -11,6 +12,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.ypackfood.common.Constants
+import com.example.ypackfood.dataClasses.actionsContent.ActionsItem
 import com.example.ypackfood.dataClasses.mainContent.Category
 import com.example.ypackfood.sealedClasses.Screens
 import com.example.ypackfood.viewModels.MainViewModel
@@ -26,27 +28,44 @@ fun ContentListComponent(navController: NavHostController, mvvmViewModel: MainVi
     ) {
         item {
             LazyRow {
-                items(count = 10) {
+                itemsIndexed(mvvmViewModel.contentResp2.value!!.data as MutableList<ActionsItem>) { index, item ->
+                    val count = mvvmViewModel.contentResp2.value!!.data!!.size
                     Row(
                         content = {
-                            PictureOneComponent(size = 200.dp, url = Constants.baseUrlPictureCategory)
-                            if (it != 9) Spacer(modifier = Modifier.width(10.dp))
+                            PictureOneComponent(
+                                size = 200.dp,
+                                url = item.picturePaths.large,
+                                modifier = Modifier.clickable { navController.navigate(Screens.Offers.createRoute(item.id)) },
+                                ///onImageClick = { navController.navigate(Screens.Offers.createRoute(item.id)) }
+                                //url = Constants.baseUrlPictureCategory
+                            )
+                            if (index != count - 1) Spacer(modifier = Modifier.width(10.dp))
                         }
                     )
                 }
+//                items(count = 10) {
+//                    Row(
+//                        content = {
+//                            PictureOneComponent(size = 200.dp, url = Constants.baseUrlPictureCategory)
+//                            if (it != 9) Spacer(modifier = Modifier.width(10.dp))
+//                        }
+//                    )
+//                }
             }
         }
         itemsIndexed(mvvmViewModel.contentResp.value!!.data as MutableList<Category>) { index, item ->
             for (content in item.dishes) {
                 with (content) {
                     ContentCardComponent(
-                        //contentCardId = id,
-                        cardName = name + id,
-                        hint = basePortion.size,
-                        description = composition,
-                        price = basePortion.price,
-                        urlPicture = picturePaths.large,
-                        //navController = navController,
+                        //cardName = name + id,
+                        cardName = "Бургер $id",
+                        hint = "250 грамм",
+                        description = "Булочки для бургера, котлета говяжья, пармезан, помидор, лук синий, майонез, кетчуп",
+                        urlPicture = Constants.baseUrlPictureContent,
+                        //hint = basePortion.size,
+                        //description = composition,
+                        price = basePortion.priceNow.price,
+                        //urlPicture = picturePaths.large,
                         onCardClick = { navController.navigate(route = Screens.DetailContent.createRoute(id)) }
                     )
                 }

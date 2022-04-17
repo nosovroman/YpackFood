@@ -1,5 +1,7 @@
 package com.example.ypackfood.retrofit
 
+import com.example.ypackfood.dataClasses.actionsContent.Actions
+import com.example.ypackfood.dataClasses.detailAction.DetailAction
 import com.example.ypackfood.dataClasses.detailContent.DetailContent
 import com.example.ypackfood.dataClasses.mainContent.Categories
 import retrofit2.http.GET
@@ -10,8 +12,14 @@ interface ApiService {
     @GET("dishes")
     suspend fun getMainContent(): Response<Categories>
 
+    @GET("actions")
+    suspend fun getActions(): Response<Actions>
+
     @GET("dish/{dishId}")
     suspend fun getDetailContent(@Path("dishId") dishId: Int): Response<DetailContent>
+
+    @GET("action/{actionId}")
+    suspend fun getDetailAction(@Path("actionId") actionId: Int): Response<DetailAction>
 }
 //@GET("hello")
 //suspend fun getHello(): Response<String>

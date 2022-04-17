@@ -40,9 +40,16 @@ fun CategoriesRowComponent(mvvmViewModel: MainViewModel) {
         contentPadding = PaddingValues(top = Constants.TOOLBAR_HEIGHT),
         content = {
             itemsIndexed(listOf("Акции") + mvvmViewModel.contentResp.value!!.data!!.map { it.categoryType }) { index, item ->
+                val name = when (item) {
+                    "BURGERS" -> "Бургеры"
+                    "PIZZA" -> "Пицца"
+                    "ROLLS" -> "Роллы"
+                    "COMBO" -> "Комбо"
+                    else -> "Акции"
+                }
                 val isChosen = index == chosenCategoryIndex
                 Spacer(modifier = Modifier.padding(start = 5.dp))
-                CategoryComponent(mvvmViewModel = mvvmViewModel, categoryName = item, positionInContent = index, isChosen = isChosen)
+                CategoryComponent(mvvmViewModel = mvvmViewModel, categoryName = name, positionInContent = index, isChosen = isChosen)
             }
         }
     )

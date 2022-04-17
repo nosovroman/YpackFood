@@ -8,7 +8,7 @@ enum class MainDrawer(val itemName: String, val icon: Int, val route: String) {
     MENU("Меню", R.drawable.ic_menu, Screens.Main.route),
     ORDERS("Мои заказы", R.drawable.ic_orders, Screens.Main.route),
     FAVORITES("Избранное", R.drawable.ic_favorite, Screens.Main.route),
-    PROFILE("Профиль", R.drawable.ic_profile, Screens.Main.route),
+    PROFILE("Профиль", R.drawable.ic_profile, Screens.Profile.route),
     INFO("Инфо", R.drawable.ic_info, Screens.Main.route),
     EXIT("Выйти", R.drawable.ic_exit, Screens.Main.route),
 }

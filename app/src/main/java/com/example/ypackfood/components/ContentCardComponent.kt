@@ -9,15 +9,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavHostController
 import com.example.ypackfood.common.Constants.baseUrlPictureContent
-import com.example.ypackfood.sealedClasses.Screens
 
 @Composable
 fun ContentCardComponent(
     //contentCardId: Int = -1,
     cardName: String,
-    hint: String = "",
+    hint: String? = "",
     description: String = "",
     price: Int = -1,
     urlPicture: String = baseUrlPictureContent,
@@ -36,7 +34,7 @@ fun ContentCardComponent(
             Spacer(modifier = Modifier.width(15.dp))
             Column {
                 Text(text = cardName, fontSize = 16.sp)
-                Text(text = hint, fontSize = 12.sp, color = Color.Gray)
+                Text(text = hint!!, fontSize = 12.sp, color = Color.Gray)
                 Text(text = description, fontSize = 14.sp)
                 if (price != -1) {
                     OutlinedButton(onClick = {  }) {

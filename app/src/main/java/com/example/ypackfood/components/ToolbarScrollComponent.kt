@@ -16,13 +16,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import com.example.ypackfood.common.Constants
+import com.example.ypackfood.sealedClasses.Screens
 import com.example.ypackfood.viewModels.MainViewModel
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
 @Composable
-fun ToolbarScrollComponent(mvvmViewModel: MainViewModel) {
+fun ToolbarScrollComponent(navController: NavHostController, mvvmViewModel: MainViewModel) {
     val scope = rememberCoroutineScope()
 
     TopAppBar (modifier = Modifier
@@ -44,7 +46,7 @@ fun ToolbarScrollComponent(mvvmViewModel: MainViewModel) {
         Spacer(Modifier.weight(1f, true))
 
         IconButton(
-            onClick = { },
+            onClick = { navController.navigate(route = Screens.ShoppingCart.route) },
             content = {
                 Icon(Icons.Outlined.ShoppingCart, contentDescription = "Корзина", Modifier.scale(-1.0f, 1.0f) )
             }

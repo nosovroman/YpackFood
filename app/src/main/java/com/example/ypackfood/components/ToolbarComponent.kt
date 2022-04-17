@@ -17,7 +17,9 @@ import androidx.navigation.NavHostController
 import com.example.ypackfood.common.Constants
 
 @Composable
-fun ToolbarComponent(navController: NavHostController, rightIconContent: @Composable () -> Unit, onRightIconClick: () -> Unit) {
+fun ToolbarComponent(navController: NavHostController, rightIcon: @Composable () -> Unit = { Spacer(Modifier.size(45.dp)) }
+                     //, rightIconContent: @Composable () -> Unit = {}, onRightIconClick: () -> Unit = {}
+) {
     TopAppBar (
         modifier = Modifier
             .height(Constants.TOOLBAR_HEIGHT),
@@ -35,12 +37,7 @@ fun ToolbarComponent(navController: NavHostController, rightIconContent: @Compos
             Text("Упак.Еда", fontSize = 22.sp)
             Spacer(Modifier.weight(1f, true))
 
-            IconButton(
-                onClick = onRightIconClick,
-                content = {
-                    rightIconContent()
-                }
-            )
+            rightIcon()
         }
     )
 }
