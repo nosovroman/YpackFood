@@ -1,9 +1,9 @@
 package com.example.ypackfood.retrofit
 
-import com.example.ypackfood.dataClasses.actionsContent.Actions
-import com.example.ypackfood.dataClasses.detailAction.DetailAction
-import com.example.ypackfood.dataClasses.detailContent.DetailContent
-import com.example.ypackfood.dataClasses.mainContent.Categories
+import com.example.ypackfood.models.actionsContent.Actions
+import com.example.ypackfood.models.detailAction.DetailAction
+import com.example.ypackfood.models.detailContent.DetailContent
+import com.example.ypackfood.models.mainContent.Categories
 import retrofit2.http.GET
 import retrofit2.Response
 import retrofit2.http.Path

@@ -12,8 +12,8 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.ypackfood.common.Constants
-import com.example.ypackfood.dataClasses.actionsContent.ActionsItem
-import com.example.ypackfood.dataClasses.mainContent.Category
+import com.example.ypackfood.models.actionsContent.ActionsItem
+import com.example.ypackfood.models.mainContent.Category
 import com.example.ypackfood.sealedClasses.Screens
 import com.example.ypackfood.viewModels.MainViewModel
 import kotlin.math.roundToInt

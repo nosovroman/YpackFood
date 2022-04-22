@@ -7,7 +7,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.ypackfood.dataClasses.detailAction.DetailAction
+import com.example.ypackfood.models.detailAction.DetailAction
 import com.example.ypackfood.repository.Repository
 import com.example.ypackfood.retrofit.RetrofitBuilder
 import com.example.ypackfood.sealedClasses.NetworkResult

@@ -1,6 +1,6 @@
-package com.example.ypackfood.dataClasses.commonData
+package com.example.ypackfood.models.commonData
 
-data class Dishe(
+data class Dish(
     val basePortion: BasePortion,
     val category: String,
     val composition: String,

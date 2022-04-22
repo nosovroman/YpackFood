@@ -1,4 +1,4 @@
-package com.example.ypackfood.dataClasses.commonData
+package com.example.ypackfood.models.commonData
 
 data class PicturePaths(
     val large: String,

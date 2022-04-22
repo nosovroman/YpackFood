@@ -9,8 +9,8 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.ypackfood.dataClasses.actionsContent.ActionsItem
-import com.example.ypackfood.dataClasses.mainContent.Category
+import com.example.ypackfood.models.actionsContent.ActionsItem
+import com.example.ypackfood.models.mainContent.Category
 import com.example.ypackfood.repository.Repository
 import com.example.ypackfood.retrofit.RetrofitBuilder
 import com.example.ypackfood.sealedClasses.NetworkResult

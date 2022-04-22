@@ -1,4 +1,4 @@
-package com.example.ypackfood.dataClasses.detailContent
+package com.example.ypackfood.models.detailContent
 
 data class Portion(
     val id: Int,
