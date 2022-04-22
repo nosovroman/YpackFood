@@ -99,32 +99,24 @@ fun DetailDescription(detailViewModel: DetailViewModel, modifier: Modifier = Mod
 
     Column(modifier = modifier) {
         Spacer(modifier = Modifier.height(20.dp))
-        //Text(text = response.name+response.id+response.category, fontSize = 16.sp)
-        Text(text = "ШефБургер", fontSize = 16.sp)
+        Text(text = response.name+response.id+response.category, fontSize = 16.sp)
         Spacer(modifier = Modifier.height(10.dp))
         // if not combo
         if (!isCombo) {
-            //Text(text = response.portions[0].size, fontSize = 14.sp, color = Color.Gray)
-            Text(text = "250 грамм", fontSize = 14.sp, color = Color.Gray)
+            Text(text = response.portions[0].size, fontSize = 14.sp, color = Color.Gray)
             Spacer(modifier = Modifier.height(10.dp))
         }
         Text(text = "Описание", fontSize = 16.sp)
-        //Text(text = response.description, fontSize = 14.sp, color = Color.Gray)
-        Text(text = "Попробуйте уникальный, сочный, мясисто-булочный очень вкусный бургер, приготовленный нашими лучшими поворами", fontSize = 14.sp, color = Color.Gray)
+        Text(text = response.description, fontSize = 14.sp, color = Color.Gray)
         Spacer(modifier = Modifier.height(10.dp))
         // if not combo
         if (!isCombo) {
             Text(text = "Состав", fontSize = 16.sp)
-            //Text(text = response.composition, fontSize = 14.sp, color = Color.Gray)
-            Text(text = "Булочки для бургера, котлета говяжья, пармезан, помидор, лук синий, майонез, кетчуп", fontSize = 14.sp, color = Color.Gray)
-            //Text(text = "Помидорки, огурчики, перец, рис, ананас, моцарелла, шохолатка, а дальше все по-новой, Помидорки, огурчики, перец, рис, ананас, моцарелла, шохолатка, а дальше все по-новой", fontSize = 14.sp, color = Color.Gray)
+            Text(text = response.composition, fontSize = 14.sp, color = Color.Gray)
         } else {// if combo
             ContentSimpleListComponent(response.dishes)
         }
     }
-
-    //ContentCardComponent(cardName = "Акция1")
-    //ContentCardComponent(cardName = "Акция2")
 }
 
 @Composable

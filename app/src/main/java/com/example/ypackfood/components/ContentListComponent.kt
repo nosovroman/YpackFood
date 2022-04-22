@@ -43,29 +43,17 @@ fun ContentListComponent(navController: NavHostController, mvvmViewModel: MainVi
                         }
                     )
                 }
-//                items(count = 10) {
-//                    Row(
-//                        content = {
-//                            PictureOneComponent(size = 200.dp, url = Constants.baseUrlPictureCategory)
-//                            if (it != 9) Spacer(modifier = Modifier.width(10.dp))
-//                        }
-//                    )
-//                }
             }
         }
         itemsIndexed(mvvmViewModel.contentResp.value!!.data as MutableList<Category>) { index, item ->
             for (content in item.dishes) {
                 with (content) {
                     ContentCardComponent(
-                        //cardName = name + id,
-                        cardName = "Бургер $id",
-                        hint = "250 грамм",
-                        description = "Булочки для бургера, котлета говяжья, пармезан, помидор, лук синий, майонез, кетчуп",
-                        urlPicture = Constants.baseUrlPictureContent,
-                        //hint = basePortion.size,
-                        //description = composition,
+                        cardName = name + id,
+                        hint = basePortion.size,
+                        description = composition,
                         price = basePortion.priceNow.price,
-                        //urlPicture = picturePaths.large,
+                        urlPicture = picturePaths.large,
                         onCardClick = { navController.navigate(route = Screens.DetailContent.createRoute(id)) }
                     )
                 }
