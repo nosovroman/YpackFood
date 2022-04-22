@@ -7,6 +7,7 @@ class Repository(private val apiService: ApiService) {
     suspend fun getActions() = apiService.getActions()
     suspend fun getDetailContent(dishId: Int) = apiService.getDetailContent(dishId)
     suspend fun getDetailAction(actionId: Int) = apiService.getDetailAction(actionId)
+    suspend fun getContentByListId(contentIdList: List<Int>) = apiService.getContentByListId(contentIdList)
 }
 
 //suspend fun getHello() = apiService.getHello()

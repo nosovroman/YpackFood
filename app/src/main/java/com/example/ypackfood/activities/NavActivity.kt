@@ -22,6 +22,7 @@ class NavActivity : ComponentActivity() {
         val detailViewModel = ViewModelProvider(this).get(DetailViewModel::class.java)
         val offerViewModel = ViewModelProvider(this).get(OfferViewModel::class.java)
         val shoppingCartViewModel = ViewModelProvider(this).get(ShoppingCartViewModel::class.java)
+        val favoritesViewModel = ViewModelProvider(this).get(FavoritesViewModel::class.java)
 
         val roomViewModel = ViewModelProvider(this).get(RoomViewModel::class.java)
 
@@ -58,7 +59,7 @@ class NavActivity : ComponentActivity() {
                     composable(route = Screens.ShoppingCart.route) { ShoppingCartScreen(navController, shoppingCartViewModel) }
                     composable(route = Screens.History.route) { HistoryScreen() }
                     composable(route = Screens.Profile.route) { ProfileScreen(navController) }
-                    composable(route = Screens.Favorites.route) { FavoritesScreen(navController, roomViewModel) }
+                    composable(route = Screens.Favorites.route) { FavoritesScreen(navController, favoritesViewModel, roomViewModel) }
                 }
             }
         }

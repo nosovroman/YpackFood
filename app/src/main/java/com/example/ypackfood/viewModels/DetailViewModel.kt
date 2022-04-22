@@ -24,12 +24,12 @@ class DetailViewModel : ViewModel() {
 
     var contentResp: MutableLiveData<NetworkResult<DetailContent>> = MutableLiveData()
 
-    fun getDetailContent(dishId: Int) {
+    fun getDetailContent(contentId: Int) {
         Log.d("requestDetail", "getDetailContent")
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 contentResp.postValue(NetworkResult.Loading())
-                val response = mainRepository.getDetailContent(dishId)
+                val response = mainRepository.getDetailContent(contentId)
                 if (response.isSuccessful) {
                     contentResp.postValue(NetworkResult.Success(response.body()!!))
                 }
