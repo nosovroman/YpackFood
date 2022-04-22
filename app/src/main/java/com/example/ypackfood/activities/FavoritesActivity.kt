@@ -1,7 +1,9 @@
 package com.example.ypackfood.activities
 
 import android.util.Log
+import androidx.compose.foundation.layout.Column
 import androidx.compose.material.Scaffold
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.navigation.NavHostController
@@ -18,17 +20,16 @@ fun FavoritesScreen(navController: NavHostController, roomViewModel: RoomViewMod
             ToolbarComponent(navController = navController)
         },
         content = {
-//            if (!detailViewModel.contentResp.value?.data?.name.isNullOrEmpty()) {
-//                Log.d("networkAnswer", "Display data")
-//
-//            }
-
-//            RequestStateComponent(
-//                requestState = requestState,
-//                byError = {
-//                    ShowErrorComponent(onButtonClick = { detailViewModel.getDetailContent(contentId) })
-//                }
-//            )
+            Column() {
+                Text("Избранное")
+                if (!favorites.isNullOrEmpty()) {
+                    Log.d("networkAnswer", "Display data")
+                    Text(favorites.toString())
+                }
+                else {
+                    Text("Загрузка... или избранных нет :)")
+                }
+            }
         }
     )
 }

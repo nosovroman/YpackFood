@@ -14,4 +14,5 @@ sealed class Screens(val route: String) {
     object ShoppingCart: Screens(route = "ShoppingCartScreen")
     object History: Screens(route = "HistoryScreen")
     object Profile: Screens(route = "ProfileScreen")
+    object Favorites: Screens(route = "FavoritesScreen")
 }
