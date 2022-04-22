@@ -49,7 +49,7 @@ fun MainScreen(navController: NavHostController, mainViewModel: MainViewModel) {
                     .fillMaxSize()
                     .nestedScroll(nestedScrollConnection)
             ) {
-                if (!mainViewModel.contentResp.value?.data.isNullOrEmpty()
+                if (!requestState?.data.isNullOrEmpty()
                     //&& !mainViewModel.contentResp2.value?.data.isNullOrEmpty()
                 ) {
                     Log.d("networkAnswer", "Display data")
@@ -59,12 +59,6 @@ fun MainScreen(navController: NavHostController, mainViewModel: MainViewModel) {
 
                 RequestStateComponent(
                     requestState = requestState,
-                    byLoading = {
-                        Column {
-                            Spacer(modifier = Modifier.height(TOOLBAR_HEIGHT + 15.dp))
-                            LoadingBarComponent()
-                        }
-                    },
                     byError = {
                         ShowErrorComponent(onButtonClick = { mainViewModel.getMainContent() })
                     }

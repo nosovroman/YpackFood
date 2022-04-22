@@ -64,7 +64,8 @@ fun DetailContentScreen(navController: NavHostController, detailViewModel: Detai
         floatingActionButton = { ShoppingRowComponent() },
         floatingActionButtonPosition = FabPosition.Center,
         content = {
-            if (!detailViewModel.contentResp.value?.data?.name.isNullOrEmpty()) {
+            //if (!detailViewModel.contentResp.value?.data?.name.isNullOrEmpty()) {
+            if (!requestState?.data?.name.isNullOrEmpty()) {
                 Log.d("networkAnswer", "Display data")
                 Column (
                     Modifier
@@ -78,12 +79,6 @@ fun DetailContentScreen(navController: NavHostController, detailViewModel: Detai
 
             RequestStateComponent(
                 requestState = requestState,
-                byLoading = {
-                    Column {
-                        Spacer(modifier = Modifier.height(Constants.TOOLBAR_HEIGHT + 15.dp))
-                        LoadingBarComponent()
-                    }
-                },
                 byError = {
                     ShowErrorComponent(onButtonClick = { detailViewModel.getDetailContent(contentId) })
                 }

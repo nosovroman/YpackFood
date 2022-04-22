@@ -117,12 +117,6 @@ fun OffersScreen(navController: NavHostController, offerViewModel: OfferViewMode
 
                 RequestStateComponent(
                     requestState = requestState,
-                    byLoading = {
-                        Column {
-                            Spacer(modifier = Modifier.height(Constants.TOOLBAR_HEIGHT + 15.dp))
-                            LoadingBarComponent()
-                        }
-                    },
                     byError = {
                         ShowErrorComponent(onButtonClick = { offerViewModel.getOfferContent(offerId) })
                     }
