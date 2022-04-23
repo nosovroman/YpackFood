@@ -61,7 +61,11 @@ fun DetailContentScreen(navController: NavHostController, detailViewModel: Detai
                 },
             )
         },
-        floatingActionButton = { ShoppingRowComponent() },
+        floatingActionButton = {
+            if (!requestState?.data?.name.isNullOrEmpty()) {
+                ShoppingRowComponent(requestState!!.data!!.basePortion.priceNow.price, detailViewModel, roomViewModel)
+            }
+        },
         floatingActionButtonPosition = FabPosition.Center,
         content = {
             //if (!detailViewModel.contentResp.value?.data?.name.isNullOrEmpty()) {
@@ -86,6 +90,32 @@ fun DetailContentScreen(navController: NavHostController, detailViewModel: Detai
         }
     )
 }
+
+@Composable
+fun ShoppingRowComponent(price: Int, detailViewModel: DetailViewModel, roomViewModel: RoomViewModel) {
+    Row(
+        //horizontalAlignment = Alignment.CenterHorizontally
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        CounterComponent(
+            count = detailViewModel.countWishDishes,
+            onIncClick = { detailViewModel.incCountWish() },
+            onDecClick = { detailViewModel.decCountWish() }
+        )
+        Spacer(modifier = Modifier.width(10.dp))
+        Button(
+            onClick = {
+//                roomViewModel.addToCart(
+//                    detailViewModel.computeDishInfo()
+//                )
+                Log.d("Cart", "Корзина")
+            },
+            content = { Text("В корзину за ${price * detailViewModel.countWishDishes} ₽") },
+            shape = RoundedCornerShape(20.dp)
+        )
+    }
+}
+
 
 @Composable
 fun DetailDescription(detailViewModel: DetailViewModel, modifier: Modifier = Modifier) {
@@ -114,60 +144,31 @@ fun DetailDescription(detailViewModel: DetailViewModel, modifier: Modifier = Mod
     }
 }
 
-@Composable
-fun ShoppingRowComponent() {
-    Row(
-        //horizontalAlignment = Alignment.CenterHorizontally
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        CounterComponent()
-        Spacer(modifier = Modifier.width(10.dp))
-            //Text("1500 ₽", modifier = Modifier.padding(start = 10.dp, end = 10.dp))
-//        IconButton(
-//            onClick = { },
+//@Composable
+//fun CounterComponent3()//(ind: Int, shoppingCartViewModel: ShoppingCartViewModel)
+//{
+//    val counterButtonSize: Dp = 30.dp
+//    Row (
+//        verticalAlignment = Alignment.CenterVertically
+//    ) {
+//          IconButton(
+//            modifier = Modifier
+//                .border(width = 1.dp, color = MaterialTheme.colors.primary, shape = CircleShape)
+//                .size(counterButtonSize),
+//            onClick = {  },
 //            content = {
-//                Icon(imageVector = Icons.Outlined.AddShoppingCart,
-//                    contentDescription = "В корзину",
-//                    tint = MaterialTheme.colors.primary
-//                )
+//                Icon(imageVector = Icons.Default.Remove, contentDescription = "-", tint = MaterialTheme.colors.primary)
 //            }
 //        )
-        Button(
-            onClick = { Log.d("Cart", "Корзина") },
-            content = { Text("В корзину за 350 ₽") },
-            shape = RoundedCornerShape(20.dp)
-        )
-    }
-}
-
-@Composable
-fun CounterComponent()//(ind: Int, shoppingCartViewModel: ShoppingCartViewModel)
-{
-    val counterButtonSize: Dp = 30.dp
-    Row (
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        //onClick = { shoppingCartViewModel.decrementCount(ind) },
-        //enabled = shoppingCartViewModel.count[ind] != 1,
-        //Text(text = "${shoppingCartViewModel.count[ind]}", modifier = Modifier.align(alignment = Alignment.CenterVertically))
-        IconButton(
-            modifier = Modifier
-                .border(width = 1.dp, color = MaterialTheme.colors.primary, shape = CircleShape)
-                .size(counterButtonSize),
-            onClick = {  },
-            content = {
-                Icon(imageVector = Icons.Default.Remove, contentDescription = "-", tint = MaterialTheme.colors.primary)
-            }
-        )
-        Text(text = "1 шт.", fontSize = 16.sp, modifier = Modifier.padding(start = 5.dp, end = 5.dp))
-        IconButton(
-            modifier = Modifier
-                .background(color = MaterialTheme.colors.primary, shape = CircleShape)
-                .size(counterButtonSize),
-            onClick = { },
-            content = {
-                Icon(imageVector = Icons.Default.Add, contentDescription = "+", tint = MaterialTheme.colors.onPrimary)
-            }
-        )
-    }
-}
+//        Text(text = "1 шт.", fontSize = 16.sp, modifier = Modifier.padding(start = 5.dp, end = 5.dp))
+//        IconButton(
+//            modifier = Modifier
+//                .background(color = MaterialTheme.colors.primary, shape = CircleShape)
+//                .size(counterButtonSize),
+//            onClick = { },
+//            content = {
+//                Icon(imageVector = Icons.Default.Add, contentDescription = "+", tint = MaterialTheme.colors.onPrimary)
+//            }
+//        )
+//    }
+//}

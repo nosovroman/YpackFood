@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.example.ypackfood.components.CounterComponent
 import com.example.ypackfood.components.PictureOneComponent
 import com.example.ypackfood.components.ToolbarComponent
 import com.example.ypackfood.sealedClasses.Screens
@@ -62,7 +63,12 @@ fun ShoppingCartCardComponent(cardName: String, cost: Int, ind: Int, shoppingCar
                     fontSize = 14.sp
                 )
 
-                CounterComponent2(ind, shoppingCartViewModel)
+                //CounterComponent2(ind, shoppingCartViewModel)
+                CounterComponent(
+                    count = shoppingCartViewModel.count[ind],
+                    onIncClick = { shoppingCartViewModel.incrementCount(ind) },
+                    onDecClick = { shoppingCartViewModel.decrementCount(ind) }
+                )
             }
         }
     )
@@ -92,8 +98,6 @@ fun CounterComponent2(ind: Int, shoppingCartViewModel: ShoppingCartViewModel)
     Row (
         verticalAlignment = Alignment.CenterVertically
     ) {
-        //onClick = { shoppingCartViewModel.decrementCount(ind) },
-        //enabled = shoppingCartViewModel.count[ind] != 1,
         IconButton(
             modifier = Modifier
                 .border(width = 1.dp, color = MaterialTheme.colors.primary, shape = CircleShape)
@@ -105,7 +109,9 @@ fun CounterComponent2(ind: Int, shoppingCartViewModel: ShoppingCartViewModel)
             }
         )
         //Text(text = "1 шт.", fontSize = 16.sp, modifier = Modifier.padding(start = 5.dp, end = 5.dp))
-        Text(text = "${shoppingCartViewModel.count[ind]} шт.", fontSize = 16.sp, modifier = Modifier.align(alignment = Alignment.CenterVertically).padding(start = 5.dp, end = 5.dp))
+        Text(text = "${shoppingCartViewModel.count[ind]} шт.", fontSize = 16.sp, modifier = Modifier
+            .align(alignment = Alignment.CenterVertically)
+            .padding(start = 5.dp, end = 5.dp))
         IconButton(
             modifier = Modifier
                 .background(color = MaterialTheme.colors.primary, shape = CircleShape)

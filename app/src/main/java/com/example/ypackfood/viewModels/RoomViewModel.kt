@@ -6,12 +6,11 @@ import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.lifecycle.*
 import com.example.ypackfood.common.Components
 import com.example.ypackfood.repository.RepositoryRoom
-import com.example.ypackfood.room.database.FavoritesDatabase
-import com.example.ypackfood.sealedClasses.NetworkResult
+import com.example.ypackfood.room.database.DishDatabase
+import com.example.ypackfood.room.entities.CartEntity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -25,27 +24,21 @@ class RoomViewModel(application: Application) : AndroidViewModel(application) {
         private set
 
     init {
-        val x = FavoritesDatabase.getInstance(application).favoritesDao()
-        repositoryRoom = RepositoryRoom(x)
+        val instanceDB = DishDatabase.getFavoritesInstance(application)
+        val favoritesDao = instanceDB.favoritesDao()
+        val shoppingCartDao = instanceDB.shoppingCartDao()
+        repositoryRoom = RepositoryRoom(favoritesDao, shoppingCartDao)
         favorites = repositoryRoom.favorites
     }
 
-//    fun checkFavoriteById(favoriteId: Int) {
-//        val oldData = contentResp.value?.data ?: Components.outlinedFavoriteIcon
-//
-//        viewModelScope.launch (Dispatchers.IO) {
-//            try {
-//                //contentResp.postValue(NetworkResult.Loading(oldData))
-//                val response = checkExistFavoriteById(favoriteId)// repositoryRoom.checkFavoriteById(favoriteId)
-//                Log.d("roomRequest $favoriteId", response.toString())
-//                val renderingIcon = if (response) Components.filledFavoriteIcon else Components.outlinedFavoriteIcon
-//                contentResp.postValue(NetworkResult.Success(renderingIcon))
-//            } catch (e: Exception) {
-//                contentResp.postValue(NetworkResult.Error(e.message, oldData))
-//            }
-//        }
-//    }
+    // ------------------ ShoppingCart
+    fun addToCart(cartEntity: CartEntity) {
+        viewModelScope.launch (Dispatchers.IO) {
+            repositoryRoom.addToCart(cartEntity)
+        }
+    }
 
+    // ------------------ Favorites
     fun addFavorite(favoriteId: Int) {
         viewModelScope.launch (Dispatchers.IO) {
             repositoryRoom.addFavorite(favoriteId)
@@ -87,3 +80,20 @@ class RoomViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 }
+
+
+//    fun checkFavoriteById(favoriteId: Int) {
+//        val oldData = contentResp.value?.data ?: Components.outlinedFavoriteIcon
+//
+//        viewModelScope.launch (Dispatchers.IO) {
+//            try {
+//                //contentResp.postValue(NetworkResult.Loading(oldData))
+//                val response = checkExistFavoriteById(favoriteId)// repositoryRoom.checkFavoriteById(favoriteId)
+//                Log.d("roomRequest $favoriteId", response.toString())
+//                val renderingIcon = if (response) Components.filledFavoriteIcon else Components.outlinedFavoriteIcon
+//                contentResp.postValue(NetworkResult.Success(renderingIcon))
+//            } catch (e: Exception) {
+//                contentResp.postValue(NetworkResult.Error(e.message, oldData))
+//            }
+//        }
+//    }

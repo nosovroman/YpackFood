@@ -1,12 +1,16 @@
 package com.example.ypackfood.viewModels
 
 import android.util.Log
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.ypackfood.models.detailContent.DetailContent
 import com.example.ypackfood.repository.Repository
 import com.example.ypackfood.retrofit.RetrofitBuilder
+import com.example.ypackfood.room.entities.CartEntity
 import com.example.ypackfood.sealedClasses.NetworkResult
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -21,8 +25,18 @@ class DetailViewModel : ViewModel() {
         Log.d("initDetail", "init")
     }
 
-
     var contentResp: MutableLiveData<NetworkResult<DetailContent>> = MutableLiveData()
+
+
+    var countWishDishes by mutableStateOf(1)
+        private set
+    fun incCountWish() {
+        countWishDishes++
+    }
+    fun decCountWish() {
+        countWishDishes--
+    }
+
 
     fun getDetailContent(contentId: Int) {
         Log.d("requestDetail", "getDetailContent")
@@ -42,5 +56,15 @@ class DetailViewModel : ViewModel() {
                 contentResp.postValue(NetworkResult.Error(e.message))
             }
         }
+    }
+
+    fun computeDishInfo(): CartEntity {
+        val detailDish = contentResp.value!!.data!!
+        return CartEntity(
+            dishId = detailDish.id,
+            dishPrice = detailDish.basePortion.priceNow.price,
+            dishCount = countWishDishes,
+            dishAddons = null
+        )
     }
 }
