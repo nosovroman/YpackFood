@@ -1,7 +1,9 @@
 package com.example.ypackfood.activities
 
 import android.util.Log
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Scaffold
@@ -9,12 +11,15 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.ypackfood.common.Constants
 import com.example.ypackfood.components.*
 import com.example.ypackfood.models.commonData.Dish
+import com.example.ypackfood.sealedClasses.Screens
 import com.example.ypackfood.viewModels.FavoritesViewModel
 import com.example.ypackfood.viewModels.RoomViewModel
 
@@ -32,22 +37,28 @@ fun FavoritesScreen(navController: NavHostController, favoritesViewModel: Favori
 
     Scaffold (
         topBar = {
-            ToolbarComponent(navController = navController)
+            ToolbarComponent(navController = navController, title = Screens.Favorites.title)
         },
         content = {
-            Column {
-//                Text("Избранное")
-//                if (!favorites.isNullOrEmpty()) {
-//                    Log.d("networkAnswer", "Display data")
-//                    Text(favorites.toString())
-//                }
-//                else {
-//                    Text("Загрузка... или избранных нет :)")
-//                }
-                if (!requestState?.data.isNullOrEmpty()) {
-                    Log.d("networkAnswer", "Display data")
-                    ContentSimpleListComponent(contentList = requestState!!.data!! as List<Dish>)
+            Column(modifier = Modifier.padding(horizontal = 15.dp)) {
+                if (!favorites.isNullOrEmpty()) {
+                    if (!requestState?.data.isNullOrEmpty()) {
+                        Log.d("networkAnswer", "Display data")
+                        ContentSimpleListComponent(
+                            contentList = requestState!!.data!! as List<Dish>,
+                            showPrice = true,
+                            onItemClick = { id -> navController.navigate(route = Screens.DetailContent.createRoute(contentId = id)) }
+                        )
+                    }
+                } else {
+                    Box (contentAlignment = Alignment.Center, modifier = Modifier.fillMaxWidth()) {
+                        Text(
+                            text = "У Вас пока что нет любимых блюд",
+                            textAlign = TextAlign.Center
+                        )
+                    }
                 }
+
 
                 RequestStateComponent(
                     requestState = requestState,

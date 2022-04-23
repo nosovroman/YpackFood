@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.ypackfood.common.Constants
 import com.example.ypackfood.components.*
+import com.example.ypackfood.sealedClasses.Screens
 import com.example.ypackfood.viewModels.OfferViewModel
 
 @Preview
@@ -67,7 +68,7 @@ fun OffersScreen(navController: NavHostController, offerViewModel: OfferViewMode
 
     val scrollState = rememberScrollState()
     Scaffold (
-        topBar = { ToolbarComponent(navController = navController) },
+        topBar = { ToolbarComponent(navController = navController, title = Screens.Offers.title) },
         bottomBar = {
             Column(
                 modifier = Modifier

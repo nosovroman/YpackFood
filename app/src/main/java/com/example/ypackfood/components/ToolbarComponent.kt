@@ -11,13 +11,18 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.example.ypackfood.R
 import com.example.ypackfood.common.Constants
 
 @Composable
-fun ToolbarComponent(navController: NavHostController, rightIcon: @Composable () -> Unit = { Spacer(Modifier.size(45.dp)) }
+fun ToolbarComponent(
+    navController: NavHostController,
+    rightIcon: @Composable () -> Unit = { Spacer(Modifier.size(45.dp)) },
+    title: String = Constants.APP_NAME_RUS
                      //, rightIconContent: @Composable () -> Unit = {}, onRightIconClick: () -> Unit = {}
 ) {
     TopAppBar (
@@ -34,7 +39,7 @@ fun ToolbarComponent(navController: NavHostController, rightIcon: @Composable ()
             )
 
             Spacer(Modifier.weight(1f, true))
-            Text("Упак.Еда", fontSize = 22.sp)
+            Text(title, fontSize = 22.sp)
             Spacer(Modifier.weight(1f, true))
 
             rightIcon()

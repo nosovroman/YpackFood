@@ -17,12 +17,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.ypackfood.components.ToolbarComponent
+import com.example.ypackfood.sealedClasses.Screens
 
 @Composable
 fun ProfileScreen(navController: NavHostController) {
     //val scrollState = rememberScrollState()
     Scaffold (
-        topBar = { ToolbarComponent(navController = navController) },
+        topBar = { ToolbarComponent(navController = navController, title = Screens.Profile.title) },
         content = {
             ProfileContent()
 //            Column (

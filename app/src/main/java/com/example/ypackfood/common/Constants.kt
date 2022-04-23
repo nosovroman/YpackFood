@@ -4,6 +4,13 @@ import androidx.compose.ui.unit.dp
 
 object Constants {
     const val ROOM_FAVORITES = "Favorites"
+    const val APP_NAME_RUS = "Упак.Еда"
+    val TOOLBAR_HEIGHT = 48.dp
+
+    const val NAV_KEY__CONTENT_ID = "contentId"
+    const val NAV_KEY__OFFER_ID = "offerId"
+
+    // --- temp
     val pizza = listOf("Пицца1", "Пицца2", "Пицца3")
     val roll = listOf("Ролл1", "Ролл2", "Ролл3")
     val salads = listOf("Салат1", "Салат2", "Салат3")
@@ -11,11 +18,7 @@ object Constants {
     val drink = listOf("Напиток1", "Напиток2", "Напиток3", "Напиток4")
     val mergedList = pizza+roll+salads+soups+drink
 
-    val TOOLBAR_HEIGHT = 48.dp
     const val BASE_URL = "https://super-food17.herokuapp.com/"
     val baseUrlPictureCategory = "https://sun9-26.userapi.com/impf/c849020/v849020562/12056a/xOiO0cHdtkk.jpg?size=604x604&quality=96&sign=2c11f0e48c64e290d0bde943da845fd6&type=album"
     val baseUrlPictureContent = "https://staff-online.ru/wp-content/uploads/2020/05/burger.jpg"
-
-    const val NAV_KEY__CONTENT_ID = "contentId"
-    const val NAV_KEY__OFFER_ID = "offerId"
 }

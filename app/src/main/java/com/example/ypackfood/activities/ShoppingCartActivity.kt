@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.ypackfood.components.PictureOneComponent
 import com.example.ypackfood.components.ToolbarComponent
+import com.example.ypackfood.sealedClasses.Screens
 import com.example.ypackfood.viewModels.ShoppingCartViewModel
 
 @Composable
@@ -29,7 +30,7 @@ fun ShoppingCartScreen(navController: NavHostController, shoppingCartViewModel: 
     val totalCost = x.sum() //shoppingCartViewModel.count.forEachIndexed { index, i ->  }//reduceIndexed { index, acc, i -> acc + (i * prices[index]) }
     Scaffold (
         topBar = {
-            ToolbarComponent(navController = navController)
+            ToolbarComponent(navController = navController, title = Screens.ShoppingCart.title)
         },
         floatingActionButtonPosition = FabPosition.Center,
         floatingActionButton = { OrderButtonComponent(totalCost) }
