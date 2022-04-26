@@ -54,7 +54,7 @@ class RoomViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     private fun checkExistFavoriteById(favoriteId: Int): Boolean {
-        return favorites.value?.contains(favoriteId) ?: false
+        return favorites?.value?.contains(favoriteId) ?: false
     }
 
     fun initFavoriteIcon(contentId: Int) {

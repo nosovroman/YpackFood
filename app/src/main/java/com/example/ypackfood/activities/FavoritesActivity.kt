@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -16,7 +15,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.example.ypackfood.common.Constants
 import com.example.ypackfood.components.*
 import com.example.ypackfood.models.commonData.Dish
 import com.example.ypackfood.sealedClasses.Screens
@@ -30,9 +28,8 @@ fun FavoritesScreen(navController: NavHostController, favoritesViewModel: Favori
     val requestState = favoritesViewModel.contentResp.observeAsState().value
 
     LaunchedEffect(favorites) {
-        if (favorites.isNotEmpty()) {
+        if (favorites.isNotEmpty())
             favoritesViewModel.getContentByListId(favorites)
-        }
     }
 
     Scaffold (

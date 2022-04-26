@@ -2,7 +2,6 @@ package com.example.ypackfood.retrofit
 
 import com.example.ypackfood.models.actionsContent.Actions
 import com.example.ypackfood.models.commonData.Dish
-import com.example.ypackfood.models.commonData.Dishes
 import com.example.ypackfood.models.detailAction.DetailAction
 import com.example.ypackfood.models.detailContent.DetailContent
 import com.example.ypackfood.models.mainContent.Categories
@@ -24,8 +23,8 @@ interface ApiService {
     @GET("action/{actionId}")
     suspend fun getDetailAction(@Path("actionId") actionId: Int): Response<DetailAction>
 
-    @GET("specificDishes")
-    suspend fun getContentByListId(@Query("ids%5B%5D", encoded = true) contentIdList: List<Int>): Response<Dishes>
+    @GET("specificDishesTestFront")
+    suspend fun getContentByListId(@Query("ids") contentIdList: List<Int>): Response<MutableList<Dish>>
 }
 //@GET("hello")
 //suspend fun getHello(): Response<String>

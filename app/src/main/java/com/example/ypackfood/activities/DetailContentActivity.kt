@@ -4,22 +4,17 @@ package com.example.ypackfood.activities
 import android.util.Log
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.example.ypackfood.common.Constants
 import com.example.ypackfood.components.*
 import com.example.ypackfood.viewModels.DetailViewModel
 import com.example.ypackfood.viewModels.RoomViewModel
@@ -28,14 +23,17 @@ import com.example.ypackfood.viewModels.RoomViewModel
 fun DetailContentScreen(navController: NavHostController, detailViewModel: DetailViewModel, roomViewModel: RoomViewModel, contentId: Int) {
     Log.d("params", "result=$contentId")
 
-    LaunchedEffect(contentId) {
-        detailViewModel.getDetailContent(contentId)
-        roomViewModel.initFavoriteIcon(contentId)
-        //roomViewModel.checkFavoriteById(contentId)
-    }
-
     val requestState = detailViewModel.contentResp.observeAsState().value
     val favorites = roomViewModel.favorites.observeAsState(listOf()).value
+
+    LaunchedEffect(contentId) {
+        detailViewModel.getDetailContent(contentId)
+    }
+
+    LaunchedEffect(favorites) {
+        Log.d("checkFavorites", favorites.toString())
+        roomViewModel.initFavoriteIcon(contentId)
+    }
 
     val scrollState = rememberScrollState()
     Scaffold (
@@ -44,7 +42,7 @@ fun DetailContentScreen(navController: NavHostController, detailViewModel: Detai
                 navController = navController,
                 rightIcon = {
                     favorites.let {
-                        Log.d("roomRequest", it.toString())
+                        Log.d("roomRequest", favorites.toString())
                         IconButton(
                             onClick = {
                                 roomViewModel.setFavoritesIcon(contentId)
@@ -68,15 +66,13 @@ fun DetailContentScreen(navController: NavHostController, detailViewModel: Detai
         },
         floatingActionButtonPosition = FabPosition.Center,
         content = {
-            //if (!detailViewModel.contentResp.value?.data?.name.isNullOrEmpty()) {
             if (!requestState?.data?.name.isNullOrEmpty()) {
                 Log.d("networkAnswer", "Display data")
                 Column (
                     Modifier
                         .verticalScroll(scrollState)
                 ) {
-                    //PictureTwoComponent(url = detailViewModel.contentResp.value!!.data!!.picturePaths.large)
-                    PictureTwoComponent(url = Constants.baseUrlPictureContent)
+                    PictureTwoComponent(url = requestState!!.data!!.picturePaths.large)
                     DetailDescription(detailViewModel, Modifier.padding(start = 20.dp, end = 20.dp))
                 }
             }
