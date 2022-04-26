@@ -16,6 +16,7 @@ import kotlinx.coroutines.launch
 
 class RoomViewModel(application: Application) : AndroidViewModel(application) {
     var favorites: LiveData<List<Int>>
+    var shopList: LiveData<List<CartEntity>>
     private var repositoryRoom: RepositoryRoom
 
     //var contentResp: MutableLiveData<NetworkResult<ImageVector>> = MutableLiveData()
@@ -29,10 +30,12 @@ class RoomViewModel(application: Application) : AndroidViewModel(application) {
         val shoppingCartDao = instanceDB.shoppingCartDao()
         repositoryRoom = RepositoryRoom(favoritesDao, shoppingCartDao)
         favorites = repositoryRoom.favorites
+        shopList = repositoryRoom.shopList
     }
 
     // ------------------ ShoppingCart
     fun addToCart(cartEntity: CartEntity) {
+        Log.d("Cart", "addToCart")
         viewModelScope.launch (Dispatchers.IO) {
             repositoryRoom.addToCart(cartEntity)
         }
@@ -54,7 +57,7 @@ class RoomViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     private fun checkExistFavoriteById(favoriteId: Int): Boolean {
-        return favorites?.value?.contains(favoriteId) ?: false
+        return favorites.value?.contains(favoriteId) ?: false
     }
 
     fun initFavoriteIcon(contentId: Int) {

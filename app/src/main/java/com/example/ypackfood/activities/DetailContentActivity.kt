@@ -25,6 +25,7 @@ fun DetailContentScreen(navController: NavHostController, detailViewModel: Detai
 
     val requestState = detailViewModel.contentResp.observeAsState().value
     val favorites = roomViewModel.favorites.observeAsState(listOf()).value
+    val cartDishes = roomViewModel.shopList.observeAsState(listOf()).value
 
     LaunchedEffect(contentId) {
         detailViewModel.getDetailContent(contentId)
@@ -33,6 +34,10 @@ fun DetailContentScreen(navController: NavHostController, detailViewModel: Detai
     LaunchedEffect(favorites) {
         Log.d("checkFavorites", favorites.toString())
         roomViewModel.initFavoriteIcon(contentId)
+    }
+
+    LaunchedEffect(cartDishes) {
+        Log.d("shopList", cartDishes.toString())
     }
 
     val scrollState = rememberScrollState()
@@ -61,7 +66,7 @@ fun DetailContentScreen(navController: NavHostController, detailViewModel: Detai
         },
         floatingActionButton = {
             if (!requestState?.data?.name.isNullOrEmpty()) {
-                ShoppingRowComponent(requestState!!.data!!.basePortion.priceNow.price, detailViewModel, roomViewModel)
+                ShoppingRowComponent(navController, requestState!!.data!!.basePortion.priceNow.price, detailViewModel, roomViewModel)
             }
         },
         floatingActionButtonPosition = FabPosition.Center,
@@ -88,7 +93,7 @@ fun DetailContentScreen(navController: NavHostController, detailViewModel: Detai
 }
 
 @Composable
-fun ShoppingRowComponent(price: Int, detailViewModel: DetailViewModel, roomViewModel: RoomViewModel) {
+fun ShoppingRowComponent(navController: NavHostController, price: Int, detailViewModel: DetailViewModel, roomViewModel: RoomViewModel) {
     Row(
         //horizontalAlignment = Alignment.CenterHorizontally
         verticalAlignment = Alignment.CenterVertically
@@ -101,10 +106,15 @@ fun ShoppingRowComponent(price: Int, detailViewModel: DetailViewModel, roomViewM
         Spacer(modifier = Modifier.width(10.dp))
         Button(
             onClick = {
-//                roomViewModel.addToCart(
-//                    detailViewModel.computeDishInfo()
-//                )
+                roomViewModel.addToCart(
+                    detailViewModel.buildDishInfo(
+                        id = detailViewModel.contentResp.value!!.data!!.id,
+                        price = price * detailViewModel.countWishDishes,
+                        count = detailViewModel.countWishDishes
+                    )
+                )
                 Log.d("Cart", "Корзина")
+                navController.popBackStack()
             },
             content = { Text("В корзину за ${price * detailViewModel.countWishDishes} ₽") },
             shape = RoundedCornerShape(20.dp)

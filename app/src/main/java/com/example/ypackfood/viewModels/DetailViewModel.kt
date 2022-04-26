@@ -58,13 +58,19 @@ class DetailViewModel : ViewModel() {
         }
     }
 
-    fun computeDishInfo(): CartEntity {
-        val detailDish = contentResp.value!!.data!!
+    fun buildDishInfo(id: Int, price: Int, count: Int, addons: String? = null): CartEntity {
         return CartEntity(
-            dishId = detailDish.id,
-            dishPrice = detailDish.basePortion.priceNow.price,
-            dishCount = countWishDishes,
-            dishAddons = null
+            dishId = id,
+            dishPrice = price,
+            dishCount = count,
+            dishAddons = addons
         )
+//        val detailDish = contentResp.value!!.data!!
+//        return CartEntity(
+//            dishId = detailDish.id,
+//            dishPrice = detailDish.basePortion.priceNow.price,
+//            dishCount = countWishDishes,
+//            dishAddons = null
+//        )
     }
 }
