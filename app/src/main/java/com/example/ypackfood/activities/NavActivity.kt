@@ -56,7 +56,7 @@ class NavActivity : ComponentActivity() {
                             OffersScreen(navController, offerViewModel, offerId)
                         }
                     }
-                    composable(route = Screens.ShoppingCart.route) { ShoppingCartScreen(navController, shoppingCartViewModel) }
+                    composable(route = Screens.ShoppingCart.route) { ShoppingCartScreen(navController, shoppingCartViewModel, roomViewModel) }
                     composable(route = Screens.History.route) { HistoryScreen() }
                     composable(route = Screens.Profile.route) { ProfileScreen(navController) }
                     composable(route = Screens.Favorites.route) { FavoritesScreen(navController, favoritesViewModel, roomViewModel) }

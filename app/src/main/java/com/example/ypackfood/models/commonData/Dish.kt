@@ -6,6 +6,5 @@ data class Dish(
     val composition: String,
     val id: Int,
     val name: String,
-    val picturePaths: PicturePaths,
-    //var isFavorite: Boolean = false
+    val picturePaths: PicturePaths
 )

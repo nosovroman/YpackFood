@@ -50,9 +50,6 @@ fun ContentCardComponent(
                             )
                             .padding(horizontal = 10.dp, vertical = 5.dp)
                     )
-//                    OutlinedButton(onClick = {  }) {
-//                        Text(text = "от $price ₽")
-//                    }
                 }
             }
         }

@@ -21,8 +21,8 @@ import androidx.compose.ui.unit.sp
 @Composable
 fun CounterComponent(
     count: Int,
-    onIncClick: () -> Unit,
-    onDecClick: () -> Unit
+    onIncClick: () -> Unit = {},
+    onDecClick: () -> Unit = {}
 ) {
     Row (
         verticalAlignment = Alignment.CenterVertically
