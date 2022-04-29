@@ -3,7 +3,6 @@ package com.example.ypackfood.viewModels
 
 import android.util.Log
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.MutableLiveData
@@ -22,58 +21,74 @@ import java.lang.Exception
 class ShoppingCartViewModel : ViewModel() {
     private var mainRepository: Repository
 
+    var dishesRoomState: List<CartEntity> = listOf()
+        private set
+    fun setDishesRoom(newList: List<CartEntity>) {
+        dishesRoomState = newList
+    }
+
     init {
         val x = RetrofitBuilder.apiService
         mainRepository = Repository(x)
         Log.d("initCart", "init")
     }
 
-    var count by mutableStateOf(mutableStateListOf(1, 2))
-        private set
-
-    fun incrementCount(ind: Int) {
-        count[ind] = count[ind] + 1
-    }
-    fun decrementCount(ind: Int) {
-        count[ind] = count[ind] - 1
-    }
-
     fun composeDishInfo(dishList: List<Dish>, shopList: List<CartEntity>): List<CartDish> {
         val dishMap = dishList.associateBy { it.id }
-        val resultDishList = shopList.map {
+
+//        Log.d("fe_dishMap shopList", shopList.map { it.dishId }.toString())
+//        Log.d("fe_dishMap dishList", dishList.map{ it.id }.toString())
+
+        val shopListFiltered = shopList.filter { it.dishId in dishMap }
+        val resultDishList = shopListFiltered.map {
             val dishInfo = dishMap[it.dishId]!!
-            val totalPriceWish = it.dishCount * it.dishPrice
-            val totalPriceReal = it.dishCount * dishInfo.basePortion.priceNow.price
             CartDish(
-                id = it.dishId,
+                shoppingCartId = it.shoppingCartId!!,
+                dishId = it.dishId,
                 name = dishInfo.name,
-                price = totalPriceReal,
+                price = dishInfo.basePortion.priceNow.price,
                 count = it.dishCount,
                 category = dishInfo.category,
                 composition = dishInfo.composition,
                 urlPicture = dishInfo.picturePaths.large,
                 addons = null,
-                changedPrice = totalPriceWish == totalPriceReal
+                changedPrice = it.dishPrice == dishInfo.basePortion.priceNow.price
             )
         }
 
-        Log.d("dishMap", dishMap.toString())
         return resultDishList
     }
 
     var contentResp: MutableLiveData<NetworkResult<MutableList<Dish>>> = MutableLiveData()
-    //var contentResp: MutableLiveData<NetworkResult<MutableList<Category>>> = MutableLiveData()
+
+    fun contentRespToLoading() {
+        contentResp.postValue(NetworkResult.Loading())
+    }
+
+    fun computeTotalPrice(): Int {
+        var totalPrice = 0
+        dishesRoomState.forEach{
+            totalPrice += it.dishPrice * it.dishCount
+        }
+
+        return totalPrice
+    }
+
 
     fun getContentByListId(contentIdList: List<Int>?) {
-        Log.d("requestFavorites", "getContentByListId")
         contentIdList?.let {
             viewModelScope.launch(Dispatchers.IO) {
                 try {
                     contentResp.postValue(NetworkResult.Loading())
                     val response = mainRepository.getContentByListId(contentIdList)
                     if (response.isSuccessful) {
+
+                        Log.d("fe_dishMap getContentByListId", "getting...")
+
                         contentResp.postValue(NetworkResult.Success(response.body()!!))
                         Log.d("getContentByListId", response.body()!!.toString())
+
+                        Log.d("getContentByListId ${response.code()}", response.raw().toString())
                     }
                     else {
                         Log.d("getContentByListId not ok ${response.code()}", response.raw().toString())

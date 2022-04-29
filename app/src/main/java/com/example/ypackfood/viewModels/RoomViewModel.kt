@@ -41,6 +41,20 @@ class RoomViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
+    fun updateCart(cartEntity: CartEntity) {
+        Log.d("Cart", "addToCart")
+        viewModelScope.launch (Dispatchers.IO) {
+            repositoryRoom.updateCart(cartEntity)
+        }
+    }
+
+    fun deleteFromCart(cartEntity: CartEntity) {
+        Log.d("Cart", "deleteFromCart")
+        viewModelScope.launch (Dispatchers.IO) {
+            repositoryRoom.deleteFromCart(cartEntity)
+        }
+    }
+
     // ------------------ Favorites
     fun addFavorite(favoriteId: Int) {
         viewModelScope.launch (Dispatchers.IO) {

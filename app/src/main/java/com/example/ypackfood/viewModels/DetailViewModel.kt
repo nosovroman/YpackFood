@@ -30,6 +30,9 @@ class DetailViewModel : ViewModel() {
 
     var countWishDishes by mutableStateOf(1)
         private set
+    fun initCountWish() {
+        countWishDishes = 1
+    }
     fun incCountWish() {
         countWishDishes++
     }

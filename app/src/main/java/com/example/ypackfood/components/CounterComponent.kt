@@ -21,6 +21,8 @@ import androidx.compose.ui.unit.sp
 @Composable
 fun CounterComponent(
     count: Int,
+    lowerLimit: Int = 1,
+    upperLimit: Int = 5,
     onIncClick: () -> Unit = {},
     onDecClick: () -> Unit = {}
 ) {
@@ -30,7 +32,7 @@ fun CounterComponent(
         CounterButtonComponent(
             count = count,
             isIncrement = false,
-            limit = 1,
+            limit = lowerLimit,
             onClick = onDecClick
         )
 
@@ -45,7 +47,7 @@ fun CounterComponent(
         CounterButtonComponent(
             count = count,
             isIncrement = true,
-            limit = 5,
+            limit = upperLimit,
             onClick = onIncClick
         )
     }

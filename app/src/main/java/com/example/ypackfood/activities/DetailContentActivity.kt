@@ -23,6 +23,10 @@ import com.example.ypackfood.viewModels.RoomViewModel
 fun DetailContentScreen(navController: NavHostController, detailViewModel: DetailViewModel, roomViewModel: RoomViewModel, contentId: Int) {
     Log.d("params", "result=$contentId")
 
+    LaunchedEffect(true) {
+        detailViewModel.initCountWish()
+    }
+
     val requestState = detailViewModel.contentResp.observeAsState().value
     val favorites = roomViewModel.favorites.observeAsState(listOf()).value
     val cartDishes = roomViewModel.shopList.observeAsState(listOf()).value
@@ -109,7 +113,7 @@ fun ShoppingRowComponent(navController: NavHostController, price: Int, detailVie
                 roomViewModel.addToCart(
                     detailViewModel.buildDishInfo(
                         id = detailViewModel.contentResp.value!!.data!!.id,
-                        price = price * detailViewModel.countWishDishes,
+                        price = price,// * detailViewModel.countWishDishes,
                         count = detailViewModel.countWishDishes
                     )
                 )

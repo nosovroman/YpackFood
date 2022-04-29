@@ -16,9 +16,9 @@ class RepositoryRoom(private val favoritesDao: FavoritesDao, private val cartDao
         return cartDao.addToCart(cartEntity)
     }
 
-//    suspend fun updateCart(cartEntity: CartEntity) {
-//        return cartDao.updateCart(cartEntity)
-//    }
+    suspend fun updateCart(cartEntity: CartEntity) {
+        return cartDao.updateCart(cartEntity)
+    }
 
     suspend fun deleteFromCart(cartEntity: CartEntity) {
         return cartDao.deleteFromCart(cartEntity)

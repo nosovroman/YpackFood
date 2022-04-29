@@ -12,8 +12,8 @@ interface CartDao {
     @Insert
     suspend fun addToCart(cartEntity: CartEntity)
 
-//    @Update
-//    suspend fun updateCart(cartEntity: CartEntity)
+    @Update
+    suspend fun updateCart(cartEntity: CartEntity)
 
     @Delete
     suspend fun deleteFromCart(cartEntity: CartEntity)

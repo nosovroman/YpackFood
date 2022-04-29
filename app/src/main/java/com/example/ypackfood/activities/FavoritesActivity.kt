@@ -48,12 +48,7 @@ fun FavoritesScreen(navController: NavHostController, favoritesViewModel: Favori
                         )
                     }
                 } else {
-                    Box (contentAlignment = Alignment.Center, modifier = Modifier.fillMaxWidth()) {
-                        Text(
-                            text = "У Вас пока что нет любимых блюд",
-                            textAlign = TextAlign.Center
-                        )
-                    }
+                    EmptyContentComponent(message = "У Вас пока что нет любимых блюд")
                 }
 
 

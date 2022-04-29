@@ -19,16 +19,11 @@ fun ContentSimpleListComponent2(
 ) {
     LazyColumn {
         items (contentList) { item ->
-            with(item) {
-                ShCartCardComponent(
-                    cardName = name,
-                    cost = price,
-                    count = count,
-                    urlPicture = urlPicture,
-                    cartViewModel = cartViewModel,
-                    roomViewModel = roomViewModel
-                )
-            }
+            ShCartCardComponent(
+                cartDish = item,
+                cartViewModel = cartViewModel,
+                roomViewModel = roomViewModel
+            )
         }
     }
 }
