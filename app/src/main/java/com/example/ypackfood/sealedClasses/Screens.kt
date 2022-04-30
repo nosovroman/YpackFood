@@ -12,6 +12,9 @@ sealed class Screens(val route: String, val title: String = Constants.APP_NAME_R
         fun createRoute(offerId: Int) = this.route.replace(oldValue = "{${Constants.NAV_KEY__OFFER_ID}}", newValue = offerId.toString())
     }
     object ShoppingCart: Screens(route = "ShoppingCartScreen", title = "Корзина")
+    object Order: Screens(route = "OrderScreen/{${Constants.NAV_KEY__ORDER_COST}}", title = "Оформление заказа") {
+        fun createRoute(orderCost: Int) = this.route.replace(oldValue = "{${Constants.NAV_KEY__ORDER_COST}}", newValue = orderCost.toString())
+    }
     object History: Screens(route = "HistoryScreen", title = "История покупок")
     object Profile: Screens(route = "ProfileScreen", title = "Профиль")
     object Favorites: Screens(route = "FavoritesScreen", title = "Избранное")

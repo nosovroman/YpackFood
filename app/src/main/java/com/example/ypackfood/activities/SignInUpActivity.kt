@@ -21,6 +21,29 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModel
 import com.example.ypackfood.R
 
+/*
+fun Regex() {
+    val regex = Regex("""\w+[\w_.%+-]+@[\w]+\.[a-z]{2,4}""")
+    val x = listOf(
+        "kva",
+        "kvaKVA10-",
+        "kvaKVA10-c1d2sQ_%",
+        "kva@",
+        "kva@gmailcom",
+        "kva@gmail.com",
+        "kva.kva@gmail.com",
+        "kva-kva@gmail.com",
+        "kvaKVA10-c1d2sQ_%@gmailcom",
+        "kvaKVA10-c1d2sQ_%@gmail.com",
+        "kvaKVA10-c1d2sQ_%@gmail..com"
+    )
+
+    for (i in x) {
+        println("${regex.matches(i)}    $i")
+    }
+}
+*/
+
 class SignInUpViewModel : ViewModel() {
     var emailFieldState by mutableStateOf("")
         private set

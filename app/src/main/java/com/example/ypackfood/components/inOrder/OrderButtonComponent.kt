@@ -6,9 +6,9 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 
 @Composable
-fun OrderButtonComponent(totalCost: Int) {
+fun OrderButtonComponent(totalCost: Int, onClick: () -> Unit) {
     ExtendedFloatingActionButton(
-        onClick = {  },
+        onClick = onClick,
         text = {
             if (totalCost != 0)
                 Text(text = "Оформить на $totalCost ₽", color = MaterialTheme.colors.onPrimary)

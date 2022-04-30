@@ -9,6 +9,9 @@ object Constants {
 
     const val NAV_KEY__CONTENT_ID = "contentId"
     const val NAV_KEY__OFFER_ID = "offerId"
+    const val NAV_KEY__ORDER_COST = "orderCost"
+
+    const val DELIVERY_COST = 200 // ₽
 
     // --- temp
     val pizza = listOf("Пицца1", "Пицца2", "Пицца3")

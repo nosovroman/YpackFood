@@ -57,6 +57,16 @@ class NavActivity : ComponentActivity() {
                         }
                     }
                     composable(route = Screens.ShoppingCart.route) { ShoppingCartScreen(navController, shoppingCartViewModel, roomViewModel) }
+                    composable(
+                        route = Screens.Order.route,
+                        arguments = listOf(
+                            navArgument(Constants.NAV_KEY__ORDER_COST) { type = NavType.IntType }
+                        )
+                    ) { backStackEntry ->
+                        backStackEntry.arguments?.getInt(Constants.NAV_KEY__ORDER_COST)?.let { orderId ->
+                            OrderScreen(navController, orderId)
+                        }
+                    }
                     composable(route = Screens.History.route) { HistoryScreen() }
                     composable(route = Screens.Profile.route) { ProfileScreen(navController) }
                     composable(route = Screens.Favorites.route) { FavoritesScreen(navController, favoritesViewModel, roomViewModel) }

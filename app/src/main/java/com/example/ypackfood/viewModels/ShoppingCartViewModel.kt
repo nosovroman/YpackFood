@@ -8,6 +8,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.ypackfood.common.Constants
 import com.example.ypackfood.models.commonData.CartDish
 import com.example.ypackfood.models.commonData.Dish
 import com.example.ypackfood.repository.Repository
@@ -61,8 +62,8 @@ class ShoppingCartViewModel : ViewModel() {
 
     var contentResp: MutableLiveData<NetworkResult<MutableList<Dish>>> = MutableLiveData()
 
-    fun contentRespToLoading() {
-        contentResp.postValue(NetworkResult.Loading())
+    fun initContentResp() {
+        contentResp.postValue(NetworkResult.Empty())
     }
 
     fun computeTotalPrice(): Int {
@@ -79,6 +80,7 @@ class ShoppingCartViewModel : ViewModel() {
         contentIdList?.let {
             viewModelScope.launch(Dispatchers.IO) {
                 try {
+                    Log.d("fe_dishMap getContentByListId", "loading...")
                     contentResp.postValue(NetworkResult.Loading())
                     val response = mainRepository.getContentByListId(contentIdList)
                     if (response.isSuccessful) {

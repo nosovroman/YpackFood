@@ -9,6 +9,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.example.ypackfood.common.Constants
 import com.example.ypackfood.components.*
 import com.example.ypackfood.components.inOrder.OrderButtonComponent
 import com.example.ypackfood.sealedClasses.Screens
@@ -19,7 +20,7 @@ import com.example.ypackfood.viewModels.ShoppingCartViewModel
 fun ShoppingCartScreen(navController: NavHostController, cartViewModel: ShoppingCartViewModel, roomViewModel: RoomViewModel) {
 
     LaunchedEffect(true) {
-        cartViewModel.contentRespToLoading()
+        cartViewModel.initContentResp()
     }
 
     val shopList = roomViewModel.shopList.observeAsState(listOf()).value
@@ -27,11 +28,9 @@ fun ShoppingCartScreen(navController: NavHostController, cartViewModel: Shopping
 
     LaunchedEffect(shopList) {
         if (shopList.size > cartViewModel.dishesRoomState.size) {
-            //cartViewModel.contentRespToLoading()
-            cartViewModel.getContentByListId(shopList.map { it.dishId }.toSet().toList()).also { cartViewModel.setDishesRoom(shopList) }
-        } else {
-            cartViewModel.setDishesRoom(shopList)
+            cartViewModel.getContentByListId(shopList.map { it.dishId }.toSet().toList())
         }
+        cartViewModel.setDishesRoom(shopList)
     }
     LaunchedEffect(cartViewModel.dishesRoomState) {
         Log.d("fe_dishMap shopListChanged", shopList.toString())
@@ -47,13 +46,24 @@ fun ShoppingCartScreen(navController: NavHostController, cartViewModel: Shopping
         floatingActionButtonPosition = FabPosition.Center,
         floatingActionButton = {
             if (!requestState?.data.isNullOrEmpty() && shopList.size == cartViewModel.dishesRoomState.size) {
-                OrderButtonComponent(cartViewModel.computeTotalPrice())
+                val totalCost = cartViewModel.computeTotalPrice()
+                OrderButtonComponent(
+                    totalCost = totalCost,
+                    onClick = {
+                        if (totalCost > 0) navController.navigate(route = Screens.Order.createRoute(orderCost = totalCost))
+                        else navController.popBackStack()
+                    }
+                )
             }
         },
         content = {
             Column (
                 modifier = Modifier.padding(horizontal = 15.dp),
                 content = {
+                    if (cartViewModel.dishesRoomState.isEmpty()) {
+                        EmptyContentComponent(message = "Корзина пуста")
+                    }
+
                     if (!requestState?.data.isNullOrEmpty() && shopList.size == cartViewModel.dishesRoomState.size) {
                         Log.d("fe_dishMap requestState?.data", requestState!!.data!!.map{ it.id }.toString())
 
@@ -65,10 +75,6 @@ fun ShoppingCartScreen(navController: NavHostController, cartViewModel: Shopping
                             cartViewModel = cartViewModel,
                             roomViewModel = roomViewModel
                         )
-                    }
-
-                    if (cartViewModel.dishesRoomState.isEmpty()) {
-                        EmptyContentComponent(message = "Корзина пуста")
                     }
 
                     RequestStateComponent(

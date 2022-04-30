@@ -26,8 +26,7 @@ fun ToolbarComponent(
                      //, rightIconContent: @Composable () -> Unit = {}, onRightIconClick: () -> Unit = {}
 ) {
     TopAppBar (
-        modifier = Modifier
-            .height(Constants.TOOLBAR_HEIGHT),
+        modifier = Modifier.height(Constants.TOOLBAR_HEIGHT),
         content = {
             IconButton(
                 onClick = {
