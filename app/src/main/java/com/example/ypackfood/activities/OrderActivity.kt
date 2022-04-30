@@ -2,48 +2,70 @@ package com.example.ypackfood.activities
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.example.ypackfood.common.Constants
 import com.example.ypackfood.common.Constants.DELIVERY_COST
+import com.example.ypackfood.components.TabRowComponent
 import com.example.ypackfood.components.ToolbarComponent
 import com.example.ypackfood.components.inOrder.OrderButtonComponent
+import com.example.ypackfood.enumClasses.DeliveryOptions
 import com.example.ypackfood.sealedClasses.Screens
+import com.example.ypackfood.viewModels.OrderViewModel
 
 @Composable
-fun OrderScreen(navController: NavHostController, totalCost: Int) {
+fun OrderScreen(navController: NavHostController, orderViewModel: OrderViewModel, totalCost: Int) {
     Scaffold (
         topBar = { ToolbarComponent(navController = navController, title = Screens.Order.title) },
         floatingActionButtonPosition = FabPosition.Center,
         floatingActionButton = {
             OrderButtonComponent(
                 totalCost = if (true) totalCost + DELIVERY_COST else totalCost,
-                onClick = {})
+                onClick = {}
+            )
         },
         content = {
-            OrderContent()
+            OrderContent(orderViewModel)
         }
     )
 }
 
-@Preview
 @Composable
-fun OrderContent() {
+fun OrderAddressComponent(orderViewModel: OrderViewModel) {
+
+    val deliveryState = orderViewModel.deliveryState.observeAsState().value!!
+
+    Column {
+        TabRowComponent(
+            currentOption = deliveryState,
+            orderViewModel = orderViewModel
+        )
+        when(deliveryState) {
+            is DeliveryOptions.DELIVERY -> {
+                Text(text = "Доставка")
+            }
+            is DeliveryOptions.PICKUP -> {
+                Text(text = "Самовывоз")
+            }
+            else -> {}
+        }
+    }
+}
+
+@Composable
+fun OrderContent(orderViewModel: OrderViewModel) {
     LazyColumn (
-        modifier = Modifier.padding(start = 20.dp, end = 20.dp),
+        modifier = Modifier.padding(horizontal = 20.dp),
         content = {
+            item {
+                OrderAddressComponent(orderViewModel = orderViewModel)
+            }
+
             item {
                 Spacer(modifier = Modifier.size(20.dp))
                 Text("Доставка по адресу", fontSize = 24.sp, fontWeight = FontWeight.Bold)

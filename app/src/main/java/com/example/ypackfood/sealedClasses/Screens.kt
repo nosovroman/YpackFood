@@ -18,4 +18,10 @@ sealed class Screens(val route: String, val title: String = Constants.APP_NAME_R
     object History: Screens(route = "HistoryScreen", title = "История покупок")
     object Profile: Screens(route = "ProfileScreen", title = "Профиль")
     object Favorites: Screens(route = "FavoritesScreen", title = "Избранное")
+
+    companion object {
+        fun getScreens(): List<Screens> {
+            return listOf(Main)
+        }
+    }
 }

@@ -22,6 +22,7 @@ class NavActivity : ComponentActivity() {
         val detailViewModel = ViewModelProvider(this).get(DetailViewModel::class.java)
         val offerViewModel = ViewModelProvider(this).get(OfferViewModel::class.java)
         val shoppingCartViewModel = ViewModelProvider(this).get(ShoppingCartViewModel::class.java)
+        val orderViewModel = ViewModelProvider(this).get(OrderViewModel::class.java)
         val favoritesViewModel = ViewModelProvider(this).get(FavoritesViewModel::class.java)
 
         val roomViewModel = ViewModelProvider(this).get(RoomViewModel::class.java)
@@ -64,7 +65,7 @@ class NavActivity : ComponentActivity() {
                         )
                     ) { backStackEntry ->
                         backStackEntry.arguments?.getInt(Constants.NAV_KEY__ORDER_COST)?.let { orderId ->
-                            OrderScreen(navController, orderId)
+                            OrderScreen(navController, orderViewModel, orderId)
                         }
                     }
                     composable(route = Screens.History.route) { HistoryScreen() }

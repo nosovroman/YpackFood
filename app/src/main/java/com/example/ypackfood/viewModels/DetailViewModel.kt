@@ -68,12 +68,5 @@ class DetailViewModel : ViewModel() {
             dishCount = count,
             dishAddons = addons
         )
-//        val detailDish = contentResp.value!!.data!!
-//        return CartEntity(
-//            dishId = detailDish.id,
-//            dishPrice = detailDish.basePortion.priceNow.price,
-//            dishCount = countWishDishes,
-//            dishAddons = null
-//        )
     }
 }
