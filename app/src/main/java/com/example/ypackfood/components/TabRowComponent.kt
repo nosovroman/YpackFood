@@ -16,8 +16,10 @@ import com.example.ypackfood.enumClasses.TabRowSwitchable
 import com.example.ypackfood.viewModels.OrderViewModel
 
 @Composable
-fun TabRowComponent(currentOption: TabRowSwitchable, orderViewModel: OrderViewModel) {
-
+fun TabRowComponent(
+    currentOption: TabRowSwitchable,
+    onClick: (newChosenOption: TabRowSwitchable) -> Unit
+) {
     val listOptions = DeliveryOptions.getOptions()
     val state = currentOption.index
 
@@ -32,9 +34,7 @@ fun TabRowComponent(currentOption: TabRowSwitchable, orderViewModel: OrderViewMo
             Tab(
                 text = { Text(item.title) },
                 selected = state == index,
-                onClick = {
-                    orderViewModel.deliveryState.postValue(currentOption.getByIndex(index))
-                },
+                onClick = { onClick(currentOption.getByIndex(index)) },
                 selectedContentColor = Color.White,
                 unselectedContentColor = MaterialTheme.colors.onBackground,
                 modifier = Modifier
