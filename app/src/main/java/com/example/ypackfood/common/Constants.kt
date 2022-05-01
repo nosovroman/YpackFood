@@ -5,6 +5,8 @@ import androidx.compose.ui.unit.dp
 object Constants {
     const val ROOM_FAVORITES = "Favorites" // это название БД
     const val APP_NAME_RUS = "Упак.Еда"
+    const val CITY = "г. Каменск-Шахтинский"
+    const val YPACK_ADDRESS = "Старая Станица, парк Лога"
     val TOOLBAR_HEIGHT = 48.dp
 
     const val NAV_KEY__CONTENT_ID = "contentId"

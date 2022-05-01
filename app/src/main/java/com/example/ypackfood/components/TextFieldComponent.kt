@@ -14,22 +14,24 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.ypackfood.ui.theme.Invisible
 
 @Composable
 fun TextFieldComponent(
-    //getCurrentValue: () -> String,
+    modifier: Modifier = Modifier,
     currentValue: String,
-    onValueChange: (newValue: String) -> Unit,
+    enabled: Boolean = true,
+    onValueChange: (newValue: String) -> Unit = {},
     placeholder: String = "",
     maxLines: Int = 3,
     shape: CornerBasedShape = RoundedCornerShape(10.dp)
 ) {
-    TextField(
+    TextField(  // OutlinedTextField
         colors = TextFieldDefaults.textFieldColors(
             focusedIndicatorColor = Color.Transparent,
             unfocusedIndicatorColor = Color.Transparent,
             disabledIndicatorColor = Color.Transparent,
-            //backgroundColor = Invisible,
+            backgroundColor = Invisible,
             //cursorColor = HintColor
         ),
         modifier = Modifier
@@ -43,6 +45,7 @@ fun TextFieldComponent(
         onValueChange = { onValueChange(it) },
         shape = shape,
         //singleLine = true,
+        enabled = enabled,
         maxLines = maxLines,
         textStyle = TextStyle(color = MaterialTheme.colors.onBackground, fontSize = 20.sp),
         placeholder = { Text(text = placeholder) }

@@ -1,27 +1,22 @@
 package com.example.ypackfood.activities
 
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.example.ypackfood.common.Constants
 import com.example.ypackfood.common.Constants.DELIVERY_COST
-import com.example.ypackfood.components.AlertDialogComponent
-import com.example.ypackfood.components.TabRowComponent
-import com.example.ypackfood.components.TextFieldComponent
-import com.example.ypackfood.components.ToolbarComponent
+import com.example.ypackfood.components.*
 import com.example.ypackfood.components.inOrder.OrderButtonComponent
 import com.example.ypackfood.enumClasses.DeliveryOptions
+import com.example.ypackfood.enumClasses.getCityNames
 import com.example.ypackfood.sealedClasses.Screens
 import com.example.ypackfood.viewModels.OrderViewModel
 
@@ -55,24 +50,49 @@ fun OrderAddressComponent(orderViewModel: OrderViewModel) {
         )
         when(deliveryState) {
             is DeliveryOptions.DELIVERY -> {
-                Text(text = "Доставка", modifier = Modifier.clickable {
-                    orderViewModel.setDeliveryDialog(true)
-                })
+                TextRectangleComponent(
+                    text = orderViewModel.getAddress(),
+                    modifier = Modifier.clickable { orderViewModel.setDeliveryDialog(true) }
+                )
                 if (orderViewModel.deliveryDialogState) {
+                    val cities = getCityNames()
                     AlertDialogComponent(
                         onDismiss = { orderViewModel.setDeliveryDialog(false) },
                         title = "Адрес доставки",
                         body = {
-                            Text(text = "title")
-                            Text(text = "super title")
+                            Column {
+                                Text(text = "Город")
+
+                                DropdownMenuComponent(
+                                    chosenItemTitle = orderViewModel.chosenCityState,
+                                    expanded = orderViewModel.expandedMenuCity,
+                                    onMenuClick = { orderViewModel.setExpandedCity(true) },
+                                    items = cities,
+                                    onItemClick = {
+                                        cityName -> orderViewModel.setCity(cityName)
+                                        orderViewModel.setExpandedCity(false)
+                                    },
+                                    onDismissRequest = { orderViewModel.setExpandedCity(false) }
+                                )
+                                Spacer(modifier = Modifier.height(10.dp))
+                                Text(text = "Улица, дом, квартира")
+                                TextFieldComponent(
+                                    currentValue = orderViewModel.addressFieldState,
+                                    onValueChange = { newAddress -> orderViewModel.setAddressField(newAddress) }
+                                )
+                            }
+
                         },
-                        onClickConfirm = { orderViewModel.setDeliveryDialog(false) },
-                        onClickDismiss = { orderViewModel.setDeliveryDialog(false) }
+                        onClickConfirm = { orderViewModel.setConfirmAddress() },
+                        onClickDismiss = { orderViewModel.setDismissAddress() }
                     )
                 }
             }
             is DeliveryOptions.PICKUP -> {
-                Text(text = "Самовывоз")
+                TextRectangleComponent(
+                    text = Constants.YPACK_ADDRESS,
+                    modifier = Modifier.clickable { orderViewModel.setDeliveryDialog(true) }
+                )
             }
             else -> {}
         }
@@ -86,12 +106,6 @@ fun OrderContent(orderViewModel: OrderViewModel) {
         content = {
             item {
                 OrderAddressComponent(orderViewModel = orderViewModel)
-            }
-
-            item {
-                Spacer(modifier = Modifier.size(20.dp))
-                Text("Доставка по адресу", fontSize = 24.sp, fontWeight = FontWeight.Bold)
-                Text("Коммунистический 110", fontSize = 18.sp)
             }
 
             item {

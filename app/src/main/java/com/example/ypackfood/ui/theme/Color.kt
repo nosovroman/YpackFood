@@ -9,3 +9,5 @@ val Teal200 = Color(0xFF03DAC5)
 
 val PrimaryLight = Color(0xFFFF0000)
 val PrimaryVariantLight = Color(0xFFFF3F3F)
+
+val Invisible = Color(0x00000000)
