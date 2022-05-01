@@ -2,6 +2,7 @@ package com.example.ypackfood.components
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.shape.CornerBasedShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
@@ -20,7 +21,8 @@ fun TextFieldComponent(
     currentValue: String,
     onValueChange: (newValue: String) -> Unit,
     placeholder: String = "",
-    maxLines: Int = 3
+    maxLines: Int = 3,
+    shape: CornerBasedShape = RoundedCornerShape(10.dp)
 ) {
     TextField(
         colors = TextFieldDefaults.textFieldColors(
@@ -35,10 +37,11 @@ fun TextFieldComponent(
             .border(
                 width = 2.dp,
                 color = MaterialTheme.colors.onBackground,
-                shape = RoundedCornerShape(10.dp)
+                shape = shape
             ),
         value = currentValue,
         onValueChange = { onValueChange(it) },
+        shape = shape,
         //singleLine = true,
         maxLines = maxLines,
         textStyle = TextStyle(color = MaterialTheme.colors.onBackground, fontSize = 20.sp),
