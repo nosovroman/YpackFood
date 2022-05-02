@@ -1,6 +1,7 @@
 package com.example.ypackfood.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.MaterialTheme
@@ -25,7 +26,7 @@ fun TabRowComponent(
 
     TabRow(
         selectedTabIndex = state,
-        modifier = Modifier.padding(horizontal = 20.dp),
+        modifier = Modifier.padding(horizontal = 20.dp).height(40.dp),
         backgroundColor = Color.Transparent,
         indicator = {  },
         divider = {  }

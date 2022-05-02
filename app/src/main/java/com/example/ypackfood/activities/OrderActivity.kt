@@ -18,11 +18,9 @@ import com.example.ypackfood.common.Constants
 import com.example.ypackfood.common.Constants.DELIVERY_COST
 import com.example.ypackfood.common.Constants.TIME_ORDER_MESSAGE
 import com.example.ypackfood.components.*
-import com.example.ypackfood.components.inOrder.OrderButtonComponent
 import com.example.ypackfood.sealedClasses.DeliveryOptions
 import com.example.ypackfood.enumClasses.getCityNames
 import com.example.ypackfood.enumClasses.getPaymentOptions
-import com.example.ypackfood.sealedClasses.Screens
 import com.example.ypackfood.sealedClasses.TabRowSwitchable
 import com.example.ypackfood.sealedClasses.TimeOptions
 import com.example.ypackfood.viewModels.OrderViewModel
@@ -31,21 +29,22 @@ import com.example.ypackfood.viewModels.OrderViewModel
 fun OrderScreen(navController: NavHostController, orderViewModel: OrderViewModel, totalCost: Int) {
     val deliveryState = orderViewModel.deliveryState.observeAsState().value!!
 
-    Scaffold (
-        topBar = { ToolbarComponent(navController = navController, title = Screens.Order.title) },
-        floatingActionButtonPosition = FabPosition.Center,
-        floatingActionButton = {
-            OrderButtonComponent(
-                totalCost = if (orderViewModel.checkIsDELIVERY()) totalCost + DELIVERY_COST else totalCost,
-                onClick = {
-                    orderViewModel.makeOrder()
-                }
-            )
-        },
-        content = {
-            OrderContent(orderViewModel, deliveryState)
-        }
-    )
+    OrderContent(orderViewModel, deliveryState, totalCost)
+//    Scaffold (
+//        topBar = { ToolbarComponent(navController = navController, title = Screens.Order.title) },
+//        floatingActionButtonPosition = FabPosition.Center,
+//        floatingActionButton = {
+//            OrderButtonComponent(
+//                totalCost = if (orderViewModel.checkIsDELIVERY()) totalCost + DELIVERY_COST else totalCost,
+//                onClick = {
+//                    orderViewModel.makeOrder()
+//                }
+//            )
+//        },
+//        content = {
+//            OrderContent(orderViewModel, deliveryState, totalCost)
+//        }
+//    )
 }
 
 
@@ -109,15 +108,15 @@ fun OrderAddressComponent(orderViewModel: OrderViewModel, deliveryState: TabRowS
 }
 
 @Composable
-fun OrderContent(orderViewModel: OrderViewModel, deliveryState: TabRowSwitchable) {
+fun OrderContent(orderViewModel: OrderViewModel, deliveryState: TabRowSwitchable, totalCost: Int) {
     LazyColumn (
-        modifier = Modifier.padding(horizontal = 20.dp, vertical = 40.dp),
+        modifier = Modifier.padding(horizontal = 20.dp, vertical = 5.dp),
         content = {
             item {
                 OrderAddressComponent(orderViewModel = orderViewModel, deliveryState)
             }
             item {
-                Spacer(modifier = Modifier.size(20.dp))
+                Spacer(modifier = Modifier.size(10.dp))
 
                 val timeState = orderViewModel.timeState.observeAsState().value!!
 
@@ -186,8 +185,8 @@ fun OrderContent(orderViewModel: OrderViewModel, deliveryState: TabRowSwitchable
             if (deliveryState is DeliveryOptions.DELIVERY) {
                 item {
                     val paymentOptions = getPaymentOptions()
-                    Spacer(modifier = Modifier.size(20.dp))
-                    Text("Способ оплаты", fontSize = 24.sp, fontWeight = FontWeight.Bold)
+                    Spacer(modifier = Modifier.size(10.dp))
+                    Text("Способ оплаты")
                     DropdownMenuComponent(
                         chosenItemTitle = orderViewModel.paymentState,
                         expanded = orderViewModel.expandedMenuPayState,
@@ -202,8 +201,8 @@ fun OrderContent(orderViewModel: OrderViewModel, deliveryState: TabRowSwitchable
                 }
 
                 item {
-                    Spacer(modifier = Modifier.size(20.dp))
-                    Text("Комментарий", fontSize = 24.sp, fontWeight = FontWeight.Bold)
+                    Spacer(modifier = Modifier.size(10.dp))
+                    Text("Комментарий")
                     TextFieldComponent(
                         modifier = Modifier.fillMaxWidth(),
                         currentValue = orderViewModel.commentFieldState,
@@ -211,6 +210,15 @@ fun OrderContent(orderViewModel: OrderViewModel, deliveryState: TabRowSwitchable
                         placeholder = "Ваш комментарий для курьера"
                     )
                 }
+            }
+            item {
+                val totalCostResult = if (orderViewModel.checkIsDELIVERY()) totalCost + DELIVERY_COST else totalCost
+                Button(
+                    onClick = { orderViewModel.makeOrder() },
+                    content = {
+                        if (totalCostResult > 0) Text(text = "Оформить на $totalCostResult ₽", color = MaterialTheme.colors.onPrimary)
+                    }
+                )
             }
         }
     )

@@ -1,0 +1,114 @@
+package com.example.ypackfood.activities
+
+import android.util.Log
+import androidx.compose.foundation.layout.*
+import androidx.compose.material.*
+import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
+import com.example.ypackfood.common.Constants
+import com.example.ypackfood.components.*
+import com.example.ypackfood.components.inOrder.OrderButtonComponent
+import com.example.ypackfood.models.commonData.Dish
+import com.example.ypackfood.room.entities.CartEntity
+import com.example.ypackfood.sealedClasses.NetworkResult
+import com.example.ypackfood.sealedClasses.Screens
+import com.example.ypackfood.viewModels.OrderViewModel
+import com.example.ypackfood.viewModels.RoomViewModel
+import com.example.ypackfood.viewModels.ShoppingCartViewModel
+import kotlinx.coroutines.launch
+
+@ExperimentalMaterialApi
+@Composable
+fun ShoppingCartScreen(navController: NavHostController, cartViewModel: ShoppingCartViewModel, orderViewModel: OrderViewModel, roomViewModel: RoomViewModel) {
+
+    LaunchedEffect(true) {
+        cartViewModel.initContentResp()
+    }
+
+    val shopList = roomViewModel.shopList.observeAsState(listOf()).value
+    val requestState = cartViewModel.contentResp.observeAsState().value
+
+    LaunchedEffect(shopList) {
+        if (shopList.size > cartViewModel.dishesRoomState.size) {
+            cartViewModel.getContentByListId(shopList.map { it.dishId }.toSet().toList())
+        }
+        cartViewModel.setDishesRoom(shopList)
+    }
+
+    val coroutineScope = rememberCoroutineScope()
+    val bottomState = rememberModalBottomSheetState(ModalBottomSheetValue.Hidden)
+    ModalBottomSheetLayout(
+        sheetState = bottomState,
+        sheetContent = {
+            Box(modifier = Modifier.height(420.dp)) {
+                OrderScreen(
+                    navController = navController,
+                    orderViewModel = orderViewModel,
+                    totalCost = cartViewModel.computeTotalPrice()
+                )
+            }
+        },
+        content = {
+            Scaffold (
+                topBar = {
+                    ToolbarComponent(navController = navController, title = Screens.ShoppingCart.title)
+                },
+                floatingActionButtonPosition = FabPosition.Center,
+                floatingActionButton = {
+                    if (!requestState?.data.isNullOrEmpty() && shopList.size == cartViewModel.dishesRoomState.size) {
+                        val totalCost = cartViewModel.computeTotalPrice()
+                        OrderButtonComponent(
+                            totalCost = totalCost,
+                            onClick = {
+                                if (totalCost > 0) {
+                                    coroutineScope.launch {
+                                        bottomState.show()
+                                    }
+                                }
+                                else navController.popBackStack()
+                            }
+                        )
+                    }
+                },
+                content = {
+                    ContentCart(requestState, shopList, cartViewModel, roomViewModel)
+                }
+            )
+        }
+    )
+}
+
+@Composable
+fun ContentCart(requestState: NetworkResult<MutableList<Dish>>?, shopList: List<CartEntity>, cartViewModel: ShoppingCartViewModel, roomViewModel: RoomViewModel) {
+    Column (
+        modifier = Modifier.padding(horizontal = 15.dp),
+        content = {
+            if (cartViewModel.dishesRoomState.isEmpty()) {
+                EmptyContentComponent(message = "Корзина пуста")
+            }
+
+            if (!requestState?.data.isNullOrEmpty() && shopList.size == cartViewModel.dishesRoomState.size) {
+                Log.d("fe_dishMap requestState?.data", requestState!!.data!!.map{ it.id }.toString())
+
+                ContentSimpleListComponent2(
+                    contentList = cartViewModel.composeDishInfo(
+                        dishList = requestState.data!!,
+                        shopList = cartViewModel.dishesRoomState
+                    ),
+                    cartViewModel = cartViewModel,
+                    roomViewModel = roomViewModel
+                )
+            }
+
+            RequestStateComponent(
+                requestState = requestState,
+                byError = {
+                    ShowErrorComponent(onButtonClick = { cartViewModel.getContentByListId(cartViewModel.dishesRoomState.map { it.dishId }.toSet().toList()) })
+                }
+            )
+        }
+    )
+}

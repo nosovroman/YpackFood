@@ -32,7 +32,7 @@ fun TextRectangleComponent(
                 shape = shape
             )
             .padding(10.dp),
-        fontSize = 20.sp,
+        fontSize = 16.sp,
         color = MaterialTheme.colors.onBackground,
     )
 }

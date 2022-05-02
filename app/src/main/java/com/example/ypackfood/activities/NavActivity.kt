@@ -3,6 +3,7 @@ package com.example.ypackfood.activities
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -15,6 +16,7 @@ import com.example.ypackfood.ui.theme.YpackFoodTheme
 import com.example.ypackfood.viewModels.*
 
 class NavActivity : ComponentActivity() {
+    @OptIn(ExperimentalMaterialApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -57,7 +59,8 @@ class NavActivity : ComponentActivity() {
                             OffersScreen(navController, offerViewModel, offerId)
                         }
                     }
-                    composable(route = Screens.ShoppingCart.route) { ShoppingCartScreen(navController, shoppingCartViewModel, roomViewModel) }
+                    //composable(route = Screens.ShoppingCart.route) { ShoppingCartScreen(navController, shoppingCartViewModel, roomViewModel) }
+                    composable(route = Screens.ShoppingCart.route) { ShoppingCartScreen(navController, shoppingCartViewModel, orderViewModel, roomViewModel) }
                     composable(
                         route = Screens.Order.route,
                         arguments = listOf(

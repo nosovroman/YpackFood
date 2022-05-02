@@ -4,6 +4,7 @@ package com.example.ypackfood.viewModels
 import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -26,6 +27,12 @@ class ShoppingCartViewModel : ViewModel() {
         private set
     fun setDishesRoom(newList: List<CartEntity>) {
         dishesRoomState = newList
+    }
+
+    var floatingState by mutableStateOf(true)
+        private set
+    fun setFloating(newState: Boolean) {
+        floatingState = newState
     }
 
     init {
