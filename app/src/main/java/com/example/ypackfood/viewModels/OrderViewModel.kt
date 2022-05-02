@@ -7,6 +7,7 @@ import androidx.compose.runtime.setValue
 import androidx.core.text.isDigitsOnly
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.ypackfood.common.Constants.END_DELIVERY
 import com.example.ypackfood.common.Constants.START_DELIVERY
 import com.example.ypackfood.sealedClasses.DeliveryOptions
@@ -14,23 +15,76 @@ import com.example.ypackfood.sealedClasses.TabRowSwitchable
 import com.example.ypackfood.enumClasses.getCityNames
 import com.example.ypackfood.enumClasses.getPaymentOptions
 import com.example.ypackfood.extensions.toTimeString
+import com.example.ypackfood.models.commonData.CartDish
+import com.example.ypackfood.models.detailContent.DetailContent
+import com.example.ypackfood.models.temp.*
+import com.example.ypackfood.models.temp.OrderFull.Order
+import com.example.ypackfood.repository.Repository
+import com.example.ypackfood.retrofit.RetrofitBuilder
+import com.example.ypackfood.sealedClasses.NetworkResult
 import com.example.ypackfood.sealedClasses.TimeOptions
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import java.lang.Exception
 import java.util.*
 
 class OrderViewModel : ViewModel() {
+    private var mainRepository: Repository
 
-    fun makeOrder() {
+    init {
+        val x = RetrofitBuilder.apiService
+        mainRepository = Repository(x)
+        Log.d("initOrder", "init")
+    }
+
+    var successPostResp: MutableLiveData<NetworkResult<Order>> = MutableLiveData()
+    fun createOrder(order: OrderMin) {
+        Log.d("createOrder param", "$order")
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                successPostResp.postValue(NetworkResult.Loading())
+                val response = mainRepository.createOrder(order)
+                if (response.isSuccessful) {
+                    Log.d("createOrder ok ", response.body()!!.toString())
+                    successPostResp.postValue(NetworkResult.Success(response.body()!!))
+                }
+                else {
+                    Log.d("createOrder not ok ", response.raw().toString())
+                    successPostResp.postValue(NetworkResult.Error(response.message()))
+                }
+            } catch (e: Exception) {
+                Log.d("createOrder error ", e.toString() + "|||message: " + e.message)
+                successPostResp.postValue(NetworkResult.Error(e.message))
+            }
+        }
+    }
+
+    fun makeOrder(dishesMin: List<CartDish>, totalCost: Int) {
         if (checkIsPICKUP()) {
-            onTimeSuccess()
+            onTimeSuccess(dishesMin, totalCost)
         }
         else {
             if (checkAddressIsNotEmpty()) {
-                onTimeSuccess()
+                onTimeSuccess(dishesMin, totalCost)
             } else {
                 emptyFieldMsgState = "Установите адрес доставки"
                 setEmptyDataDialog(true)
             }
         }
+    }
+
+    fun composeOrder(cartDishes: List<CartDish>, totalCost: Int): OrderMin {
+        val dishesMin = cartDishes.map { DishMin(
+            id = it.dishId,
+            basePortion = BasePortionMin(id = 0, priceNow = PriceNowMin(0))
+        ) }
+
+        return OrderMin(
+            address = AddressMin(0),
+            client = ClientMin(13),
+            dishes = dishesMin,
+            totalPrice = totalCost
+        )
     }
 
     fun checkIsPICKUP(): Boolean = deliveryState.value is DeliveryOptions.PICKUP
@@ -39,20 +93,15 @@ class OrderViewModel : ViewModel() {
     fun checkIsForTime(): Boolean = timeState.value is TimeOptions.ForTime
     fun checkTimeIsNotEmpty(): Boolean = hourState != "00"
     fun checkAddressIsNotEmpty(): Boolean = addressState.isNotBlank()
-    fun onTimeSuccess() {
+    fun onTimeSuccess(dishesMin: List<CartDish>, totalCost: Int) {
         if (checkIsFaster() || checkIsForTime() && checkTimeIsNotEmpty()) {
             validateTime()
             emptyFieldMsgState = ""
-            postOrder()
+            createOrder(composeOrder(dishesMin, totalCost))
         } else {
             emptyFieldMsgState = "Установите время доставки"
             setEmptyDataDialog(true)
         }
-    }
-
-
-    fun postOrder() {
-        Log.d("postOrder", "postOrder")
     }
 
         // EMPTY FIELDS ALERT

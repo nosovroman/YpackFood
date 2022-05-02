@@ -24,30 +24,13 @@ import com.example.ypackfood.enumClasses.getPaymentOptions
 import com.example.ypackfood.sealedClasses.TabRowSwitchable
 import com.example.ypackfood.sealedClasses.TimeOptions
 import com.example.ypackfood.viewModels.OrderViewModel
+import com.example.ypackfood.viewModels.ShoppingCartViewModel
 
 @Composable
-fun OrderScreen(navController: NavHostController, orderViewModel: OrderViewModel, totalCost: Int) {
+fun OrderScreen(navController: NavHostController, orderViewModel: OrderViewModel, cartViewModel: ShoppingCartViewModel, totalCost: Int) {
     val deliveryState = orderViewModel.deliveryState.observeAsState().value!!
-
-    OrderContent(orderViewModel, deliveryState, totalCost)
-//    Scaffold (
-//        topBar = { ToolbarComponent(navController = navController, title = Screens.Order.title) },
-//        floatingActionButtonPosition = FabPosition.Center,
-//        floatingActionButton = {
-//            OrderButtonComponent(
-//                totalCost = if (orderViewModel.checkIsDELIVERY()) totalCost + DELIVERY_COST else totalCost,
-//                onClick = {
-//                    orderViewModel.makeOrder()
-//                }
-//            )
-//        },
-//        content = {
-//            OrderContent(orderViewModel, deliveryState, totalCost)
-//        }
-//    )
+    OrderContent(orderViewModel, cartViewModel, deliveryState, totalCost)
 }
-
-
 
 @Composable
 fun OrderAddressComponent(orderViewModel: OrderViewModel, deliveryState: TabRowSwitchable) {
@@ -108,7 +91,7 @@ fun OrderAddressComponent(orderViewModel: OrderViewModel, deliveryState: TabRowS
 }
 
 @Composable
-fun OrderContent(orderViewModel: OrderViewModel, deliveryState: TabRowSwitchable, totalCost: Int) {
+fun OrderContent(orderViewModel: OrderViewModel, cartViewModel: ShoppingCartViewModel, deliveryState: TabRowSwitchable, totalCost: Int) {
     LazyColumn (
         modifier = Modifier.padding(horizontal = 20.dp, vertical = 5.dp),
         content = {
@@ -214,7 +197,7 @@ fun OrderContent(orderViewModel: OrderViewModel, deliveryState: TabRowSwitchable
             item {
                 val totalCostResult = if (orderViewModel.checkIsDELIVERY()) totalCost + DELIVERY_COST else totalCost
                 Button(
-                    onClick = { orderViewModel.makeOrder() },
+                    onClick = { orderViewModel.makeOrder(dishesMin = cartViewModel.resultDishState, totalCost = totalCostResult) },
                     content = {
                         if (totalCostResult > 0) Text(text = "Оформить на $totalCostResult ₽", color = MaterialTheme.colors.onPrimary)
                     }

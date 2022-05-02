@@ -22,7 +22,12 @@ import kotlinx.coroutines.launch
 
 @ExperimentalMaterialApi
 @Composable
-fun ShoppingCartScreen(navController: NavHostController, cartViewModel: ShoppingCartViewModel, orderViewModel: OrderViewModel, roomViewModel: RoomViewModel) {
+fun ShoppingCartScreen(
+    navController: NavHostController,
+    cartViewModel: ShoppingCartViewModel,
+    orderViewModel: OrderViewModel,
+    roomViewModel: RoomViewModel
+) {
 
     LaunchedEffect(true) {
         cartViewModel.initContentResp()
@@ -47,7 +52,8 @@ fun ShoppingCartScreen(navController: NavHostController, cartViewModel: Shopping
                 OrderScreen(
                     navController = navController,
                     orderViewModel = orderViewModel,
-                    totalCost = cartViewModel.computeTotalPrice()
+                    cartViewModel = cartViewModel,
+                    totalCost = cartViewModel.totalPriceState
                 )
             }
         },
@@ -59,11 +65,12 @@ fun ShoppingCartScreen(navController: NavHostController, cartViewModel: Shopping
                 floatingActionButtonPosition = FabPosition.Center,
                 floatingActionButton = {
                     if (!requestState?.data.isNullOrEmpty() && shopList.size == cartViewModel.dishesRoomState.size) {
-                        val totalCost = cartViewModel.computeTotalPrice()
+                        //val totalCost = cartViewModel.computeTotalPrice()
+                        cartViewModel.computeTotalPrice()
                         OrderButtonComponent(
-                            totalCost = totalCost,
+                            totalCost = cartViewModel.totalPriceState,
                             onClick = {
-                                if (totalCost > 0) {
+                                if (cartViewModel.totalPriceState > 0) {
                                     coroutineScope.launch {
                                         bottomState.show()
                                     }
@@ -82,7 +89,12 @@ fun ShoppingCartScreen(navController: NavHostController, cartViewModel: Shopping
 }
 
 @Composable
-fun ContentCart(requestState: NetworkResult<MutableList<Dish>>?, shopList: List<CartEntity>, cartViewModel: ShoppingCartViewModel, roomViewModel: RoomViewModel) {
+fun ContentCart(
+    requestState: NetworkResult<MutableList<Dish>>?,
+    shopList: List<CartEntity>,
+    cartViewModel: ShoppingCartViewModel,
+    roomViewModel: RoomViewModel
+) {
     Column (
         modifier = Modifier.padding(horizontal = 15.dp),
         content = {
@@ -93,11 +105,13 @@ fun ContentCart(requestState: NetworkResult<MutableList<Dish>>?, shopList: List<
             if (!requestState?.data.isNullOrEmpty() && shopList.size == cartViewModel.dishesRoomState.size) {
                 Log.d("fe_dishMap requestState?.data", requestState!!.data!!.map{ it.id }.toString())
 
+                cartViewModel.composeDishInfo(
+                    dishList = requestState.data!!,
+                    shopList = cartViewModel.dishesRoomState
+                )
+
                 ContentSimpleListComponent2(
-                    contentList = cartViewModel.composeDishInfo(
-                        dishList = requestState.data!!,
-                        shopList = cartViewModel.dishesRoomState
-                    ),
+                    contentList = cartViewModel.resultDishState,
                     cartViewModel = cartViewModel,
                     roomViewModel = roomViewModel
                 )

@@ -1,5 +1,6 @@
 package com.example.ypackfood.repository
 
+import com.example.ypackfood.models.temp.OrderMin
 import com.example.ypackfood.retrofit.ApiService
 
 class Repository(private val apiService: ApiService) {
@@ -8,6 +9,7 @@ class Repository(private val apiService: ApiService) {
     suspend fun getDetailContent(dishId: Int) = apiService.getDetailContent(dishId)
     suspend fun getDetailAction(actionId: Int) = apiService.getDetailAction(actionId)
     suspend fun getContentByListId(contentIdList: List<Int>) = apiService.getContentByListId(contentIdList)
+    suspend fun createOrder(order: OrderMin) = apiService.createOrder(order)
 }
 
 //suspend fun getHello() = apiService.getHello()

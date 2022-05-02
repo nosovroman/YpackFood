@@ -23,6 +23,12 @@ import java.lang.Exception
 class ShoppingCartViewModel : ViewModel() {
     private var mainRepository: Repository
 
+    var totalPriceState by mutableStateOf(0)
+        private set
+    fun setTotalPrice(newState: Int) {
+        totalPriceState = newState
+    }
+
     var dishesRoomState: List<CartEntity> = listOf()
         private set
     fun setDishesRoom(newList: List<CartEntity>) {
@@ -41,7 +47,14 @@ class ShoppingCartViewModel : ViewModel() {
         Log.d("initCart", "init")
     }
 
-    fun composeDishInfo(dishList: List<Dish>, shopList: List<CartEntity>): List<CartDish> {
+    var resultDishState: List<CartDish> = listOf()
+        private set
+    fun setResultDish(newList: List<CartDish>) {
+        resultDishState = newList
+    }
+
+    fun composeDishInfo(dishList: List<Dish>, shopList: List<CartEntity>)//: List<CartDish>
+    {
         val dishMap = dishList.associateBy { it.id }
 
 //        Log.d("fe_dishMap shopList", shopList.map { it.dishId }.toString())
@@ -64,7 +77,8 @@ class ShoppingCartViewModel : ViewModel() {
             )
         }
 
-        return resultDishList
+        resultDishState = resultDishList
+        //return resultDishList
     }
 
     var contentResp: MutableLiveData<NetworkResult<MutableList<Dish>>> = MutableLiveData()
@@ -73,13 +87,22 @@ class ShoppingCartViewModel : ViewModel() {
         contentResp.postValue(NetworkResult.Empty())
     }
 
-    fun computeTotalPrice(): Int {
+//    fun computeTotalPrice(): Int {
+//        var totalPrice = 0
+//        dishesRoomState.forEach{
+//            totalPrice += it.dishPrice * it.dishCount
+//        }
+//
+//        return totalPrice
+//    }
+
+    fun computeTotalPrice() {
         var totalPrice = 0
         dishesRoomState.forEach{
             totalPrice += it.dishPrice * it.dishCount
         }
 
-        return totalPrice
+        setTotalPrice(totalPrice)
     }
 
 
