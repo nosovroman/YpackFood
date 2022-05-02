@@ -1,4 +1,4 @@
-package com.example.ypackfood.enumClasses
+package com.example.ypackfood.sealedClasses
 
 interface TabRowSwitchable {
     val title: String

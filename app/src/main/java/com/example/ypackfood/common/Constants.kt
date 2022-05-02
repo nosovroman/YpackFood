@@ -5,9 +5,12 @@ import androidx.compose.ui.unit.dp
 object Constants {
     const val ROOM_FAVORITES = "Favorites" // это название БД
     const val APP_NAME_RUS = "Упак.Еда"
-    const val CITY = "г. Каменск-Шахтинский"
     const val YPACK_ADDRESS = "Старая Станица, парк Лога"
     val TOOLBAR_HEIGHT = 48.dp
+    const val START_DELIVERY = 2
+    const val END_DELIVERY = 23
+
+    const val TIME_ORDER_MESSAGE = "Заказать можно с $START_DELIVERY:00 до $END_DELIVERY:00, минимальное время ожидания 45 минут (установится автоматически при попытке заказа за меньший интервал времени)."
 
     const val NAV_KEY__CONTENT_ID = "contentId"
     const val NAV_KEY__OFFER_ID = "offerId"

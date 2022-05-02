@@ -4,6 +4,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.shape.CornerBasedShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
@@ -24,7 +25,8 @@ fun TextFieldComponent(
     onValueChange: (newValue: String) -> Unit = {},
     placeholder: String = "",
     maxLines: Int = 3,
-    shape: CornerBasedShape = RoundedCornerShape(10.dp)
+    shape: CornerBasedShape = RoundedCornerShape(10.dp),
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default
 ) {
     TextField(  // OutlinedTextField
         colors = TextFieldDefaults.textFieldColors(
@@ -34,8 +36,7 @@ fun TextFieldComponent(
             backgroundColor = Invisible,
             //cursorColor = HintColor
         ),
-        modifier = Modifier
-            .fillMaxWidth()
+        modifier = modifier
             .border(
                 width = 2.dp,
                 color = MaterialTheme.colors.onBackground,
@@ -44,6 +45,7 @@ fun TextFieldComponent(
         value = currentValue,
         onValueChange = { onValueChange(it) },
         shape = shape,
+        keyboardOptions = keyboardOptions,
         //singleLine = true,
         enabled = enabled,
         maxLines = maxLines,

@@ -11,16 +11,16 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.example.ypackfood.enumClasses.DeliveryOptions
-import com.example.ypackfood.enumClasses.TabRowSwitchable
-import com.example.ypackfood.viewModels.OrderViewModel
+import com.example.ypackfood.sealedClasses.DeliveryOptions
+import com.example.ypackfood.sealedClasses.TabRowSwitchable
 
 @Composable
 fun TabRowComponent(
     currentOption: TabRowSwitchable,
+    listOptions: List<TabRowSwitchable>,
     onClick: (newChosenOption: TabRowSwitchable) -> Unit
 ) {
-    val listOptions = DeliveryOptions.getOptions()
+    //val listOptions = DeliveryOptions.getOptions()
     val state = currentOption.index
 
     TabRow(

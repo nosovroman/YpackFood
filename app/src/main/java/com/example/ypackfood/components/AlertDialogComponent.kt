@@ -7,7 +7,6 @@ import androidx.compose.runtime.Composable
 
 @Composable
 fun AlertDialogComponent(
-    onDismiss: () -> Unit,
     title: String,
     body: @Composable () -> Unit,
     onClickConfirm: () -> Unit,
@@ -16,10 +15,7 @@ fun AlertDialogComponent(
     dismissButtonText: String = "Назад",
 ) {
     AlertDialog(
-        onDismissRequest = onDismiss,
-        title = {
-            Text(text = title)
-        },
+        title = { Text(text = title) },
         text = body,
         confirmButton = {
             Button(
@@ -32,6 +28,7 @@ fun AlertDialogComponent(
                 onClick = onClickDismiss ,
                 content = { Text(text = dismissButtonText) }
             )
-        }
+        },
+        onDismissRequest = onClickDismiss
     )
 }

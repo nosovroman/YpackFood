@@ -33,6 +33,6 @@ fun TextRectangleComponent(
             )
             .padding(10.dp),
         fontSize = 20.sp,
-        color = MaterialTheme.colors.onBackground
+        color = MaterialTheme.colors.onBackground,
     )
 }
