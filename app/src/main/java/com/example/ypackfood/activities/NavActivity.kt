@@ -4,12 +4,15 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.ypackfood.R
 import com.example.ypackfood.common.Constants
 import com.example.ypackfood.sealedClasses.Screens
 import com.example.ypackfood.ui.theme.YpackFoodTheme
@@ -28,6 +31,10 @@ class NavActivity : ComponentActivity() {
         val favoritesViewModel = ViewModelProvider(this).get(FavoritesViewModel::class.java)
 
         val roomViewModel = ViewModelProvider(this).get(RoomViewModel::class.java)
+
+        val fontFamily = FontFamily(
+            Font(R.font.beauty_font_one)
+        )
 
         setContent {
             YpackFoodTheme {
@@ -71,7 +78,7 @@ class NavActivity : ComponentActivity() {
                             OrderScreen(navController, orderViewModel, shoppingCartViewModel, orderId)
                         }
                     }
-                    composable(route = Screens.History.route) { HistoryScreen() }
+                    composable(route = Screens.History.route) { HistoryScreen(navController) }
                     composable(route = Screens.Profile.route) { ProfileScreen(navController) }
                     composable(route = Screens.Favorites.route) { FavoritesScreen(navController, favoritesViewModel, roomViewModel) }
                 }

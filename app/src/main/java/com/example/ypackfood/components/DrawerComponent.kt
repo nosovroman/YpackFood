@@ -1,16 +1,27 @@
 package com.example.ypackfood.components
 
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.Divider
 import androidx.compose.material.Icon
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.example.ypackfood.common.Constants
 import com.example.ypackfood.enumClasses.MainDrawer
 import com.example.ypackfood.enumClasses.getDrawerItems
 
@@ -20,14 +31,43 @@ fun DrawerComponent(navController: NavHostController) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(start = 24.dp, top = 48.dp),
+            .padding(start = 24.dp, end = 24.dp),
         content = {
+            DrawerHeader()
+            Divider()
             itemsDrawer.forEach { currentItem ->
+                if (itemsDrawer.last() == currentItem) {
+                    Spacer(Modifier.weight(1f, true))
+                    Divider()
+                }
                 DrawerItemComponent(item = currentItem) {
                     // переход к нужной странице
                     navController.navigate(route = currentItem.route)
                 }
             }
+        }
+    )
+}
+@Preview
+@Composable
+fun DrawerHeader() {
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(100.dp)
+        //    .border(1.dp, color = MaterialTheme.colors.onBackground)
+        ,
+        content = {
+            Text(
+                text = Constants.APP_NAME_RUS,
+                textAlign = TextAlign.Center,
+                style = TextStyle(
+                    fontSize = 40.sp,
+                    fontFamily = Constants.fontFamily,
+                    fontStyle = FontStyle.Normal
+                )
+            )
         }
     )
 }

@@ -11,23 +11,33 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import com.example.ypackfood.components.PictureOneComponent
+import com.example.ypackfood.components.ToolbarComponent
 
 @Composable
-fun HistoryScreen() {
+fun HistoryScreen(navController: NavHostController) {
     val scrollState = rememberScrollState()
-    Scaffold {
-        Column (
-            Modifier
-                .padding(start = 20.dp, end = 20.dp)
-                .verticalScroll(scrollState)
-        ) {
-            HistoryCardComponent("1", 1200, "Завершен")
-            HistoryCardComponent("2", 1500, "Ждет курьера")
-            HistoryCardComponent("3", 2100, "Курьер в пути")
-            HistoryCardComponent("4", 850, "Готовится")
+    Scaffold(
+        topBar = {
+            ToolbarComponent(
+                navController = navController,
+            )
+        },
+        content = {
+            Column (
+                modifier = Modifier
+                    .padding(start = 20.dp, end = 20.dp)
+                    .verticalScroll(scrollState),
+                content = {
+                    HistoryCardComponent("1", 1200, "Завершен")
+                    HistoryCardComponent("2", 1500, "Ждет курьера")
+                    HistoryCardComponent("3", 2100, "Курьер в пути")
+                    HistoryCardComponent("4", 850, "Готовится")
+                }
+            )
         }
-    }
+    )
 }
 
 @Composable

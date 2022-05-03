@@ -43,7 +43,6 @@ fun ProfileScreen(navController: NavHostController) {
     )
 }
 
-@Preview
 @Composable
 fun ProfileContent() {
     LazyColumn (

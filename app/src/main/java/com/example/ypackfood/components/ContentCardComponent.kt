@@ -55,18 +55,3 @@ fun ContentCardComponent(
         }
     )
 }
-
-@Preview
-@Composable
-fun qer() {
-    Text(
-        text = "от 1500 ₽",
-        modifier = Modifier
-            .border(
-                width = 1.dp,
-                color = MaterialTheme.colors.secondary,
-                shape = CircleShape
-            )
-            .padding(horizontal = 10.dp, vertical = 5.dp)
-    )
-}

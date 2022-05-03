@@ -28,7 +28,6 @@ import com.example.ypackfood.components.*
 import com.example.ypackfood.sealedClasses.Screens
 import com.example.ypackfood.viewModels.OfferViewModel
 
-@Preview
 @Composable
 fun Temp() {
     Column(

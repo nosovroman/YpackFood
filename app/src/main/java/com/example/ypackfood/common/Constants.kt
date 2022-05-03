@@ -1,5 +1,7 @@
 package com.example.ypackfood.common
-
+import com.example.ypackfood.R
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 
 object Constants {
@@ -9,6 +11,10 @@ object Constants {
     val TOOLBAR_HEIGHT = 48.dp
     const val START_DELIVERY = 2
     const val END_DELIVERY = 23
+
+    val fontFamily = FontFamily(
+        Font(R.font.beauty_font_one)
+    )
 
     const val TIME_ORDER_MESSAGE = "Заказать можно с $START_DELIVERY:00 до $END_DELIVERY:00, минимальное время ожидания 45 минут (установится автоматически при попытке заказа за меньший интервал времени)."
 
@@ -28,5 +34,5 @@ object Constants {
 
     const val BASE_URL = "https://super-food17.herokuapp.com/"
     val baseUrlPictureCategory = "https://sun9-26.userapi.com/impf/c849020/v849020562/12056a/xOiO0cHdtkk.jpg?size=604x604&quality=96&sign=2c11f0e48c64e290d0bde943da845fd6&type=album"
-    val baseUrlPictureContent = "https://staff-online.ru/wp-content/uploads/2020/05/burger.jpg"
+    val baseUrlPictureContent = "https://yesofcorsa.com/wp-content/uploads/2018/09/Chicken-Burger-Desktop-Wallpaper.jpg"
 }

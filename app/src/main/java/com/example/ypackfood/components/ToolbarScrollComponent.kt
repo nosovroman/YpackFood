@@ -42,7 +42,7 @@ fun ToolbarScrollComponent(navController: NavHostController, mvvmViewModel: Main
         )
 
         Spacer(Modifier.weight(1f, true))
-        Text("Упак.Еда", fontSize = 22.sp)
+        Text(Constants.APP_NAME_RUS, fontSize = 22.sp)
         Spacer(Modifier.weight(1f, true))
 
         IconButton(
