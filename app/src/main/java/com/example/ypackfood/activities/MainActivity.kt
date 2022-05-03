@@ -1,6 +1,7 @@
 package com.example.ypackfood.activities
 
 import android.util.Log
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.*
 import androidx.compose.material.*
@@ -14,8 +15,14 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.example.ypackfood.common.Constants
 import com.example.ypackfood.common.Constants.TOOLBAR_HEIGHT
 import com.example.ypackfood.components.*
+import com.example.ypackfood.components.inOrder.ContentListComponent2
+import com.example.ypackfood.components.specific.DishesColumnComponent
+import com.example.ypackfood.models.actionsContent.ActionsItem
+import com.example.ypackfood.models.mainContent.Category
+import com.example.ypackfood.sealedClasses.Screens
 import com.example.ypackfood.viewModels.MainViewModel
 
 
@@ -53,7 +60,15 @@ fun MainScreen(navController: NavHostController, mainViewModel: MainViewModel) {
                     //&& !mainViewModel.contentResp2.value?.data.isNullOrEmpty()
                 ) {
                     Log.d("networkAnswer", "Display data")
-                    ContentListComponent(navController, mainViewModel)
+                    //ContentListComponent(navController, mainViewModel)
+                    ContentListComponent2(navController, mainViewModel, itemsOfList = {
+                        item {
+                            ActionsRowComponent(navController, mainViewModel)
+                        }
+                        itemsIndexed(mainViewModel.contentResp.value!!.data as MutableList<Category>) { index, item ->
+                            DishesColumnComponent(navController, item, index)
+                        }
+                    })
                     CategoriesRowComponent(mainViewModel)
                 }
 
