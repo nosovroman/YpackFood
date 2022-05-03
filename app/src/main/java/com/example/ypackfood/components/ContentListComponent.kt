@@ -20,7 +20,7 @@ import kotlin.math.roundToInt
 
 @Composable
 fun ContentListComponent(navController: NavHostController, mvvmViewModel: MainViewModel) {
-    Log.d("getMainContent ", mvvmViewModel.contentResp.toString())
+    Log.d("getMainContent ", mvvmViewModel.dishesState.toString())
     val offset = with(LocalDensity.current) { -mvvmViewModel.toolbarOffsetState.roundToInt().toDp() }
     LazyColumn (
         state = mvvmViewModel.listContentState,
@@ -28,8 +28,8 @@ fun ContentListComponent(navController: NavHostController, mvvmViewModel: MainVi
     ) {
         item {
             LazyRow {
-                itemsIndexed(mvvmViewModel.contentResp2.value!!.data as MutableList<ActionsItem>) { index, item ->
-                    val count = mvvmViewModel.contentResp2.value!!.data!!.size
+                itemsIndexed(mvvmViewModel.actionsState.value!!.data as MutableList<ActionsItem>) { index, item ->
+                    val count = mvvmViewModel.actionsState.value!!.data!!.size
                     Row(
                         content = {
                             PictureOneComponent(
@@ -45,7 +45,7 @@ fun ContentListComponent(navController: NavHostController, mvvmViewModel: MainVi
                 }
             }
         }
-        itemsIndexed(mvvmViewModel.contentResp.value!!.data as MutableList<Category>) { index, item ->
+        itemsIndexed(mvvmViewModel.dishesState.value!!.data as MutableList<Category>) { index, item ->
             for (content in item.dishes) {
                 with (content) {
                     ContentCardComponent(

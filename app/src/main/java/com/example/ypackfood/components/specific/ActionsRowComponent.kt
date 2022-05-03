@@ -1,4 +1,4 @@
-package com.example.ypackfood.components
+package com.example.ypackfood.components.specific
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
@@ -10,15 +10,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.example.ypackfood.components.PictureOneComponent
 import com.example.ypackfood.models.actionsContent.ActionsItem
 import com.example.ypackfood.sealedClasses.Screens
-import com.example.ypackfood.viewModels.MainViewModel
 
 @Composable
-fun ActionsRowComponent(navController: NavHostController, mainViewModel: MainViewModel) {
+fun ActionsRowComponent(navController: NavHostController, actionList: MutableList<ActionsItem>) {
     LazyRow {
-        itemsIndexed(mainViewModel.contentResp2.value!!.data as MutableList<ActionsItem>) { index, item ->
-            val count = mainViewModel.contentResp2.value!!.data!!.size
+        itemsIndexed(actionList) { index, item ->
+            val count = actionList.size
             Row(
                 content = {
                     PictureOneComponent(

@@ -8,13 +8,16 @@ import androidx.compose.ui.Modifier
 import com.example.ypackfood.viewModels.MainViewModel
 
 @Composable
-fun ShowErrorComponent(onButtonClick: () -> Unit) {
+fun ShowErrorComponent(
+    message: String? = null,
+    onButtonClick: () -> Unit
+) {
     Column(
         modifier = Modifier.fillMaxHeight(),
         verticalArrangement = Arrangement.Bottom
     ) {
         SnackBarComponent(
-            message = "Ошибка",
+            message = if (message.isNullOrBlank()) "Ошибка загрузки данных" else message,
             buttonText = "Обновить",
             onButtonClick = onButtonClick
         )

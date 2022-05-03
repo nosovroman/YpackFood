@@ -1,7 +1,6 @@
 package com.example.ypackfood.activities
 
 import android.util.Log
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.*
 import androidx.compose.material.*
@@ -13,16 +12,14 @@ import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.example.ypackfood.common.Constants
 import com.example.ypackfood.common.Constants.TOOLBAR_HEIGHT
 import com.example.ypackfood.components.*
 import com.example.ypackfood.components.inOrder.ContentListComponent2
+import com.example.ypackfood.components.specific.ActionsRowComponent
 import com.example.ypackfood.components.specific.DishesColumnComponent
 import com.example.ypackfood.models.actionsContent.ActionsItem
 import com.example.ypackfood.models.mainContent.Category
-import com.example.ypackfood.sealedClasses.Screens
 import com.example.ypackfood.viewModels.MainViewModel
 
 
@@ -44,8 +41,8 @@ fun MainScreen(navController: NavHostController, mainViewModel: MainViewModel) {
         }
     }
 
-    val requestState = mainViewModel.contentResp.observeAsState().value
-    val requestState2 = mainViewModel.contentResp2.observeAsState().value
+    val dishesState = mainViewModel.dishesState.observeAsState().value
+    val actionsState = mainViewModel.actionsState.observeAsState().value
 
     Scaffold(
         scaffoldState = mainViewModel.scaffoldState,
@@ -56,26 +53,30 @@ fun MainScreen(navController: NavHostController, mainViewModel: MainViewModel) {
                     .fillMaxSize()
                     .nestedScroll(nestedScrollConnection)
             ) {
-                if (!requestState?.data.isNullOrEmpty()
-                    //&& !mainViewModel.contentResp2.value?.data.isNullOrEmpty()
-                ) {
-                    Log.d("networkAnswer", "Display data")
-                    //ContentListComponent(navController, mainViewModel)
-                    ContentListComponent2(navController, mainViewModel, itemsOfList = {
+                ContentListComponent2(
+                    navController = navController,
+                    mainViewModel = mainViewModel,
+                    itemsOfList = {
                         item {
-                            ActionsRowComponent(navController, mainViewModel)
+                            RequestStateComponent(
+                                requestState = actionsState,
+                                bySuccess = { ActionsRowComponent(navController, mainViewModel.actionsState.value!!.data as MutableList<ActionsItem>) },
+                                byError = { ShowErrorComponent(message = actionsState?.message, onButtonClick = { mainViewModel.getActionsContent() }) }
+                            )
                         }
-                        itemsIndexed(mainViewModel.contentResp.value!!.data as MutableList<Category>) { index, item ->
+
+                        itemsIndexed(mainViewModel.dishesState.value!!.data as MutableList<Category>) { index, item ->
                             DishesColumnComponent(navController, item, index)
                         }
-                    })
-                    CategoriesRowComponent(mainViewModel)
-                }
+                    }
+                )
+                CategoriesRowComponent(mainViewModel)
+
 
                 RequestStateComponent(
-                    requestState = requestState,
+                    requestState = dishesState,
                     byError = {
-                        ShowErrorComponent(onButtonClick = { mainViewModel.getMainContent() })
+                        ShowErrorComponent(message = dishesState?.message, onButtonClick = { mainViewModel.getMainContent() })
                     }
                 )
 

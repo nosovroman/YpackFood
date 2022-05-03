@@ -22,13 +22,13 @@ fun RequestStateComponent(
     },
     bySuccess: @Composable () -> Unit = {},
     byEmpty: @Composable () -> Unit = {},
-    byError: @Composable () -> Unit = {}
+    byError: @Composable (message: String?) -> Unit = {}
 ) {
     when (requestState) {
         is NetworkResult.Loading<*> -> byLoading()
         is NetworkResult.Success<*> -> bySuccess()
         is NetworkResult.Empty<*> -> byEmpty()
-        is NetworkResult.Error<*> -> byError()
+        is NetworkResult.Error<*> -> byError(requestState.message)
         else -> { Log.d("elseBranch", "else branch") }
     }
 }

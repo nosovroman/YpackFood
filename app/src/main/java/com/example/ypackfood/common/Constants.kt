@@ -16,6 +16,8 @@ object Constants {
         Font(R.font.beauty_font_one)
     )
 
+    const val ERROR_INTERNET = "Проблема с интернет-подключением"
+
     const val TIME_ORDER_MESSAGE = "Заказать можно с $START_DELIVERY:00 до $END_DELIVERY:00, минимальное время ожидания 45 минут (установится автоматически при попытке заказа за меньший интервал времени)."
 
     const val NAV_KEY__CONTENT_ID = "contentId"

@@ -55,9 +55,7 @@ fun DrawerHeader() {
         contentAlignment = Alignment.Center,
         modifier = Modifier
             .fillMaxWidth()
-            .height(100.dp)
-        //    .border(1.dp, color = MaterialTheme.colors.onBackground)
-        ,
+            .height(100.dp),
         content = {
             Text(
                 text = Constants.APP_NAME_RUS,

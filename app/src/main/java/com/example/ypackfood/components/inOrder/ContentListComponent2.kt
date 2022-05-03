@@ -18,7 +18,7 @@ fun ContentListComponent2(
     mainViewModel: MainViewModel,
     itemsOfList: LazyListScope. () -> Unit
 ) {
-    Log.d("getMainContent ", mainViewModel.contentResp.toString())
+    Log.d("getMainContent ", mainViewModel.dishesState.toString())
     val offset = with(LocalDensity.current) { -mainViewModel.toolbarOffsetState.roundToInt().toDp() }
     LazyColumn (
         state = mainViewModel.listContentState,

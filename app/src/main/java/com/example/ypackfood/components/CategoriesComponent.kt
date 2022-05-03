@@ -39,7 +39,7 @@ fun CategoriesRowComponent(mvvmViewModel: MainViewModel) {
             .offset { IntOffset(x = 0, y = mvvmViewModel.toolbarOffsetState.roundToInt()) },
         contentPadding = PaddingValues(top = Constants.TOOLBAR_HEIGHT),
         content = {
-            itemsIndexed(listOf("Акции") + mvvmViewModel.contentResp.value!!.data!!.map { it.categoryType }) { index, item ->
+            itemsIndexed(listOf("Акции") + mvvmViewModel.dishesState.value!!.data!!.map { it.categoryType }) { index, item ->
                 val name = when (item) {
                     "BURGERS" -> "Бургеры"
                     "PIZZA" -> "Пицца"

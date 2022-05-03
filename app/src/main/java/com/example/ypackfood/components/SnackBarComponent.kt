@@ -19,7 +19,7 @@ import androidx.compose.ui.unit.dp
 fun SnackBarComponent(message: String, buttonText: String, onButtonClick: () -> Unit) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween,
+        //horizontalArrangement = Arrangement.SpaceBetween,
         modifier = Modifier
             .fillMaxWidth()
             .border(
