@@ -37,7 +37,7 @@ class NavActivity : ComponentActivity() {
         )
 
         setContent {
-            YpackFoodTheme {
+            YpackFoodTheme(darkTheme = false) {
                 val navController = rememberNavController()
 
                 NavHost(

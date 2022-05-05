@@ -26,7 +26,7 @@ interface ApiService {
     @GET("specificDishesTestFront")
     suspend fun getContentByListId(@Query("ids") contentIdList: List<Int>): Response<MutableList<Dish>>
 
-    @POST("/createOrder")
+    @POST("createOrder")
     suspend fun createOrder(@Body order: OrderMin): Response<Order>
 }
 //@GET("hello")

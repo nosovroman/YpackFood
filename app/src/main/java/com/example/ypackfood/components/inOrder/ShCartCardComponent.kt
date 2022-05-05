@@ -62,6 +62,8 @@ fun composeCartEntity(cartDish: CartDish, countIncrement: Int = 0): CartEntity {
     return with(cartDish) {
         CartEntity(
             dishId = dishId,
+            portionId = portionId,
+            dishPriceId = priceId,
             dishPrice = price,
             dishCount = count + countIncrement,
             shoppingCartId = shoppingCartId

@@ -60,12 +60,12 @@ fun MainScreen(navController: NavHostController, mainViewModel: MainViewModel) {
                         item {
                             RequestStateComponent(
                                 requestState = actionsState,
-                                bySuccess = { ActionsRowComponent(navController, mainViewModel.actionsState.value!!.data as MutableList<ActionsItem>) },
+                                bySuccess = { ActionsRowComponent(navController, actionsState!!.data as MutableList<ActionsItem>) },
                                 byError = { ShowErrorComponent(message = actionsState?.message, onButtonClick = { mainViewModel.getActionsContent() }) }
                             )
                         }
 
-                        itemsIndexed(mainViewModel.dishesState.value!!.data as MutableList<Category>) { index, item ->
+                        itemsIndexed(dishesState?.data as MutableList<Category>) { index, item ->
                             DishesColumnComponent(navController, item, index)
                         }
                     }

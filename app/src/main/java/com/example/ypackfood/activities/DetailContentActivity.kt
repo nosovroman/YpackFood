@@ -27,7 +27,7 @@ fun DetailContentScreen(navController: NavHostController, detailViewModel: Detai
         detailViewModel.initCountWish()
     }
 
-    val requestState = detailViewModel.contentResp.observeAsState().value
+    val requestState = detailViewModel.detailDishState.observeAsState().value
     val favorites = roomViewModel.favorites.observeAsState(listOf()).value
     val cartDishes = roomViewModel.shopList.observeAsState(listOf()).value
 
@@ -70,7 +70,11 @@ fun DetailContentScreen(navController: NavHostController, detailViewModel: Detai
         },
         floatingActionButton = {
             if (!requestState?.data?.name.isNullOrEmpty()) {
-                ShoppingRowComponent(navController, requestState!!.data!!.basePortion.priceNow.price, detailViewModel, roomViewModel)
+                ShoppingRowComponent(
+                    navController,
+                    detailViewModel,
+                    roomViewModel
+                )
             }
         },
         floatingActionButtonPosition = FabPosition.Center,
@@ -97,39 +101,45 @@ fun DetailContentScreen(navController: NavHostController, detailViewModel: Detai
 }
 
 @Composable
-fun ShoppingRowComponent(navController: NavHostController, price: Int, detailViewModel: DetailViewModel, roomViewModel: RoomViewModel) {
+fun ShoppingRowComponent(navController: NavHostController, detailViewModel: DetailViewModel, roomViewModel: RoomViewModel) {
     Row(
         //horizontalAlignment = Alignment.CenterHorizontally
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        CounterComponent(
-            count = detailViewModel.countWishDishes,
-            onIncClick = { detailViewModel.incCountWish() },
-            onDecClick = { detailViewModel.decCountWish() }
-        )
-        Spacer(modifier = Modifier.width(10.dp))
-        Button(
-            onClick = {
-                roomViewModel.addToCart(
-                    detailViewModel.buildDishInfo(
-                        id = detailViewModel.contentResp.value!!.data!!.id,
-                        price = price,// * detailViewModel.countWishDishes,
-                        count = detailViewModel.countWishDishes
+        verticalAlignment = Alignment.CenterVertically,
+        content = {
+            val detailDishState = detailViewModel.detailDishState.value!!.data!!
+            CounterComponent(
+                count = detailViewModel.countWishDishes,
+                onIncClick = { detailViewModel.incCountWish() },
+                onDecClick = { detailViewModel.decCountWish() }
+            )
+            Spacer(modifier = Modifier.width(10.dp))
+            Button(
+                onClick = {
+                    roomViewModel.addToCart(
+                        detailViewModel.buildDishInfo(
+                            id = detailDishState.id,
+                            portionId = detailDishState.basePortion.id,
+                            priceId = detailDishState.basePortion.priceNow.id,
+                            price = detailDishState.basePortion.priceNow.price,
+                            count = detailViewModel.countWishDishes
+                        )
                     )
-                )
-                Log.d("Cart", "Корзина")
-                navController.popBackStack()
-            },
-            content = { Text("В корзину за ${price * detailViewModel.countWishDishes} ₽") },
-            shape = RoundedCornerShape(20.dp)
-        )
-    }
+                    Log.d("Cart", "Корзина")
+                    navController.popBackStack()
+                },
+                content = {
+                    Text("В корзину за ${detailDishState.basePortion.priceNow.price * detailViewModel.countWishDishes} ₽")
+                },
+                shape = RoundedCornerShape(20.dp)
+            )
+        }
+    )
 }
 
 
 @Composable
 fun DetailDescription(detailViewModel: DetailViewModel, modifier: Modifier = Modifier) {
-    val response = detailViewModel.contentResp.value!!.data!!
+    val response = detailViewModel.detailDishState.value!!.data!!
     val isCombo = response.category == "COMBO"
 
     Column(modifier = modifier) {

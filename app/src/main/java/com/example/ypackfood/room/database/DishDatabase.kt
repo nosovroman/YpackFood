@@ -10,7 +10,7 @@ import com.example.ypackfood.room.dao.CartDao
 import com.example.ypackfood.room.entities.CartEntity
 import com.example.ypackfood.room.entities.FavoritesEntity
 
-@Database(entities = [FavoritesEntity::class, CartEntity::class], version = 2)
+@Database(entities = [FavoritesEntity::class, CartEntity::class], version = 4)
 abstract class DishDatabase : RoomDatabase() {
     abstract fun favoritesDao(): FavoritesDao
     abstract fun shoppingCartDao(): CartDao

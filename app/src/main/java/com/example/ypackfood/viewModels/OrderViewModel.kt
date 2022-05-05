@@ -16,7 +16,6 @@ import com.example.ypackfood.enumClasses.getCityNames
 import com.example.ypackfood.enumClasses.getPaymentOptions
 import com.example.ypackfood.extensions.toTimeString
 import com.example.ypackfood.models.commonData.CartDish
-import com.example.ypackfood.models.detailContent.DetailContent
 import com.example.ypackfood.models.temp.*
 import com.example.ypackfood.models.temp.OrderFull.Order
 import com.example.ypackfood.repository.Repository
@@ -59,28 +58,36 @@ class OrderViewModel : ViewModel() {
         }
     }
 
-    fun makeOrder(dishesMin: List<CartDish>, totalCost: Int) {
-        if (checkIsPICKUP()) {
-            onTimeSuccess(dishesMin, totalCost)
-        }
-        else {
-            if (checkAddressIsNotEmpty()) {
-                onTimeSuccess(dishesMin, totalCost)
-            } else {
+    fun makeOrder(dishMinList: List<CartDish>, addressMerged: String, totalCost: Int) {
+//        if (checkIsPICKUP()) {
+//            onTimeSuccess(dishesMin, addressMerged, totalCost)
+//        }
+//        else {
+            if (checkIsPICKUP() || checkAddressIsNotEmpty()) {
+                if (checkIsFaster() || checkIsForTime() && checkTimeIsNotEmpty()) {
+                    validateTime()
+                    emptyFieldMsgState = ""
+                    createOrder(composeOrder(dishMinList, addressMerged, totalCost))
+                } else {
+                    emptyFieldMsgState = "Установите время доставки"
+                    setEmptyDataDialog(true)
+                }
+                //onTimeSuccess(dishesMin, addressMerged, totalCost)
+            } else if (!checkAddressIsNotEmpty()) {
                 emptyFieldMsgState = "Установите адрес доставки"
                 setEmptyDataDialog(true)
             }
-        }
+        //}
     }
 
-    fun composeOrder(cartDishes: List<CartDish>, totalCost: Int): OrderMin {
-        val dishesMin = cartDishes.map { DishMin(
+    fun composeOrder(dishMinList: List<CartDish>, addressMerged: String, totalCost: Int): OrderMin {
+        val dishesMin = dishMinList.map { DishMin(
             id = it.dishId,
-            basePortion = BasePortionMin(id = 0, priceNow = PriceNowMin(0))
+            basePortion = BasePortionMin(id = it.portionId, priceNow = PriceNowMin(it.priceId))
         ) }
 
         return OrderMin(
-            address = AddressMin(0),
+            address = AddressMin(address = addressMerged), // строка или id
             client = ClientMin(13),
             dishes = dishesMin,
             totalPrice = totalCost
@@ -93,11 +100,11 @@ class OrderViewModel : ViewModel() {
     fun checkIsForTime(): Boolean = timeState.value is TimeOptions.ForTime
     fun checkTimeIsNotEmpty(): Boolean = hourState != "00"
     fun checkAddressIsNotEmpty(): Boolean = addressState.isNotBlank()
-    fun onTimeSuccess(dishesMin: List<CartDish>, totalCost: Int) {
+    fun onTimeSuccess(dishesMin: List<CartDish>, addressMerged: String, totalCost: Int) {
         if (checkIsFaster() || checkIsForTime() && checkTimeIsNotEmpty()) {
             validateTime()
             emptyFieldMsgState = ""
-            createOrder(composeOrder(dishesMin, totalCost))
+            createOrder(composeOrder(dishesMin, addressMerged, totalCost))
         } else {
             emptyFieldMsgState = "Установите время доставки"
             setEmptyDataDialog(true)
@@ -157,6 +164,12 @@ class OrderViewModel : ViewModel() {
         expandedMenuPayState = isExpanded
     }
 
+        // ADDRESS FULL
+    var fullAddressState by mutableStateOf(getCityNames()[0])
+        private set
+    fun setFullAddress(newState: String) {
+        fullAddressState = newState
+    }
         // ADDRESS REAL
     var cityState by mutableStateOf(getCityNames()[0])
         private set

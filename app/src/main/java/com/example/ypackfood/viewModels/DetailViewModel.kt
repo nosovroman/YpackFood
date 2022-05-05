@@ -25,7 +25,7 @@ class DetailViewModel : ViewModel() {
         Log.d("initDetail", "init")
     }
 
-    var contentResp: MutableLiveData<NetworkResult<DetailContent>> = MutableLiveData()
+    var detailDishState: MutableLiveData<NetworkResult<DetailContent>> = MutableLiveData()
 
 
     var countWishDishes by mutableStateOf(1)
@@ -45,25 +45,27 @@ class DetailViewModel : ViewModel() {
         Log.d("requestDetail", "getDetailContent")
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                contentResp.postValue(NetworkResult.Loading())
+                detailDishState.postValue(NetworkResult.Loading())
                 val response = mainRepository.getDetailContent(contentId)
                 if (response.isSuccessful) {
-                    contentResp.postValue(NetworkResult.Success(response.body()!!))
+                    detailDishState.postValue(NetworkResult.Success(response.body()!!))
                 }
                 else {
                     Log.d("getDetailContent not ok ", response.message().toString())
-                    contentResp.postValue(NetworkResult.Error(response.message()))
+                    detailDishState.postValue(NetworkResult.Error(response.message()))
                 }
             } catch (e: Exception) {
                 Log.d("getDetailContent error ", e.toString() + "|||message: " + e.message)
-                contentResp.postValue(NetworkResult.Error(e.message))
+                detailDishState.postValue(NetworkResult.Error(e.message))
             }
         }
     }
 
-    fun buildDishInfo(id: Int, price: Int, count: Int, addons: String? = null): CartEntity {
+    fun buildDishInfo(id: Int, portionId: Int, priceId: Int, price: Int, count: Int, addons: String? = null): CartEntity {
         return CartEntity(
             dishId = id,
+            portionId = portionId,
+            dishPriceId = priceId,
             dishPrice = price,
             dishCount = count,
             dishAddons = addons

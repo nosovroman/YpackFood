@@ -8,10 +8,8 @@ import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.core.text.isDigitsOnly
 import androidx.navigation.NavHostController
 import com.example.ypackfood.common.Constants
@@ -196,8 +194,9 @@ fun OrderContent(orderViewModel: OrderViewModel, cartViewModel: ShoppingCartView
             }
             item {
                 val totalCostResult = if (orderViewModel.checkIsDELIVERY()) totalCost + DELIVERY_COST else totalCost
+                val addressMerged = "${orderViewModel.cityState}, ${orderViewModel.addressState}"
                 Button(
-                    onClick = { orderViewModel.makeOrder(dishesMin = cartViewModel.resultDishState, totalCost = totalCostResult) },
+                    onClick = { orderViewModel.makeOrder(dishMinList = cartViewModel.resultDishState, addressMerged = addressMerged, totalCost = totalCostResult) },
                     content = {
                         if (totalCostResult > 0) Text(text = "Оформить на $totalCostResult ₽", color = MaterialTheme.colors.onPrimary)
                     }

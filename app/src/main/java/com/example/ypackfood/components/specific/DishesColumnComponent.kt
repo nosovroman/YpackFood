@@ -24,9 +24,7 @@ fun DishesColumnComponent(navController: NavHostController, category: Category, 
                 onCardClick = { navController.navigate(route = Screens.DetailContent.createRoute(id)) }
             )
         }
-    }
 
-    if (index < Constants.mergedList.size - 1) {
         Spacer(modifier = Modifier.height(5.dp))
     }
 }

@@ -7,6 +7,8 @@ import androidx.room.PrimaryKey
 @Entity
 data class CartEntity(
     @ColumnInfo(name = "dish_id") val dishId: Int,
+    @ColumnInfo(name = "portion_id") val portionId: Int,
+    @ColumnInfo(name = "dish_price_id") val dishPriceId: Int,
     @ColumnInfo(name = "dish_price") val dishPrice: Int,
     @ColumnInfo(name = "dish_count") val dishCount: Int,
     @ColumnInfo(name = "dish_addons") val dishAddons: String? = null,
