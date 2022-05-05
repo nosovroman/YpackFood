@@ -10,6 +10,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.ypackfood.common.Constants.ERROR_INTERNET
+import com.example.ypackfood.common.RequestTemplate
+import com.example.ypackfood.common.RequestTemplate.mainRepository
 import com.example.ypackfood.models.actionsContent.ActionsItem
 import com.example.ypackfood.models.mainContent.Category
 import com.example.ypackfood.repository.Repository
@@ -20,14 +22,6 @@ import kotlinx.coroutines.launch
 import java.lang.Exception
 
 class MainViewModel : ViewModel() {
-    private var mainRepository: Repository
-
-    init {
-        val x = RetrofitBuilder.apiService
-        mainRepository = Repository(x)
-    }
-
-
     lateinit var listContentState: LazyListState
         private set
     fun listContentStateInit(newListState: LazyListState) {

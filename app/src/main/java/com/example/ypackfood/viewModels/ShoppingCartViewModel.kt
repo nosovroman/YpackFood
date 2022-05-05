@@ -4,12 +4,11 @@ package com.example.ypackfood.viewModels
 import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.ypackfood.common.Constants
+import com.example.ypackfood.common.RequestTemplate.mainRepository
 import com.example.ypackfood.models.commonData.CartDish
 import com.example.ypackfood.models.commonData.Dish
 import com.example.ypackfood.repository.Repository
@@ -21,11 +20,10 @@ import kotlinx.coroutines.launch
 import java.lang.Exception
 
 class ShoppingCartViewModel : ViewModel() {
-    private var mainRepository: Repository
 
     var totalPriceState by mutableStateOf(0)
         private set
-    fun setTotalPrice(newState: Int) {
+    private fun setTotalPrice(newState: Int) {
         totalPriceState = newState
     }
 
@@ -35,30 +33,15 @@ class ShoppingCartViewModel : ViewModel() {
         dishesRoomState = newList
     }
 
-    var floatingState by mutableStateOf(true)
-        private set
-    fun setFloating(newState: Boolean) {
-        floatingState = newState
-    }
-
-    init {
-        val x = RetrofitBuilder.apiService
-        mainRepository = Repository(x)
-        Log.d("initCart", "init")
-    }
 
     var resultDishState: List<CartDish> = listOf()
         private set
-    fun setResultDish(newList: List<CartDish>) {
+    private fun setResultDish(newList: List<CartDish>) {
         resultDishState = newList
     }
 
-    fun composeDishInfo(dishList: List<Dish>, shopList: List<CartEntity>)//: List<CartDish>
-    {
+    fun composeDishInfo(dishList: List<Dish>, shopList: List<CartEntity>) {
         val dishMap = dishList.associateBy { it.id }
-
-//        Log.d("fe_dishMap shopList", shopList.map { it.dishId }.toString())
-//        Log.d("fe_dishMap dishList", dishList.map{ it.id }.toString())
 
         val shopListFiltered = shopList.filter { it.dishId in dishMap }
         val resultDishList = shopListFiltered.map {
@@ -79,8 +62,7 @@ class ShoppingCartViewModel : ViewModel() {
             )
         }
 
-        resultDishState = resultDishList
-        //return resultDishList
+        setResultDish(resultDishList)
     }
 
     var contentResp: MutableLiveData<NetworkResult<MutableList<Dish>>> = MutableLiveData()
@@ -88,15 +70,6 @@ class ShoppingCartViewModel : ViewModel() {
     fun initContentResp() {
         contentResp.postValue(NetworkResult.Empty())
     }
-
-//    fun computeTotalPrice(): Int {
-//        var totalPrice = 0
-//        dishesRoomState.forEach{
-//            totalPrice += it.dishPrice * it.dishCount
-//        }
-//
-//        return totalPrice
-//    }
 
     fun computeTotalPrice() {
         var totalPrice = 0

@@ -19,8 +19,6 @@ class RoomViewModel(application: Application) : AndroidViewModel(application) {
     var shopList: LiveData<List<CartEntity>>
     private var repositoryRoom: RepositoryRoom
 
-    //var contentResp: MutableLiveData<NetworkResult<ImageVector>> = MutableLiveData()
-
     var currentIcon by mutableStateOf(Components.defaultIcon)
         private set
 
@@ -56,14 +54,14 @@ class RoomViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     // ------------------ Favorites
-    fun addFavorite(favoriteId: Int) {
+    private fun addFavorite(favoriteId: Int) {
         viewModelScope.launch (Dispatchers.IO) {
             repositoryRoom.addFavorite(favoriteId)
         }
         Log.d("roomRequest", "adding $favoriteId")
     }
 
-    fun deleteFavorite(favoriteId: Int) {
+    private fun deleteFavorite(favoriteId: Int) {
         viewModelScope.launch (Dispatchers.IO) {
             repositoryRoom.deleteFavorite(favoriteId)
         }

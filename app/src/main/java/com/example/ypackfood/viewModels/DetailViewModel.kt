@@ -7,6 +7,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.ypackfood.common.RequestTemplate.mainRepository
 import com.example.ypackfood.models.detailContent.DetailContent
 import com.example.ypackfood.repository.Repository
 import com.example.ypackfood.retrofit.RetrofitBuilder
@@ -17,17 +18,6 @@ import kotlinx.coroutines.launch
 import java.lang.Exception
 
 class DetailViewModel : ViewModel() {
-    private var mainRepository: Repository
-
-    init {
-        val x = RetrofitBuilder.apiService
-        mainRepository = Repository(x)
-        Log.d("initDetail", "init")
-    }
-
-    var detailDishState: MutableLiveData<NetworkResult<DetailContent>> = MutableLiveData()
-
-
     var countWishDishes by mutableStateOf(1)
         private set
     fun initCountWish() {
@@ -40,6 +30,8 @@ class DetailViewModel : ViewModel() {
         countWishDishes--
     }
 
+
+    var detailDishState: MutableLiveData<NetworkResult<DetailContent>> = MutableLiveData()
 
     fun getDetailContent(contentId: Int) {
         Log.d("requestDetail", "getDetailContent")

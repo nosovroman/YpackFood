@@ -7,6 +7,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.ypackfood.common.RequestTemplate.mainRepository
 import com.example.ypackfood.models.detailAction.DetailAction
 import com.example.ypackfood.repository.Repository
 import com.example.ypackfood.retrofit.RetrofitBuilder
@@ -16,14 +17,6 @@ import kotlinx.coroutines.launch
 import java.lang.Exception
 
 class OfferViewModel : ViewModel() {
-    private var mainRepository: Repository
-
-    init {
-        val x = RetrofitBuilder.apiService
-        mainRepository = Repository(x)
-        Log.d("initOffer", "init")
-    }
-
     var totalOldPriceState by mutableStateOf(0)
         private set
     fun setTotalOldPrice(totalOldPrice: Int) {

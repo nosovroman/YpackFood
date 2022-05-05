@@ -10,6 +10,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.ypackfood.common.Constants.END_DELIVERY
 import com.example.ypackfood.common.Constants.START_DELIVERY
+import com.example.ypackfood.common.RequestTemplate.mainRepository
 import com.example.ypackfood.sealedClasses.DeliveryOptions
 import com.example.ypackfood.sealedClasses.TabRowSwitchable
 import com.example.ypackfood.enumClasses.getCityNames
@@ -28,15 +29,8 @@ import java.lang.Exception
 import java.util.*
 
 class OrderViewModel : ViewModel() {
-    private var mainRepository: Repository
-
-    init {
-        val x = RetrofitBuilder.apiService
-        mainRepository = Repository(x)
-        Log.d("initOrder", "init")
-    }
-
     var successPostResp: MutableLiveData<NetworkResult<Order>> = MutableLiveData()
+
     fun createOrder(order: OrderMin) {
         Log.d("createOrder param", "$order")
         viewModelScope.launch(Dispatchers.IO) {
@@ -100,16 +94,6 @@ class OrderViewModel : ViewModel() {
     fun checkIsForTime(): Boolean = timeState.value is TimeOptions.ForTime
     fun checkTimeIsNotEmpty(): Boolean = hourState != "00"
     fun checkAddressIsNotEmpty(): Boolean = addressState.isNotBlank()
-    fun onTimeSuccess(dishesMin: List<CartDish>, addressMerged: String, totalCost: Int) {
-        if (checkIsFaster() || checkIsForTime() && checkTimeIsNotEmpty()) {
-            validateTime()
-            emptyFieldMsgState = ""
-            createOrder(composeOrder(dishesMin, addressMerged, totalCost))
-        } else {
-            emptyFieldMsgState = "Установите время доставки"
-            setEmptyDataDialog(true)
-        }
-    }
 
         // EMPTY FIELDS ALERT
     var emptyFieldMsgState by mutableStateOf("")
