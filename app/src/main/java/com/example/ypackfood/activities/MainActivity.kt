@@ -1,6 +1,6 @@
 package com.example.ypackfood.activities
 
-import android.util.Log
+
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.*
 import androidx.compose.material.*

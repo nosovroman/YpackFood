@@ -1,10 +1,11 @@
 package com.example.ypackfood.retrofit
 
-import com.example.ypackfood.models.actionsContent.Actions
+import com.example.ypackfood.common.Constants.HEADER_AUTH
+import com.example.ypackfood.models.actionsContent.ActionsItem
 import com.example.ypackfood.models.commonData.Dish
 import com.example.ypackfood.models.detailAction.DetailAction
 import com.example.ypackfood.models.detailContent.DetailContent
-import com.example.ypackfood.models.mainContent.Categories
+import com.example.ypackfood.models.mainContent.Category
 import com.example.ypackfood.models.temp.OrderFull.Order
 import com.example.ypackfood.models.temp.OrderMin
 import retrofit2.Response
@@ -12,22 +13,34 @@ import retrofit2.http.*
 
 interface ApiService {
     @GET("dishes")
-    suspend fun getMainContent(): Response<Categories>
+    suspend fun getMainContent(@Header(HEADER_AUTH) token: String): Response<MutableList<Category>>
 
     @GET("actions")
-    suspend fun getActions(): Response<Actions>
+    suspend fun getActions(@Header(HEADER_AUTH) token: String): Response<MutableList<ActionsItem>>
 
     @GET("dish/{dishId}")
-    suspend fun getDetailContent(@Path("dishId") dishId: Int): Response<DetailContent>
+    suspend fun getDetailContent(
+        @Header(HEADER_AUTH) token: String,
+        @Path("dishId") dishId: Int
+    ): Response<DetailContent>
 
     @GET("action/{actionId}")
-    suspend fun getDetailAction(@Path("actionId") actionId: Int): Response<DetailAction>
+    suspend fun getDetailAction(
+        @Header(HEADER_AUTH) token: String,
+        @Path("actionId") actionId: Int
+    ): Response<DetailAction>
 
-    @GET("specificDishesTestFront")
-    suspend fun getContentByListId(@Query("ids") contentIdList: List<Int>): Response<MutableList<Dish>>
+    @GET("specificDishes")
+    suspend fun getContentByListId(
+        @Header(HEADER_AUTH) token: String,
+        @Query("ids") contentIdList: List<Int>
+    ): Response<MutableList<Dish>>
 
     @POST("createOrder")
-    suspend fun createOrder(@Body order: OrderMin): Response<Order>
+    suspend fun createOrder(
+        @Header(HEADER_AUTH) token: String,
+        @Body order: OrderMin
+    ): Response<Order>
 }
 //@GET("hello")
 //suspend fun getHello(): Response<String>

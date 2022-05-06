@@ -8,13 +8,15 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.ypackfood.common.RequestTemplate.TOKEN
+import com.example.ypackfood.common.RequestTemplate.getErrorFromJson
 import com.example.ypackfood.common.RequestTemplate.mainRepository
 import com.example.ypackfood.models.commonData.CartDish
 import com.example.ypackfood.models.commonData.Dish
-import com.example.ypackfood.repository.Repository
-import com.example.ypackfood.retrofit.RetrofitBuilder
+import com.example.ypackfood.models.commonData.ErrorResponse
 import com.example.ypackfood.room.entities.CartEntity
 import com.example.ypackfood.sealedClasses.NetworkResult
+
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.lang.Exception
@@ -81,25 +83,32 @@ class ShoppingCartViewModel : ViewModel() {
     }
 
 
-    fun getContentByListId(contentIdList: List<Int>?) {
+    fun getContentByListId(contentIdList: List<Int>?, roomViewModel: RoomViewModel) {
         contentIdList?.let {
             viewModelScope.launch(Dispatchers.IO) {
                 try {
                     Log.d("fe_dishMap getContentByListId", "loading...")
                     contentResp.postValue(NetworkResult.Loading())
-                    val response = mainRepository.getContentByListId(contentIdList)
-                    if (response.isSuccessful) {
+                    val response = mainRepository.getContentByListId(TOKEN, contentIdList)
+                    when(response.code()) {
+                        in 200..299 -> {
+                            contentResp.postValue(NetworkResult.Success(response.body()!!))
+                            Log.d("getContentByListId ${response.code()}", response.raw().toString())
+                        }
+                        400 -> {
+                            val jsonString = response.errorBody()!!.string()
 
-                        Log.d("fe_dishMap getContentByListId", "getting...")
 
-                        contentResp.postValue(NetworkResult.Success(response.body()!!))
-                        Log.d("getContentByListId", response.body()!!.toString())
-
-                        Log.d("getContentByListId ${response.code()}", response.raw().toString())
-                    }
-                    else {
-                        Log.d("getContentByListId not ok ${response.code()}", response.raw().toString())
-                        contentResp.postValue(NetworkResult.Error(response.message()))
+                            val res = getErrorFromJson(jsonString)
+                            Log.d("getContentByListId x = ", res.ids.toString())
+                            roomViewModel.setDeletingDishList(res.ids!!)
+                            contentResp.postValue(NetworkResult.Error("Некоторые блюда были исключены из меню ресторана"))
+                        }
+                        else -> {
+                            Log.d("getContentByListId not ok ${response.code()}", response.raw().toString())
+                            Log.d("getContentByListId", response.errorBody()?.string().toString())
+                            contentResp.postValue(NetworkResult.Error(response.message()))
+                        }
                     }
                 } catch (e: Exception) {
                     Log.d("getContentByListId error ", e.toString())

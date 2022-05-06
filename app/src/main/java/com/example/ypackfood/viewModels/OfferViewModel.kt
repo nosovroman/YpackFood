@@ -7,6 +7,8 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.ypackfood.common.RequestTemplate
+import com.example.ypackfood.common.RequestTemplate.TOKEN
 import com.example.ypackfood.common.RequestTemplate.mainRepository
 import com.example.ypackfood.models.detailAction.DetailAction
 import com.example.ypackfood.repository.Repository
@@ -37,12 +39,12 @@ class OfferViewModel : ViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 contentResp.postValue(NetworkResult.Loading())
-                val response = mainRepository.getDetailAction(actionId)
+                val response = mainRepository.getDetailAction(TOKEN, actionId)
                 if (response.isSuccessful) {
                     contentResp.postValue(NetworkResult.Success(response.body()!!))
                 }
                 else {
-                    Log.d("getOfferContent not ok ", response.message().toString())
+                    Log.d("getOfferContent not ok ", response.errorBody().toString())
                     contentResp.postValue(NetworkResult.Error(response.message()))
                 }
             } catch (e: Exception) {

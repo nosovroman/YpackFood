@@ -7,10 +7,9 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.ypackfood.common.RequestTemplate.TOKEN
 import com.example.ypackfood.common.RequestTemplate.mainRepository
 import com.example.ypackfood.models.detailContent.DetailContent
-import com.example.ypackfood.repository.Repository
-import com.example.ypackfood.retrofit.RetrofitBuilder
 import com.example.ypackfood.room.entities.CartEntity
 import com.example.ypackfood.sealedClasses.NetworkResult
 import kotlinx.coroutines.Dispatchers
@@ -38,12 +37,13 @@ class DetailViewModel : ViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 detailDishState.postValue(NetworkResult.Loading())
-                val response = mainRepository.getDetailContent(contentId)
+                val response = mainRepository.getDetailContent(TOKEN, contentId)
                 if (response.isSuccessful) {
                     detailDishState.postValue(NetworkResult.Success(response.body()!!))
                 }
                 else {
                     Log.d("getDetailContent not ok ", response.message().toString())
+                    Log.d("getDetailContent not ok ", response.errorBody()?.string().toString())
                     detailDishState.postValue(NetworkResult.Error(response.message()))
                 }
             } catch (e: Exception) {

@@ -1,5 +1,6 @@
 package com.example.ypackfood.repository
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import com.example.ypackfood.room.dao.FavoritesDao
 import com.example.ypackfood.room.dao.CartDao
@@ -22,6 +23,12 @@ class RepositoryRoom(private val favoritesDao: FavoritesDao, private val cartDao
 
     suspend fun deleteFromCart(cartEntity: CartEntity) {
         return cartDao.deleteFromCart(cartEntity)
+    }
+
+    suspend fun deleteFromCartByListId(ids: List<Int>) {
+        val x = cartDao.deleteFromCartByListId(ids)
+        Log.d("CartDeleteFromCartByListId", x.toString())
+        return x
     }
 
 

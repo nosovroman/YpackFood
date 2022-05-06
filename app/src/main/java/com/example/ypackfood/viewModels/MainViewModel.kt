@@ -10,12 +10,10 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.ypackfood.common.Constants.ERROR_INTERNET
-import com.example.ypackfood.common.RequestTemplate
+import com.example.ypackfood.common.RequestTemplate.TOKEN
 import com.example.ypackfood.common.RequestTemplate.mainRepository
 import com.example.ypackfood.models.actionsContent.ActionsItem
 import com.example.ypackfood.models.mainContent.Category
-import com.example.ypackfood.repository.Repository
-import com.example.ypackfood.retrofit.RetrofitBuilder
 import com.example.ypackfood.sealedClasses.NetworkResult
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -56,17 +54,18 @@ class MainViewModel : ViewModel() {
     }
 
     fun getMainContent() {
-        Log.d("getMainContent", "getMainContent")
         val oldData = dishesState.value?.data ?: mutableListOf()
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 dishesState.postValue(NetworkResult.Loading(oldData))
-                val response = mainRepository.getMainContent()
+                val response = mainRepository.getMainContent(TOKEN)
                 if (response.isSuccessful) {
-                    dishesState.postValue(NetworkResult.Success(response.body()!!.categories))
+                    Log.d("getMainContent ok", response.body().toString())
+                    dishesState.postValue(NetworkResult.Success(response.body()!!))
                 }
                 else {
                     Log.d("getMainContent not ok ", response.raw().toString())
+                    Log.d("getMainContent not ok ", response.errorBody()?.string().toString())
                     dishesState.postValue(NetworkResult.Error(response.message(), oldData))
                 }
             } catch (e: Exception) {
@@ -82,13 +81,14 @@ class MainViewModel : ViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 actionsState.postValue(NetworkResult.Loading(oldData))
-                val response = mainRepository.getActions()
+                val response = mainRepository.getActions(TOKEN)
                 if (response.isSuccessful) {
-                    actionsState.postValue(NetworkResult.Success(response.body()!!.actions))
+                    actionsState.postValue(NetworkResult.Success(response.body()!!))
                     Log.d("getActionsContent ok ", response.body().toString())
                 }
                 else {
                     Log.d("getActionsContent not ok ", response.message().toString())
+                    Log.d("getActionsContent not ok ", response.errorBody().toString())
                     actionsState.postValue(NetworkResult.Error(response.message(), oldData))
                 }
             } catch (e: Exception) {

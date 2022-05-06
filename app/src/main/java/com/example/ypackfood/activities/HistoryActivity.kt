@@ -19,11 +19,7 @@ import com.example.ypackfood.components.ToolbarComponent
 fun HistoryScreen(navController: NavHostController) {
     val scrollState = rememberScrollState()
     Scaffold(
-        topBar = {
-            ToolbarComponent(
-                navController = navController,
-            )
-        },
+        topBar = { ToolbarComponent(navController = navController) },
         content = {
             Column (
                 modifier = Modifier

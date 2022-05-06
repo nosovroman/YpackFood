@@ -8,7 +8,6 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.example.ypackfood.common.Constants
 import com.example.ypackfood.components.*
 import com.example.ypackfood.components.inOrder.OrderButtonComponent
 import com.example.ypackfood.models.commonData.Dish
@@ -35,12 +34,22 @@ fun ShoppingCartScreen(
 
     val shopList = roomViewModel.shopList.observeAsState(listOf()).value
     val requestState = cartViewModel.contentResp.observeAsState().value
+    val deletingDishList = roomViewModel.deletingDishListState
 
     LaunchedEffect(shopList) {
         if (shopList.size > cartViewModel.dishesRoomState.size) {
-            cartViewModel.getContentByListId(shopList.map { it.dishId }.toSet().toList())
+            cartViewModel.getContentByListId(
+                contentIdList = shopList.map { it.dishId }.toSet().toList(),
+                roomViewModel = roomViewModel
+            )
         }
         cartViewModel.setDishesRoom(shopList)
+    }
+
+    LaunchedEffect(deletingDishList) {
+        if (deletingDishList.isNotEmpty()) {
+            roomViewModel.deleteFromCartByListId(deletingDishList)
+        }
     }
 
     val coroutineScope = rememberCoroutineScope()
@@ -120,7 +129,15 @@ fun ContentCart(
             RequestStateComponent(
                 requestState = requestState,
                 byError = {
-                    ShowErrorComponent(onButtonClick = { cartViewModel.getContentByListId(cartViewModel.dishesRoomState.map { it.dishId }.toSet().toList()) })
+                    ShowErrorComponent(
+                        message = requestState?.message,
+                        onButtonClick = {
+                            cartViewModel.getContentByListId(
+                                contentIdList = cartViewModel.dishesRoomState.map { it.dishId }.toSet().toList(),
+                                roomViewModel = roomViewModel
+                            )
+                        }
+                    )
                 }
             )
         }

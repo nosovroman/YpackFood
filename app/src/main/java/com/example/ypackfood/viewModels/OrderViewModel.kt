@@ -10,6 +10,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.ypackfood.common.Constants.END_DELIVERY
 import com.example.ypackfood.common.Constants.START_DELIVERY
+import com.example.ypackfood.common.RequestTemplate
+import com.example.ypackfood.common.RequestTemplate.TOKEN
 import com.example.ypackfood.common.RequestTemplate.mainRepository
 import com.example.ypackfood.sealedClasses.DeliveryOptions
 import com.example.ypackfood.sealedClasses.TabRowSwitchable
@@ -19,8 +21,6 @@ import com.example.ypackfood.extensions.toTimeString
 import com.example.ypackfood.models.commonData.CartDish
 import com.example.ypackfood.models.temp.*
 import com.example.ypackfood.models.temp.OrderFull.Order
-import com.example.ypackfood.repository.Repository
-import com.example.ypackfood.retrofit.RetrofitBuilder
 import com.example.ypackfood.sealedClasses.NetworkResult
 import com.example.ypackfood.sealedClasses.TimeOptions
 import kotlinx.coroutines.Dispatchers
@@ -36,13 +36,14 @@ class OrderViewModel : ViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 successPostResp.postValue(NetworkResult.Loading())
-                val response = mainRepository.createOrder(order)
+                val response = mainRepository.createOrder(TOKEN, order)
                 if (response.isSuccessful) {
                     Log.d("createOrder ok ", response.body()!!.toString())
                     successPostResp.postValue(NetworkResult.Success(response.body()!!))
                 }
                 else {
                     Log.d("createOrder not ok ", response.raw().toString())
+                    Log.d("createOrder not ok ", response.errorBody()?.string().toString())
                     successPostResp.postValue(NetworkResult.Error(response.message()))
                 }
             } catch (e: Exception) {
@@ -53,25 +54,19 @@ class OrderViewModel : ViewModel() {
     }
 
     fun makeOrder(dishMinList: List<CartDish>, addressMerged: String, totalCost: Int) {
-//        if (checkIsPICKUP()) {
-//            onTimeSuccess(dishesMin, addressMerged, totalCost)
-//        }
-//        else {
-            if (checkIsPICKUP() || checkAddressIsNotEmpty()) {
-                if (checkIsFaster() || checkIsForTime() && checkTimeIsNotEmpty()) {
-                    validateTime()
-                    emptyFieldMsgState = ""
-                    createOrder(composeOrder(dishMinList, addressMerged, totalCost))
-                } else {
-                    emptyFieldMsgState = "Установите время доставки"
-                    setEmptyDataDialog(true)
-                }
-                //onTimeSuccess(dishesMin, addressMerged, totalCost)
-            } else if (!checkAddressIsNotEmpty()) {
-                emptyFieldMsgState = "Установите адрес доставки"
+        if (checkIsPICKUP() || checkAddressIsNotEmpty()) {
+            if (checkIsFaster() || checkIsForTime() && checkTimeIsNotEmpty()) {
+                validateTime()
+                emptyFieldMsgState = ""
+                createOrder(composeOrder(dishMinList, addressMerged, totalCost))
+            } else {
+                emptyFieldMsgState = "Установите время доставки"
                 setEmptyDataDialog(true)
             }
-        //}
+        } else if (!checkAddressIsNotEmpty()) {
+            emptyFieldMsgState = "Установите адрес доставки"
+            setEmptyDataDialog(true)
+        }
     }
 
     fun composeOrder(dishMinList: List<CartDish>, addressMerged: String, totalCost: Int): OrderMin {
@@ -82,7 +77,7 @@ class OrderViewModel : ViewModel() {
 
         return OrderMin(
             address = AddressMin(address = addressMerged), // строка или id
-            client = ClientMin(13),
+            client = ClientMin(15),
             dishes = dishesMin,
             totalPrice = totalCost
         )

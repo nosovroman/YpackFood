@@ -22,6 +22,12 @@ class RoomViewModel(application: Application) : AndroidViewModel(application) {
     var currentIcon by mutableStateOf(Components.defaultIcon)
         private set
 
+    var deletingDishListState by mutableStateOf(listOf<Int>())
+        private set
+    fun setDeletingDishList(newState: List<Int>) {
+        deletingDishListState = newState
+    }
+
     init {
         val instanceDB = DishDatabase.getFavoritesInstance(application)
         val favoritesDao = instanceDB.favoritesDao()
@@ -50,6 +56,13 @@ class RoomViewModel(application: Application) : AndroidViewModel(application) {
         Log.d("Cart", "deleteFromCart")
         viewModelScope.launch (Dispatchers.IO) {
             repositoryRoom.deleteFromCart(cartEntity)
+        }
+    }
+
+    fun deleteFromCartByListId(ids: List<Int>) {
+        Log.d("Cart", "deleteFromCartByListId")
+        viewModelScope.launch (Dispatchers.IO) {
+            repositoryRoom.deleteFromCartByListId(ids)
         }
     }
 

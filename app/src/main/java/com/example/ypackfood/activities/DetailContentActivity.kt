@@ -20,7 +20,12 @@ import com.example.ypackfood.viewModels.DetailViewModel
 import com.example.ypackfood.viewModels.RoomViewModel
 
 @Composable
-fun DetailContentScreen(navController: NavHostController, detailViewModel: DetailViewModel, roomViewModel: RoomViewModel, contentId: Int) {
+fun DetailContentScreen(
+    navController: NavHostController,
+    detailViewModel: DetailViewModel,
+    roomViewModel: RoomViewModel,
+    contentId: Int
+) {
     Log.d("params", "result=$contentId")
 
     LaunchedEffect(true) {
@@ -82,8 +87,7 @@ fun DetailContentScreen(navController: NavHostController, detailViewModel: Detai
             if (!requestState?.data?.name.isNullOrEmpty()) {
                 Log.d("networkAnswer", "Display data")
                 Column (
-                    Modifier
-                        .verticalScroll(scrollState)
+                    Modifier.verticalScroll(scrollState)
                 ) {
                     PictureTwoComponent(url = requestState!!.data!!.picturePaths.large)
                     DetailDescription(detailViewModel, Modifier.padding(start = 20.dp, end = 20.dp))
