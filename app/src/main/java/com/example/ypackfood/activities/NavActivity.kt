@@ -23,6 +23,7 @@ class NavActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        val signViewModel = ViewModelProvider(this).get(SignInUpViewModel::class.java)
         val mainViewModel = ViewModelProvider(this).get(MainViewModel::class.java)
         val detailViewModel = ViewModelProvider(this).get(DetailViewModel::class.java)
         val offerViewModel = ViewModelProvider(this).get(OfferViewModel::class.java)
@@ -42,7 +43,7 @@ class NavActivity : ComponentActivity() {
 
                 NavHost(
                     navController = navController,
-                    startDestination = Screens.Main.route
+                    startDestination = Screens.SignInUp.route
                 ) {
                     composable(route = Screens.Main.route) { MainScreen(navController, mainViewModel) }
                     composable(
@@ -55,7 +56,7 @@ class NavActivity : ComponentActivity() {
                             DetailContentScreen(navController, detailViewModel, roomViewModel, contentId)
                         }
                     }
-                    composable(route = Screens.SignInUp.route) { SignInUpScreen() }
+                    composable(route = Screens.SignInUp.route) { SignInUpScreen(signViewModel) }
                     composable(
                         route = Screens.Offers.route,
                         arguments = listOf(

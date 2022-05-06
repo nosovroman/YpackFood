@@ -16,9 +16,10 @@ import com.example.ypackfood.common.Constants
 import com.example.ypackfood.common.Constants.DELIVERY_COST
 import com.example.ypackfood.common.Constants.TIME_ORDER_MESSAGE
 import com.example.ypackfood.components.*
-import com.example.ypackfood.sealedClasses.DeliveryOptions
+import com.example.ypackfood.sealedClasses.SignOptions
 import com.example.ypackfood.enumClasses.getCityNames
 import com.example.ypackfood.enumClasses.getPaymentOptions
+import com.example.ypackfood.sealedClasses.DeliveryOptions
 import com.example.ypackfood.sealedClasses.TabRowSwitchable
 import com.example.ypackfood.sealedClasses.TimeOptions
 import com.example.ypackfood.viewModels.OrderViewModel

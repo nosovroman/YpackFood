@@ -10,19 +10,15 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.ypackfood.common.Constants.END_DELIVERY
 import com.example.ypackfood.common.Constants.START_DELIVERY
-import com.example.ypackfood.common.RequestTemplate
 import com.example.ypackfood.common.RequestTemplate.TOKEN
 import com.example.ypackfood.common.RequestTemplate.mainRepository
-import com.example.ypackfood.sealedClasses.DeliveryOptions
-import com.example.ypackfood.sealedClasses.TabRowSwitchable
 import com.example.ypackfood.enumClasses.getCityNames
 import com.example.ypackfood.enumClasses.getPaymentOptions
 import com.example.ypackfood.extensions.toTimeString
 import com.example.ypackfood.models.commonData.CartDish
 import com.example.ypackfood.models.temp.*
 import com.example.ypackfood.models.temp.OrderFull.Order
-import com.example.ypackfood.sealedClasses.NetworkResult
-import com.example.ypackfood.sealedClasses.TimeOptions
+import com.example.ypackfood.sealedClasses.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.lang.Exception
@@ -58,6 +54,7 @@ class OrderViewModel : ViewModel() {
             if (checkIsFaster() || checkIsForTime() && checkTimeIsNotEmpty()) {
                 validateTime()
                 emptyFieldMsgState = ""
+                //Log.d("enumCLass", deliveryState.value?.javaClass?.simpleName)
                 createOrder(composeOrder(dishMinList, addressMerged, totalCost))
             } else {
                 emptyFieldMsgState = "Установите время доставки"
@@ -72,14 +69,19 @@ class OrderViewModel : ViewModel() {
     fun composeOrder(dishMinList: List<CartDish>, addressMerged: String, totalCost: Int): OrderMin {
         val dishesMin = dishMinList.map { DishMin(
             id = it.dishId,
-            basePortion = BasePortionMin(id = it.portionId, priceNow = PriceNowMin(it.priceId))
+            count = it.count,
+            portion = BasePortionMin(id = it.portionId, price = PriceNowMin(it.priceId))
         ) }
 
+        val address = if (deliveryState.value is DeliveryOptions.DELIVERY) AddressMin(address = addressMerged)
+        else null
+
         return OrderMin(
-            address = AddressMin(address = addressMerged), // строка или id
-            client = ClientMin(15),
+            targetProduction = "$hourState:$minuteState",
+            totalPrice = totalCost,
+            address = address, // строка или id
             dishes = dishesMin,
-            totalPrice = totalCost
+            wayToGet = deliveryState.value?.javaClass?.simpleName.toString()
         )
     }
 

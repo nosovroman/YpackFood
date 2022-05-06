@@ -12,7 +12,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.example.ypackfood.sealedClasses.DeliveryOptions
 import com.example.ypackfood.sealedClasses.TabRowSwitchable
 
 @Composable

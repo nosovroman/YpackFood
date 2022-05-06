@@ -11,10 +11,13 @@ object Constants {
     val TOOLBAR_HEIGHT = 48.dp
     const val START_DELIVERY = 2
     const val END_DELIVERY = 23
+    const val MIN_PASSWORD_LEN = 6
 
     val fontFamily = FontFamily(
         Font(R.font.beauty_font_one)
     )
+
+    val REGEX_EMAIL = Regex("""\w+[\w_.%+-]+@[\w]+\.[a-z]{2,4}""")
 
     const val ERROR_INTERNET = "Проблема с интернет-подключением"
 

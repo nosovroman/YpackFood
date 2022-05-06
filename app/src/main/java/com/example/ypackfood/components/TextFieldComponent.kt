@@ -13,6 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.ypackfood.ui.theme.Invisible
@@ -26,7 +27,8 @@ fun TextFieldComponent(
     placeholder: String = "",
     maxLines: Int = 3,
     shape: CornerBasedShape = RoundedCornerShape(10.dp),
-    keyboardOptions: KeyboardOptions = KeyboardOptions.Default
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+    visualTransformation: VisualTransformation = VisualTransformation.None,
 ) {
     TextField(  // OutlinedTextField
         colors = TextFieldDefaults.textFieldColors(
@@ -46,6 +48,7 @@ fun TextFieldComponent(
         onValueChange = { onValueChange(it) },
         shape = shape,
         keyboardOptions = keyboardOptions,
+        visualTransformation = visualTransformation,
         //singleLine = true,
         enabled = enabled,
         maxLines = maxLines,
