@@ -44,6 +44,12 @@ class MainViewModel : ViewModel() {
         toolbarOffsetState = newOffsetPx
     }
 
+    fun computeCategoryList(): List<String> {
+        val dishes = dishesState.value?.data?.map { it.categoryType }
+        val action = if (actionsState.value?.data.isNullOrEmpty()) listOf() else listOf("Акции")
+        return action+dishes!!
+    }
+
 
     var dishesState: MutableLiveData<NetworkResult<MutableList<Category>>> = MutableLiveData()
     var actionsState: MutableLiveData<NetworkResult<MutableList<ActionsItem>>> = MutableLiveData()

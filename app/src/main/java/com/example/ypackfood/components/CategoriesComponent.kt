@@ -39,20 +39,10 @@ fun CategoriesRowComponent(mvvmViewModel: MainViewModel) {
             .offset { IntOffset(x = 0, y = mvvmViewModel.toolbarOffsetState.roundToInt()) },
         contentPadding = PaddingValues(top = Constants.TOOLBAR_HEIGHT),
         content = {
-            mvvmViewModel.dishesState.value?.data?.let {
-                itemsIndexed(listOf("Акции") + mvvmViewModel.dishesState.value!!.data!!.map { it.categoryType }) { index, item ->
-                    val name = when (item) {
-                        "Акции" -> "Акции"
-                        "BURGERS" -> "Бургеры"
-                        "PIZZA" -> "Пицца"
-                        "ROLLS" -> "Роллы"
-                        "COMBO" -> "Комбо"
-                        else -> "Новинки"
-                    }
-                    val isChosen = index == chosenCategoryIndex
-                    Spacer(modifier = Modifier.padding(start = 5.dp))
-                    CategoryComponent(mvvmViewModel = mvvmViewModel, categoryName = name, positionInContent = index, isChosen = isChosen)
-                }
+            itemsIndexed(mvvmViewModel.computeCategoryList()) { index, item ->
+                val isChosen = index == chosenCategoryIndex
+                Spacer(modifier = Modifier.padding(start = 5.dp))
+                CategoryComponent(mvvmViewModel = mvvmViewModel, categoryName = item, positionInContent = index, isChosen = isChosen)
             }
         }
     )
