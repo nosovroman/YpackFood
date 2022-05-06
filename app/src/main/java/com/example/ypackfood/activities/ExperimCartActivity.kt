@@ -34,7 +34,7 @@ fun ShoppingCartScreen(
 
     val shopList = roomViewModel.shopList.observeAsState(listOf()).value
     val requestState = cartViewModel.contentResp.observeAsState().value
-    val deletingDishList = roomViewModel.deletingDishListState
+    val deletingDishList = roomViewModel.deletingCartListState
 
     LaunchedEffect(shopList) {
         if (shopList.size > cartViewModel.dishesRoomState.size) {

@@ -13,7 +13,6 @@ import com.example.ypackfood.common.RequestTemplate.getErrorFromJson
 import com.example.ypackfood.common.RequestTemplate.mainRepository
 import com.example.ypackfood.models.commonData.CartDish
 import com.example.ypackfood.models.commonData.Dish
-import com.example.ypackfood.models.commonData.ErrorResponse
 import com.example.ypackfood.room.entities.CartEntity
 import com.example.ypackfood.sealedClasses.NetworkResult
 
@@ -97,11 +96,9 @@ class ShoppingCartViewModel : ViewModel() {
                         }
                         400 -> {
                             val jsonString = response.errorBody()!!.string()
-
-
                             val res = getErrorFromJson(jsonString)
                             Log.d("getContentByListId x = ", res.ids.toString())
-                            roomViewModel.setDeletingDishList(res.ids!!)
+                            roomViewModel.setDeletingCartList(res.ids!!)
                             contentResp.postValue(NetworkResult.Error("Некоторые блюда были исключены из меню ресторана"))
                         }
                         else -> {

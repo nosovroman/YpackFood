@@ -25,7 +25,7 @@ object RequestTemplate {
         val apiService = RetrofitBuilder.apiService
         mainRepository = Repository(apiService)
 
-        TOKEN = "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzdHJpbmciLCJpYXQiOjE2NTE3NjQwNTcsImV4cCI6MTY1NDQ0MjQ1N30.YBamSe2tgPkYkT6J1E4jjllKNURVjah7n8h56JbgYxk"
+        TOKEN = "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJxd2VydEBnbWFpbC5jb20iLCJpZCI6MzUsImlhdCI6MTY1MTg0NjA4MCwiZXhwIjoxNjU0NTI0NDgwfQ.5u33FglKAK6fq3eTBvhl4uyaKy4IwITekt8Eftet2o8"
     }
 
 //    suspend fun <T> executeRequest(

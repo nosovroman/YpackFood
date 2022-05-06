@@ -18,13 +18,13 @@ interface ApiService {
     @GET("actions")
     suspend fun getActions(@Header(HEADER_AUTH) token: String): Response<MutableList<ActionsItem>>
 
-    @GET("dish/{dishId}")
+    @GET("dishes/{dishId}")
     suspend fun getDetailContent(
         @Header(HEADER_AUTH) token: String,
         @Path("dishId") dishId: Int
     ): Response<DetailContent>
 
-    @GET("action/{actionId}")
+    @GET("actions/{actionId}")
     suspend fun getDetailAction(
         @Header(HEADER_AUTH) token: String,
         @Path("actionId") actionId: Int
@@ -36,7 +36,7 @@ interface ApiService {
         @Query("ids") contentIdList: List<Int>
     ): Response<MutableList<Dish>>
 
-    @POST("createOrder")
+    @POST("my/orders")
     suspend fun createOrder(
         @Header(HEADER_AUTH) token: String,
         @Body order: OrderMin

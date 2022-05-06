@@ -1,6 +1,5 @@
 package com.example.ypackfood.repository
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import com.example.ypackfood.room.dao.FavoritesDao
 import com.example.ypackfood.room.dao.CartDao
@@ -26,9 +25,7 @@ class RepositoryRoom(private val favoritesDao: FavoritesDao, private val cartDao
     }
 
     suspend fun deleteFromCartByListId(ids: List<Int>) {
-        val x = cartDao.deleteFromCartByListId(ids)
-        Log.d("CartDeleteFromCartByListId", x.toString())
-        return x
+        return cartDao.deleteFromCartByListId(ids)
     }
 
 
@@ -39,6 +36,10 @@ class RepositoryRoom(private val favoritesDao: FavoritesDao, private val cartDao
 
     suspend fun deleteFavorite(favoriteId: Int) {
         return favoritesDao.deleteFavorite(FavoritesEntity(favoriteId))
+    }
+
+    suspend fun deleteFromFavoritesByListId(ids: List<Int>) {
+        return cartDao.deleteFromFavoritesByListId(ids)
     }
 }
 

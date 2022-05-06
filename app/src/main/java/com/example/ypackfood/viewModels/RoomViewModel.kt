@@ -22,10 +22,16 @@ class RoomViewModel(application: Application) : AndroidViewModel(application) {
     var currentIcon by mutableStateOf(Components.defaultIcon)
         private set
 
-    var deletingDishListState by mutableStateOf(listOf<Int>())
+    var deletingCartListState by mutableStateOf(listOf<Int>())
         private set
-    fun setDeletingDishList(newState: List<Int>) {
-        deletingDishListState = newState
+    fun setDeletingCartList(newState: List<Int>) {
+        deletingCartListState = newState
+    }
+
+    var deletingFavListState by mutableStateOf(listOf<Int>())
+        private set
+    fun setDeletingFavList(newState: List<Int>) {
+        deletingFavListState = newState
     }
 
     init {
@@ -79,6 +85,13 @@ class RoomViewModel(application: Application) : AndroidViewModel(application) {
             repositoryRoom.deleteFavorite(favoriteId)
         }
         Log.d("roomRequest", "deleting $favoriteId")
+    }
+
+    fun deleteFromFavoritesByListId(ids: List<Int>) {
+        Log.d("Cart", "deleteFromFavoritesByListId")
+        viewModelScope.launch (Dispatchers.IO) {
+            repositoryRoom.deleteFromFavoritesByListId(ids)
+        }
     }
 
     private fun checkExistFavoriteById(favoriteId: Int): Boolean {

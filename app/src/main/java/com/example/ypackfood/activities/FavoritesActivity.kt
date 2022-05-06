@@ -21,14 +21,25 @@ fun FavoritesScreen(navController: NavHostController, favoritesViewModel: Favori
 
     val favorites = roomViewModel.favorites.observeAsState(listOf()).value
     val requestState = favoritesViewModel.favoritesState.observeAsState().value
+    val deletingDishList = roomViewModel.deletingFavListState
 
     LaunchedEffect(true) {
         favoritesViewModel.initContentResp()
     }
 
     LaunchedEffect(favorites) {
-        if (favorites.isNotEmpty())
-            favoritesViewModel.getContentByListId(favorites)
+        if (favorites.isNotEmpty()) {
+            favoritesViewModel.getContentByListId(
+                contentIdList = favorites,
+                roomViewModel = roomViewModel
+            )
+        }
+    }
+
+    LaunchedEffect(deletingDishList) {
+        if (deletingDishList.isNotEmpty()) {
+            roomViewModel.deleteFromFavoritesByListId(deletingDishList)
+        }
     }
 
     Scaffold (
@@ -54,7 +65,15 @@ fun FavoritesScreen(navController: NavHostController, favoritesViewModel: Favori
                 RequestStateComponent(
                     requestState = requestState,
                     byError = {
-                        ShowErrorComponent(onButtonClick = { favoritesViewModel.getContentByListId(favorites) })
+                        ShowErrorComponent(
+                            message = requestState?.message,
+                            onButtonClick = {
+                                favoritesViewModel.getContentByListId(
+                                    contentIdList = favorites,
+                                    roomViewModel = roomViewModel
+                                )
+                            }
+                        )
                     }
                 )
             }
