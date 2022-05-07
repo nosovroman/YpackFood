@@ -7,6 +7,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.ypackfood.common.Auth
 import com.example.ypackfood.common.RequestTemplate.TOKEN
 import com.example.ypackfood.common.RequestTemplate.mainRepository
 import com.example.ypackfood.models.detailContent.DetailContent
@@ -37,7 +38,7 @@ class DetailViewModel : ViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 detailDishState.postValue(NetworkResult.Loading())
-                val response = mainRepository.getDetailContent(TOKEN, contentId)
+                val response = mainRepository.getDetailContent(Auth.authInfo.token, contentId)
                 if (response.isSuccessful) {
                     detailDishState.postValue(NetworkResult.Success(response.body()!!))
                 }

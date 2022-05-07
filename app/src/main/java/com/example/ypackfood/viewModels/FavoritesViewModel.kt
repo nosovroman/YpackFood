@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.ypackfood.common.Auth
 import com.example.ypackfood.common.RequestTemplate
 import com.example.ypackfood.common.RequestTemplate.TOKEN
 import com.example.ypackfood.common.RequestTemplate.mainRepository
@@ -26,7 +27,7 @@ class FavoritesViewModel: ViewModel() {
             viewModelScope.launch(Dispatchers.IO) {
                 try {
                     favoritesState.postValue(NetworkResult.Loading())
-                    val response = mainRepository.getContentByListId(TOKEN, contentIdList)
+                    val response = mainRepository.getContentByListId(Auth.authInfo.token, contentIdList)
                     when(response.code()) {
                         in 200..299 -> {
                             favoritesState.postValue(NetworkResult.Success(response.body()!!))

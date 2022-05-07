@@ -16,9 +16,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import androidx.datastore.preferences.protobuf.Empty
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.NavHostController
 import com.example.ypackfood.R
 import com.example.ypackfood.common.Auth
 import com.example.ypackfood.common.Constants.MIN_PASSWORD_LEN
@@ -28,6 +30,7 @@ import com.example.ypackfood.components.*
 import com.example.ypackfood.models.auth.AuthInfo
 import com.example.ypackfood.models.auth.Authorization
 import com.example.ypackfood.sealedClasses.NetworkResult
+import com.example.ypackfood.sealedClasses.Screens
 import com.example.ypackfood.sealedClasses.SignOptions
 import com.example.ypackfood.sealedClasses.TabRowSwitchable
 import com.example.ypackfood.viewModels.DatastoreViewModel
@@ -38,7 +41,10 @@ import java.lang.Exception
 class SignInUpViewModel : ViewModel() {
     var signSwitcherState: MutableLiveData<TabRowSwitchable> = MutableLiveData(SignOptions.SignIn())
 
-    var registerState: MutableLiveData<NetworkResult<AuthInfo>> = MutableLiveData()
+    var registerState: MutableLiveData<NetworkResult<AuthInfo>> = MutableLiveData(NetworkResult.Empty())
+    fun registerStateInit() {
+        registerState.postValue(NetworkResult.Empty())
+    }
 
     var errorEnteringState by mutableStateOf("")
         private set
@@ -77,22 +83,55 @@ class SignInUpViewModel : ViewModel() {
         }
     }
 
+    fun authorizeUser(auth: Authorization) {
+        Log.d("authorizeUser param", "$auth")
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                registerState.postValue(NetworkResult.Loading())
+                val response = RequestTemplate.mainRepository.authorizeUser(auth)
+                if (response.isSuccessful) {
+                    Log.d("authorizeUser ok ", response.body()!!.toString())
+                    clearErrorEntering()
+                    registerState.postValue(NetworkResult.Success(response.body()!!))
+                }
+                else {
+                    val jsonString = response.errorBody()!!.string()
+                    val errorCode = RequestTemplate.getErrorFromJson(jsonString).errorCode.toString()
+                    setErrorEntering(errorCode)
+
+                    Log.d("authorizeUser not ok ", response.raw().toString())
+                    Log.d("authorizeUser not ok ", response.errorBody()?.string().toString())
+                    registerState.postValue(NetworkResult.Error(response.message()))
+                }
+            } catch (e: Exception) {
+                setErrorEntering("Какая-то ошибка")
+                Log.d("authorizeUser error ", e.toString() + "|||message: " + e.message)
+                registerState.postValue(NetworkResult.Error(e.message))
+            }
+        }
+    }
+
     fun registerUser(auth: Authorization) {
         Log.d("registerUser param", "$auth")
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 registerState.postValue(NetworkResult.Loading())
-                val response = RequestTemplate.mainRepository.registerUser(RequestTemplate.TOKEN, auth)
+                val response = RequestTemplate.mainRepository.registerUser(auth)
                 if (response.isSuccessful) {
                     Log.d("registerUser ok ", response.body()!!.toString())
                     registerState.postValue(NetworkResult.Success(response.body()!!))
                 }
                 else {
+                    val jsonString = response.errorBody()!!.string()
+                    val errorCode = RequestTemplate.getErrorFromJson(jsonString).errorCode.toString()
+                    setErrorEntering(errorCode)
+
                     Log.d("registerUser not ok ", response.raw().toString())
                     Log.d("registerUser not ok ", response.errorBody()?.string().toString())
                     registerState.postValue(NetworkResult.Error(response.message()))
                 }
             } catch (e: Exception) {
+                setErrorEntering("Какая-то ошибка")
                 Log.d("registerUser error ", e.toString() + "|||message: " + e.message)
                 registerState.postValue(NetworkResult.Error(e.message))
             }
@@ -101,14 +140,27 @@ class SignInUpViewModel : ViewModel() {
 }
 
 @Composable
-fun SignInUpScreen(signViewModel: SignInUpViewModel, datastoreViewModel: DatastoreViewModel) {
+fun SignInUpScreen(navController: NavHostController, signViewModel: SignInUpViewModel, datastoreViewModel: DatastoreViewModel) {
 
     val signState = signViewModel.signSwitcherState.observeAsState().value!!
-    val authInfoState = datastoreViewModel.authInfoState?.observeAsState()?.value
-    
-    LaunchedEffect(authInfoState) {
-        Log.d("SignInUp2", authInfoState.toString())
-        Log.d("SignInUp3", Auth.authInfo.toString())
+    val authInfoState = datastoreViewModel.authInfoState.observeAsState().value
+    val registerState = signViewModel.registerState.observeAsState().value
+
+//    LaunchedEffect(true) {
+//        Log.d("SignInUp", "LaunchedEffect(true)")
+//        signViewModel.registerStateInit()
+//    }
+
+    LaunchedEffect(registerState) {
+        if (registerState is NetworkResult.Success<*>) {
+            signViewModel.registerStateInit()
+            Log.d("SignInUp", "registerState is NetworkResult.Success<*>")
+            datastoreViewModel.updateAuthInfo(idValue = registerState.data!!.personId, tokenValue = registerState.data.token)
+            Log.d("SignInUp LaunchedEffect(registerState)", Auth.authInfo.toString())
+            navController.navigate(route = Screens.Main.route) {
+                popUpTo(Screens.SignInUp.route) { inclusive = true }
+            }
+        }
     }
 
     Scaffold (
@@ -120,31 +172,45 @@ fun SignInUpScreen(signViewModel: SignInUpViewModel, datastoreViewModel: Datasto
                     .padding(20.dp),
                 verticalArrangement = Arrangement.Center,
                 content = {
-                    TabRowComponent(
-                        currentOption = signState,
-                        listOptions = SignOptions.getOptions(),
-                        onClick = { newChosenOption -> signViewModel.signSwitcherState.postValue(newChosenOption) }
-                    )
-                    when(signState) {
-                        is SignOptions.SignIn -> {
-                            SignFormComponent(
-                                signViewModel = signViewModel,
-                                datastoreViewModel,
-                                buttonText = stringResource(R.string.sign_in_btn),
-                                onClick = {
-                                    Log.d("SignInUp", "Вход успешен")
-                                }
+                    when (registerState) {
+                        is NetworkResult.Empty<*> -> {
+                            TabRowComponent(
+                                currentOption = signState,
+                                listOptions = SignOptions.getOptions(),
+                                onClick = { newChosenOption -> signViewModel.signSwitcherState.postValue(newChosenOption) }
                             )
+                            when(signState) {
+                                is SignOptions.SignIn -> {
+                                    SignFormComponent(
+                                        signViewModel = signViewModel,
+                                        datastoreViewModel,
+                                        buttonText = stringResource(R.string.sign_in_btn),
+                                        onClick = {
+                                            signViewModel.authorizeUser(Authorization(signViewModel.emailFieldState, signViewModel.passwordFieldState))
+                                            Log.d("SignInUp", "Вход успешен")
+                                        }
+                                    )
+                                }
+                                is SignOptions.SignUp -> {
+                                    SignFormComponent(
+                                        signViewModel = signViewModel,
+                                        datastoreViewModel,
+                                        buttonText = stringResource(R.string.sign_up_btn),
+                                        onClick = {
+                                            signViewModel.registerUser(Authorization(signViewModel.emailFieldState, signViewModel.passwordFieldState))
+                                            Log.d("SignInUp", "Регистрация успешна")
+                                        }
+                                    )
+                                }
+                                else -> {}
+                            }
                         }
-                        is SignOptions.SignUp -> {
-                            SignFormComponent(
-                                signViewModel = signViewModel,
-                                datastoreViewModel,
-                                buttonText = stringResource(R.string.sign_up_btn),
-                                onClick = {
-                                    Log.d("SignInUp", "Регистрация успешна")
-                                }
-                            )
+                        is NetworkResult.Loading<*> -> {
+                            LoadingBarComponent()
+                        }
+                        is NetworkResult.Error<*> -> {
+                            signViewModel.registerState.postValue(NetworkResult.Empty())
+                                //ShowErrorComponent(message = registerState.message, onButtonClick = { signViewModel.registerState.postValue(NetworkResult.Empty()) })
                         }
                         else -> {}
                     }
@@ -207,8 +273,8 @@ fun SignFormComponent(
                 text = buttonText,
                 shape = RoundedCornerShape(10.dp),
                 onClick = {
-                    datastoreViewModel.updateAuthInfo(idValue = 12, tokenValue = "revenger11_TOKEN")
-                    datastoreViewModel.getAuthInfo()
+//                    datastoreViewModel.updateAuthInfo(idValue = 12, tokenValue = "revenger11_TOKEN")
+//                    datastoreViewModel.getAuthInfo()
                     if (signViewModel.validateFields(signViewModel.emailFieldState, signViewModel.passwordFieldState)) onClick()
                 }
             )

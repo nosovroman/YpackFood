@@ -44,9 +44,13 @@ interface ApiService {
         @Body order: OrderMin
     ): Response<Order>
 
+    @POST("auth/login")
+    suspend fun authorizeUser(
+        @Body auth: Authorization
+    ): Response<AuthInfo>
+
     @POST("auth/register")
     suspend fun registerUser(
-        @Header(HEADER_AUTH) token: String,
         @Body auth: Authorization
     ): Response<AuthInfo>
 }

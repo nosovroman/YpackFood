@@ -1,5 +1,6 @@
 package com.example.ypackfood.components
 
+import android.util.Log
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -24,9 +25,10 @@ import androidx.navigation.NavHostController
 import com.example.ypackfood.common.Constants
 import com.example.ypackfood.enumClasses.MainDrawer
 import com.example.ypackfood.enumClasses.getDrawerItems
+import com.example.ypackfood.sealedClasses.Screens
 
 @Composable
-fun DrawerComponent(navController: NavHostController) {
+fun DrawerComponent(navController: NavHostController, onExitClick: () -> Unit) {
     val itemsDrawer = getDrawerItems()
     Column(
         modifier = Modifier
@@ -40,10 +42,21 @@ fun DrawerComponent(navController: NavHostController) {
                     Spacer(Modifier.weight(1f, true))
                     Divider()
                 }
-                DrawerItemComponent(item = currentItem) {
-                    // переход к нужной странице
-                    navController.navigate(route = currentItem.route)
-                }
+                DrawerItemComponent(
+                    item = currentItem,
+                    onItemClick = {
+                        // переход к нужной странице
+                        if (itemsDrawer.last() == currentItem) {
+                            Log.d("SignInUp", "onExitClick")
+                            onExitClick()
+                            navController.navigate(route = Screens.SignInUp.route) {
+                                popUpTo(Screens.Main.route) { inclusive = true }
+                            }
+                        } else {
+                            navController.navigate(route = currentItem.route) { launchSingleTop = true }
+                        }
+                    }
+                )
             }
         }
     )

@@ -32,6 +32,8 @@ class NavActivity : ComponentActivity() {
         val roomViewModel = ViewModelProvider(this).get(RoomViewModel::class.java)
         val datastoreViewModel = ViewModelProvider(this).get(DatastoreViewModel::class.java)
 
+        datastoreViewModel.getAuthInfo()
+
 
         setContent {
             YpackFoodTheme(darkTheme = false) {
@@ -39,9 +41,10 @@ class NavActivity : ComponentActivity() {
 
                 NavHost(
                     navController = navController,
-                    startDestination = Screens.SignInUp.route
+                    startDestination = Screens.Main.route
                 ) {
-                    composable(route = Screens.Main.route) { MainScreen(navController, mainViewModel) }
+                    composable(route = Screens.SignInUp.route) { SignInUpScreen(navController, signViewModel, datastoreViewModel) }
+                    composable(route = Screens.Main.route) { MainScreen(navController, mainViewModel, datastoreViewModel) }
                     composable(
                         route = Screens.DetailContent.route,
                         arguments = listOf(
@@ -52,7 +55,6 @@ class NavActivity : ComponentActivity() {
                             DetailContentScreen(navController, detailViewModel, roomViewModel, contentId)
                         }
                     }
-                    composable(route = Screens.SignInUp.route) { SignInUpScreen(signViewModel, datastoreViewModel) }
                     composable(
                         route = Screens.Offers.route,
                         arguments = listOf(

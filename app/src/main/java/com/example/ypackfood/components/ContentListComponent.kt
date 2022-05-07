@@ -20,7 +20,6 @@ import kotlin.math.roundToInt
 
 @Composable
 fun ContentListComponent(navController: NavHostController, mvvmViewModel: MainViewModel) {
-    Log.d("getMainContent ", mvvmViewModel.dishesState.toString())
     val offset = with(LocalDensity.current) { -mvvmViewModel.toolbarOffsetState.roundToInt().toDp() }
     LazyColumn (
         state = mvvmViewModel.listContentState,

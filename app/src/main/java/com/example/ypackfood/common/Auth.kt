@@ -6,5 +6,5 @@ object Auth {
     const val ID_KEY = "userId"
     const val TOKEN_KEY = "token"
 
-    var authInfo: AuthInfo? = null
+    var authInfo: AuthInfo = AuthInfo()
 }

@@ -7,6 +7,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.ypackfood.common.Auth
 import com.example.ypackfood.common.RequestTemplate
 import com.example.ypackfood.common.RequestTemplate.TOKEN
 import com.example.ypackfood.common.RequestTemplate.mainRepository
@@ -39,7 +40,7 @@ class OfferViewModel : ViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 contentResp.postValue(NetworkResult.Loading())
-                val response = mainRepository.getDetailAction(TOKEN, actionId)
+                val response = mainRepository.getDetailAction(Auth.authInfo.token, actionId)
                 if (response.isSuccessful) {
                     contentResp.postValue(NetworkResult.Success(response.body()!!))
                 }

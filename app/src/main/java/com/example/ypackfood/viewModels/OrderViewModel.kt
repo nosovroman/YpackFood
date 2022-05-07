@@ -8,6 +8,7 @@ import androidx.core.text.isDigitsOnly
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.ypackfood.common.Auth
 import com.example.ypackfood.common.Constants.END_DELIVERY
 import com.example.ypackfood.common.Constants.START_DELIVERY
 import com.example.ypackfood.common.RequestTemplate.TOKEN
@@ -32,7 +33,7 @@ class OrderViewModel : ViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 successPostResp.postValue(NetworkResult.Loading())
-                val response = mainRepository.createOrder(TOKEN, order)
+                val response = mainRepository.createOrder(Auth.authInfo.token, order)
                 if (response.isSuccessful) {
                     Log.d("createOrder ok ", response.body()!!.toString())
                     successPostResp.postValue(NetworkResult.Success(response.body()!!))

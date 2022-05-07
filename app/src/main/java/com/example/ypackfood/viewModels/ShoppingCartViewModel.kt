@@ -8,6 +8,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.ypackfood.common.Auth
 import com.example.ypackfood.common.RequestTemplate.TOKEN
 import com.example.ypackfood.common.RequestTemplate.getErrorFromJson
 import com.example.ypackfood.common.RequestTemplate.mainRepository
@@ -88,7 +89,7 @@ class ShoppingCartViewModel : ViewModel() {
                 try {
                     Log.d("fe_dishMap getContentByListId", "loading...")
                     contentResp.postValue(NetworkResult.Loading())
-                    val response = mainRepository.getContentByListId(TOKEN, contentIdList)
+                    val response = mainRepository.getContentByListId(Auth.authInfo.token, contentIdList)
                     when(response.code()) {
                         in 200..299 -> {
                             contentResp.postValue(NetworkResult.Success(response.body()!!))
