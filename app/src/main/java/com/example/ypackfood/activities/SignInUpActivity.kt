@@ -8,7 +8,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
-import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
@@ -19,17 +18,27 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.ypackfood.R
+import com.example.ypackfood.common.Auth
 import com.example.ypackfood.common.Constants.MIN_PASSWORD_LEN
 import com.example.ypackfood.common.Constants.REGEX_EMAIL
+import com.example.ypackfood.common.RequestTemplate
 import com.example.ypackfood.components.*
-import com.example.ypackfood.sealedClasses.Screens
+import com.example.ypackfood.models.auth.AuthInfo
+import com.example.ypackfood.models.auth.Authorization
+import com.example.ypackfood.sealedClasses.NetworkResult
 import com.example.ypackfood.sealedClasses.SignOptions
 import com.example.ypackfood.sealedClasses.TabRowSwitchable
-import com.example.ypackfood.ui.theme.Shapes
+import com.example.ypackfood.viewModels.DatastoreViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import java.lang.Exception
 
 class SignInUpViewModel : ViewModel() {
-    var signState: MutableLiveData<TabRowSwitchable> = MutableLiveData(SignOptions.SignIn())
+    var signSwitcherState: MutableLiveData<TabRowSwitchable> = MutableLiveData(SignOptions.SignIn())
+
+    var registerState: MutableLiveData<NetworkResult<AuthInfo>> = MutableLiveData()
 
     var errorEnteringState by mutableStateOf("")
         private set
@@ -53,7 +62,6 @@ class SignInUpViewModel : ViewModel() {
     }
 
     fun validateFields(email: String, password: String): Boolean {
-
         return validateEmail(email) && validatePassword(password)
     }
 
@@ -68,12 +76,40 @@ class SignInUpViewModel : ViewModel() {
             if (!it) setErrorEntering("Длина пароля должна быть не менее $MIN_PASSWORD_LEN символов") else clearErrorEntering()
         }
     }
+
+    fun registerUser(auth: Authorization) {
+        Log.d("registerUser param", "$auth")
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                registerState.postValue(NetworkResult.Loading())
+                val response = RequestTemplate.mainRepository.registerUser(RequestTemplate.TOKEN, auth)
+                if (response.isSuccessful) {
+                    Log.d("registerUser ok ", response.body()!!.toString())
+                    registerState.postValue(NetworkResult.Success(response.body()!!))
+                }
+                else {
+                    Log.d("registerUser not ok ", response.raw().toString())
+                    Log.d("registerUser not ok ", response.errorBody()?.string().toString())
+                    registerState.postValue(NetworkResult.Error(response.message()))
+                }
+            } catch (e: Exception) {
+                Log.d("registerUser error ", e.toString() + "|||message: " + e.message)
+                registerState.postValue(NetworkResult.Error(e.message))
+            }
+        }
+    }
 }
 
 @Composable
-fun SignInUpScreen(signViewModel: SignInUpViewModel) {
+fun SignInUpScreen(signViewModel: SignInUpViewModel, datastoreViewModel: DatastoreViewModel) {
 
-    val signState = signViewModel.signState.observeAsState().value!!
+    val signState = signViewModel.signSwitcherState.observeAsState().value!!
+    val authInfoState = datastoreViewModel.authInfoState?.observeAsState()?.value
+    
+    LaunchedEffect(authInfoState) {
+        Log.d("SignInUp2", authInfoState.toString())
+        Log.d("SignInUp3", Auth.authInfo.toString())
+    }
 
     Scaffold (
         topBar = { ToolbarEasyComponent() },
@@ -87,12 +123,13 @@ fun SignInUpScreen(signViewModel: SignInUpViewModel) {
                     TabRowComponent(
                         currentOption = signState,
                         listOptions = SignOptions.getOptions(),
-                        onClick = { newChosenOption -> signViewModel.signState.postValue(newChosenOption) }
+                        onClick = { newChosenOption -> signViewModel.signSwitcherState.postValue(newChosenOption) }
                     )
                     when(signState) {
                         is SignOptions.SignIn -> {
                             SignFormComponent(
                                 signViewModel = signViewModel,
+                                datastoreViewModel,
                                 buttonText = stringResource(R.string.sign_in_btn),
                                 onClick = {
                                     Log.d("SignInUp", "Вход успешен")
@@ -102,6 +139,7 @@ fun SignInUpScreen(signViewModel: SignInUpViewModel) {
                         is SignOptions.SignUp -> {
                             SignFormComponent(
                                 signViewModel = signViewModel,
+                                datastoreViewModel,
                                 buttonText = stringResource(R.string.sign_up_btn),
                                 onClick = {
                                     Log.d("SignInUp", "Регистрация успешна")
@@ -150,6 +188,7 @@ fun FieldsComponent(signViewModel: SignInUpViewModel) {
 @Composable
 fun SignFormComponent(
     signViewModel: SignInUpViewModel,
+    datastoreViewModel: DatastoreViewModel,
     buttonText: String,
     onClick: () -> Unit
 ) {
@@ -167,7 +206,11 @@ fun SignFormComponent(
             ButtonComponent(
                 text = buttonText,
                 shape = RoundedCornerShape(10.dp),
-                onClick = { if (signViewModel.validateFields(signViewModel.emailFieldState, signViewModel.passwordFieldState)) onClick() }
+                onClick = {
+                    datastoreViewModel.updateAuthInfo(idValue = 12, tokenValue = "revenger11_TOKEN")
+                    datastoreViewModel.getAuthInfo()
+                    if (signViewModel.validateFields(signViewModel.emailFieldState, signViewModel.passwordFieldState)) onClick()
+                }
             )
         }
     )

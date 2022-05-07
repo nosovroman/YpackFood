@@ -2,6 +2,8 @@ package com.example.ypackfood.retrofit
 
 import com.example.ypackfood.common.Constants.HEADER_AUTH
 import com.example.ypackfood.models.actionsContent.ActionsItem
+import com.example.ypackfood.models.auth.AuthInfo
+import com.example.ypackfood.models.auth.Authorization
 import com.example.ypackfood.models.commonData.Dish
 import com.example.ypackfood.models.detailAction.DetailAction
 import com.example.ypackfood.models.detailContent.DetailContent
@@ -41,6 +43,12 @@ interface ApiService {
         @Header(HEADER_AUTH) token: String,
         @Body order: OrderMin
     ): Response<Order>
+
+    @POST("auth/register")
+    suspend fun registerUser(
+        @Header(HEADER_AUTH) token: String,
+        @Body auth: Authorization
+    ): Response<AuthInfo>
 }
 //@GET("hello")
 //suspend fun getHello(): Response<String>

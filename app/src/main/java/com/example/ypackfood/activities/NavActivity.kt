@@ -4,21 +4,19 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.example.ypackfood.R
 import com.example.ypackfood.common.Constants
 import com.example.ypackfood.sealedClasses.Screens
 import com.example.ypackfood.ui.theme.YpackFoodTheme
 import com.example.ypackfood.viewModels.*
 
 class NavActivity : ComponentActivity() {
+
     @OptIn(ExperimentalMaterialApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,10 +30,8 @@ class NavActivity : ComponentActivity() {
         val favoritesViewModel = ViewModelProvider(this).get(FavoritesViewModel::class.java)
 
         val roomViewModel = ViewModelProvider(this).get(RoomViewModel::class.java)
+        val datastoreViewModel = ViewModelProvider(this).get(DatastoreViewModel::class.java)
 
-        val fontFamily = FontFamily(
-            Font(R.font.beauty_font_one)
-        )
 
         setContent {
             YpackFoodTheme(darkTheme = false) {
@@ -56,7 +52,7 @@ class NavActivity : ComponentActivity() {
                             DetailContentScreen(navController, detailViewModel, roomViewModel, contentId)
                         }
                     }
-                    composable(route = Screens.SignInUp.route) { SignInUpScreen(signViewModel) }
+                    composable(route = Screens.SignInUp.route) { SignInUpScreen(signViewModel, datastoreViewModel) }
                     composable(
                         route = Screens.Offers.route,
                         arguments = listOf(
@@ -87,17 +83,3 @@ class NavActivity : ComponentActivity() {
         }
     }
 }
-
-//@Composable
-//fun Navigator() {
-//    val navController = rememberNavController()
-//
-//    NavHost(
-//        navController = navController,
-//        startDestination = Screens.Main.route
-//    ) {
-//        composable(route = Screens.Main.route) { MainScreen(navController, mainViewModel) }
-//        composable(route = Screens.SignInUp.route) { SignInUpScreen() }
-//        composable(route = Screens.Offers.route) { OffersScreen() }
-//    }
-//}

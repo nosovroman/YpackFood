@@ -1,9 +1,11 @@
 package com.example.ypackfood.repository
 
+import com.example.ypackfood.models.auth.Authorization
 import com.example.ypackfood.models.temp.OrderMin
 import com.example.ypackfood.retrofit.ApiService
 
 class Repository(private val apiService: ApiService) {
+    suspend fun registerUser(token: String, auth: Authorization) = apiService.registerUser(token, auth)
     suspend fun getMainContent(token: String) = apiService.getMainContent(token)
     suspend fun getActions(token: String) = apiService.getActions(token)
     suspend fun getDetailContent(token: String, dishId: Int) = apiService.getDetailContent(token, dishId)
