@@ -16,6 +16,7 @@ import com.example.ypackfood.models.detailContent.DetailContent
 import com.example.ypackfood.room.entities.CartEntity
 import com.example.ypackfood.sealedClasses.NetworkResult
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.lang.Exception
 
@@ -32,12 +33,18 @@ class DetailViewModel : ViewModel() {
         countWishDishes--
     }
 
+    var enabledIButtonState by mutableStateOf(true)
+        private set
+    fun setEnabledIButton(newState: Boolean) {
+        enabledIButtonState = newState
+    }
+
     var currentIcon by mutableStateOf(Components.defaultIcon)
         private set
 
     var detailDishState: MutableLiveData<NetworkResult<DetailContent>> = MutableLiveData()
     var favoritesState: MutableLiveData<NetworkResult<MutableList<Int>>> = MutableLiveData()
-    var favoritesToggledState: MutableLiveData<NetworkResult<Boolean>> = MutableLiveData()
+    //var favoritesToggledState: MutableLiveData<NetworkResult<Boolean>> = MutableLiveData()
 
     fun getDetailContent(contentId: Int) {
         Log.d("requestDetail", "getDetailContent")
@@ -82,7 +89,7 @@ class DetailViewModel : ViewModel() {
     }
 
     fun addFavorite(contentId: Int) {
-        Log.d("addFavorite", "addFavorite")
+        Log.d("changeFavorite addFavorite", "addFavorite")
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 //favoritesToggledState.postValue(NetworkResult.Loading())
@@ -92,22 +99,26 @@ class DetailViewModel : ViewModel() {
                     val newFavoritesList = favoritesState.value!!.data!!//.add(contentId)
                     newFavoritesList.add(contentId)
                     favoritesState.postValue(NetworkResult.Success(newFavoritesList))
-                    Log.d("addFavorite ok ", newFavoritesList.toString())
+                    Log.d("changeFavorite addFavorite ok ", newFavoritesList.toString())
+                    setEnabledIButton(false).also {
+                        delay(3000)
+                        setEnabledIButton(true)
+                    }
                 }
                 else {
-                    Log.d("addFavorite not ok ", response.message().toString())
-                    Log.d("addFavorite not ok ", response.errorBody()?.string().toString())
+                    Log.d("changeFavorite addFavorite not ok ", response.message().toString())
+                    Log.d("changeFavorite addFavorite not ok ", response.errorBody()?.string().toString())
                     //favoritesToggledState.postValue(NetworkResult.Error(response.message()))
                 }
             } catch (e: Exception) {
-                Log.d("addFavorite error ", e.toString() + "|||message: " + e.message)
+                Log.d("changeFavorite addFavorite error ", e.toString() + "|||message: " + e.message)
                 //favoritesToggledState.postValue(NetworkResult.Error(e.message))
             }
         }
     }
 
     fun deleteFavorite(contentId: Int) {
-        Log.d("deleteFavorite", "deleteFavorite")
+        Log.d("changeFavorite deleteFavorite", "deleteFavorite")
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 //favoritesState.postValue(NetworkResult.Loading())
@@ -117,15 +128,19 @@ class DetailViewModel : ViewModel() {
                     val newFavoritesList = favoritesState.value!!.data!!//.add(contentId)
                     newFavoritesList.remove(contentId)
                     favoritesState.postValue(NetworkResult.Success(newFavoritesList))
-                    Log.d("deleteFavorite ok ", newFavoritesList.toString())
+                    Log.d("changeFavorite deleteFavorite ok ", newFavoritesList.toString())
+                    setEnabledIButton(false).also {
+                        delay(3000)
+                        setEnabledIButton(true)
+                    }
                 }
                 else {
-                    Log.d("deleteFavorite not ok ", response.message().toString())
-                    Log.d("deleteFavorite not ok ", response.errorBody()?.string().toString())
+                    Log.d("changeFavorite deleteFavorite not ok ", response.message().toString())
+                    Log.d("changeFavorite deleteFavorite not ok ", response.errorBody()?.string().toString())
                     //favoritesState.postValue(NetworkResult.Error(response.message()))
                 }
             } catch (e: Exception) {
-                Log.d("deleteFavorite error ", e.toString() + "|||message: " + e.message)
+                Log.d("changeFavorite deleteFavorite error ", e.toString() + "|||message: " + e.message)
                 //favoritesState.postValue(NetworkResult.Error(e.message))
             }
         }

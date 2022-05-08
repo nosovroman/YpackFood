@@ -5,6 +5,7 @@ import com.example.ypackfood.models.actionsContent.ActionsItem
 import com.example.ypackfood.models.auth.AuthInfo
 import com.example.ypackfood.models.auth.Authorization
 import com.example.ypackfood.models.commonData.Dish
+import com.example.ypackfood.models.commonData.Favorites
 import com.example.ypackfood.models.detailAction.DetailAction
 import com.example.ypackfood.models.detailContent.DetailContent
 import com.example.ypackfood.models.mainContent.Category
@@ -33,13 +34,13 @@ interface ApiService {
     suspend fun addFavorite(
         @Header(HEADER_AUTH) token: String,
         @Path("dishId") dishId: Int
-    ): Response<Boolean>
+    ): Response<Favorites>
 
     @DELETE("my/favorites/{dishId}")
     suspend fun deleteFavorite(
         @Header(HEADER_AUTH) token: String,
         @Path("dishId") dishId: Int
-    ): Response<Boolean>
+    ): Response<Favorites>
 
     @GET("actions/{actionId}")
     suspend fun getDetailAction(

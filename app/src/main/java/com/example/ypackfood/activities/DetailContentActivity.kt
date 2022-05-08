@@ -36,7 +36,7 @@ fun DetailContentScreen(
 
     val detailDishState = detailViewModel.detailDishState.observeAsState().value
     val favoritesState = detailViewModel.favoritesState.observeAsState().value
-    val favoritesToggledState = detailViewModel.favoritesToggledState.observeAsState().value
+    //val favoritesToggledState = detailViewModel.favoritesToggledState.observeAsState().value
     //val favorites = roomViewModel.favorites.observeAsState(listOf()).value
     val cartDishes = roomViewModel.shopList.observeAsState(listOf()).value
 
@@ -68,6 +68,7 @@ fun DetailContentScreen(
                                 onClick = {
                                     detailViewModel.onClickFavoritesIcon(contentId, favoritesState.data!!)
                                 },
+                                enabled = detailViewModel.enabledIButtonState,
                                 content = {
                                     Icon(
                                         imageVector =  detailViewModel.getRealCurrentIcon(contentId, favoritesState.data!!),

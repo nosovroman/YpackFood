@@ -2,6 +2,7 @@ package com.example.ypackfood.viewModels
 
 
 import android.app.Application
+import android.util.Log
 import androidx.datastore.preferences.core.clear
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.preferencesKey
@@ -27,7 +28,6 @@ class DatastoreViewModel(context: Application) : AndroidViewModel(context) {
                 settings[idKey] = idValue
                 settings[tokenKey] = tokenValue
             }
-            setAuthInfoState(AuthInfo(idValue, tokenValue))
         }
     }
 
@@ -46,7 +46,7 @@ class DatastoreViewModel(context: Application) : AndroidViewModel(context) {
         updateAuthInfo(-1, "")
     }
 
-    private fun setAuthInfoState(authInfo: AuthInfo) {
+    fun setAuthInfoState(authInfo: AuthInfo) {
         Auth.authInfo = authInfo
         authInfoState.postValue(authInfo)
     }
