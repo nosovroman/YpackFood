@@ -16,8 +16,8 @@ import com.example.ypackfood.enumClasses.getCityNames
 import com.example.ypackfood.enumClasses.getPaymentOptions
 import com.example.ypackfood.extensions.toTimeString
 import com.example.ypackfood.models.commonData.CartDish
-import com.example.ypackfood.models.temp.*
-import com.example.ypackfood.models.temp.OrderFull.Order
+import com.example.ypackfood.models.orders.OrderFull.Order
+import com.example.ypackfood.models.orders.OrderMin.*
 import com.example.ypackfood.sealedClasses.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

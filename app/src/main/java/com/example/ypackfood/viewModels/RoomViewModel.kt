@@ -47,6 +47,12 @@ class RoomViewModel(application: Application) : AndroidViewModel(application) {
             repositoryRoom.addToCart(cartEntity)
         }
     }
+    fun addToCartMany(cartEntityList: List<CartEntity>) {
+        Log.d("Cart", "addToCartMany")
+        viewModelScope.launch (Dispatchers.IO) {
+            repositoryRoom.addToCartMany(cartEntityList)
+        }
+    }
 
     fun updateCart(cartEntity: CartEntity) {
         Log.d("Cart", "addToCart")

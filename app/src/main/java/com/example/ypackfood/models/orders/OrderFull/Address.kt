@@ -1,4 +1,4 @@
-package com.example.ypackfood.models.temp.OrderFull
+package com.example.ypackfood.models.orders.OrderFull
 
 data class Address(
     val address: String,

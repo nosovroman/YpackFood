@@ -6,7 +6,11 @@ import com.example.ypackfood.models.commonData.Dish
 import com.example.ypackfood.sealedClasses.Screens
 
 @Composable
-fun ContentSimpleListComponent(contentList: List<Dish>, showPrice: Boolean = false, onItemClick: (id: Int) -> Unit = {}) {
+fun ContentSimpleListComponent(
+    contentList: List<Dish>,
+    showPrice: Boolean = false,
+    onItemClick: (id: Int) -> Unit = {}
+) {
     Column {
         contentList.forEach { content ->
             with(content) {

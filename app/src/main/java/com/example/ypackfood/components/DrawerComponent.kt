@@ -91,13 +91,14 @@ fun DrawerItemComponent(item: MainDrawer, onItemClick: () -> Unit) {
             .fillMaxWidth()
             .height(45.dp)
             .clickable { onItemClick() }
-            .padding(start = 0.dp)
-    ) {
-        Icon(
-            painterResource(item.icon),
-            contentDescription = item.itemName
-        )
-        Spacer(modifier = Modifier.width(8.dp))
-        Text(text = item.itemName, fontSize = 18.sp)
-    }
+            .padding(start = 0.dp),
+        content = {
+            Icon(
+                painterResource(item.icon),
+                contentDescription = item.itemName
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(text = item.itemName, fontSize = 18.sp)
+        }
+    )
 }

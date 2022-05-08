@@ -12,6 +12,9 @@ interface CartDao {
     @Insert
     suspend fun addToCart(cartEntity: CartEntity)
 
+    @Insert
+    suspend fun addToCartMany(cartEntityList: List<CartEntity>)
+
     @Update
     suspend fun updateCart(cartEntity: CartEntity)
 

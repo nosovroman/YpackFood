@@ -13,6 +13,10 @@ class RepositoryRoom(private val cartDao: CartDao) {
         return cartDao.addToCart(cartEntity)
     }
 
+    suspend fun addToCartMany(cartEntityList: List<CartEntity>) {
+        return cartDao.addToCartMany(cartEntityList)
+    }
+
     suspend fun updateCart(cartEntity: CartEntity) {
         return cartDao.updateCart(cartEntity)
     }

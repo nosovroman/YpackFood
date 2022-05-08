@@ -9,8 +9,8 @@ import com.example.ypackfood.models.commonData.Favorites
 import com.example.ypackfood.models.detailAction.DetailAction
 import com.example.ypackfood.models.detailContent.DetailContent
 import com.example.ypackfood.models.mainContent.Category
-import com.example.ypackfood.models.temp.OrderFull.Order
-import com.example.ypackfood.models.temp.OrderMin
+import com.example.ypackfood.models.orders.OrderFull.Order
+import com.example.ypackfood.models.orders.OrderMin.OrderMin
 import retrofit2.Response
 import retrofit2.http.*
 
@@ -69,6 +69,9 @@ interface ApiService {
         @Header(HEADER_AUTH) token: String,
         @Body order: OrderMin
     ): Response<Order>
+
+    @GET("my/orders")
+    suspend fun getHistory(@Header(HEADER_AUTH) token: String): Response<MutableList<Order>>
 
 
         // Авторизация

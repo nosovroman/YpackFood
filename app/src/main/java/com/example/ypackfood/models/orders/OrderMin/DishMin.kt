@@ -1,4 +1,4 @@
-package com.example.ypackfood.models.temp
+package com.example.ypackfood.models.orders.OrderMin
 
 data class DishMin(
     val id: Int,
