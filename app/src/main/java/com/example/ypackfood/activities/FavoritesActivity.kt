@@ -2,6 +2,8 @@ package com.example.ypackfood.activities
 
 import android.util.Log
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
@@ -10,8 +12,10 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.example.ypackfood.common.Constants
 import com.example.ypackfood.components.*
 import com.example.ypackfood.models.commonData.Dish
+import com.example.ypackfood.sealedClasses.NetworkResult
 import com.example.ypackfood.sealedClasses.Screens
 import com.example.ypackfood.viewModels.FavoritesViewModel
 import com.example.ypackfood.viewModels.RoomViewModel
@@ -19,63 +23,60 @@ import com.example.ypackfood.viewModels.RoomViewModel
 @Composable
 fun FavoritesScreen(navController: NavHostController, favoritesViewModel: FavoritesViewModel, roomViewModel: RoomViewModel) {
 
-    val favorites = roomViewModel.favorites.observeAsState(listOf()).value
-    val requestState = favoritesViewModel.favoritesState.observeAsState().value
-    val deletingDishList = roomViewModel.deletingFavListState
+    //val favorites = roomViewModel.favorites.observeAsState(listOf()).value
+    val favoritesState = favoritesViewModel.favoritesState.observeAsState().value
+    //val deletingDishList = roomViewModel.deletingFavListState
 
     LaunchedEffect(true) {
-        favoritesViewModel.initContentResp()
+        //favoritesViewModel.initContentResp()
+        favoritesViewModel.getFavorites()
     }
 
-    LaunchedEffect(favorites) {
-        if (favorites.isNotEmpty()) {
-            favoritesViewModel.getContentByListId(
-                contentIdList = favorites,
-                roomViewModel = roomViewModel
-            )
-        }
-    }
+//    LaunchedEffect(favorites) {
+//        if (favorites.isNotEmpty()) {
+//            favoritesViewModel.getContentByListId(
+//                contentIdList = favorites,
+//                roomViewModel = roomViewModel
+//            )
+//        }
+//    }
 
-    LaunchedEffect(deletingDishList) {
-        if (deletingDishList.isNotEmpty()) {
-            roomViewModel.deleteFromFavoritesByListId(deletingDishList)
-        }
-    }
+//    LaunchedEffect(deletingDishList) {
+//        if (deletingDishList.isNotEmpty()) {
+//            roomViewModel.deleteFromFavoritesByListId(deletingDishList)
+//        }
+//    }
 
     Scaffold (
-        topBar = {
-            ToolbarComponent(navController = navController, title = Screens.Favorites.title)
-        },
+        topBar = { ToolbarComponent(navController = navController, title = Screens.Favorites.title) },
         content = {
             Column(modifier = Modifier.padding(horizontal = 15.dp)) {
-                if (!favorites.isNullOrEmpty()) {
-                    if (!requestState?.data.isNullOrEmpty()) {
+                when (favoritesState) {
+                    is NetworkResult.Success<*> -> {
                         Log.d("networkAnswer", "Display data")
                         ContentSimpleListComponent(
-                            contentList = requestState!!.data!! as List<Dish>,
+                            contentList = favoritesState.data!! as List<Dish>,
                             showPrice = true,
                             onItemClick = { id -> navController.navigate(route = Screens.DetailContent.createRoute(contentId = id)) }
                         )
                     }
-                } else {
-                    EmptyContentComponent(message = "У Вас пока что нет любимых блюд")
-                }
-
-
-                RequestStateComponent(
-                    requestState = requestState,
-                    byError = {
+                    is NetworkResult.Empty<*> -> {
+                        EmptyContentComponent(message = "У Вас пока что нет любимых блюд")
+                    }
+                    is NetworkResult.Error<*> -> {
                         ShowErrorComponent(
-                            message = requestState?.message,
-                            onButtonClick = {
-                                favoritesViewModel.getContentByListId(
-                                    contentIdList = favorites,
-                                    roomViewModel = roomViewModel
-                                )
-                            }
+                            message = favoritesState.message,
+                            onButtonClick = { favoritesViewModel.getFavorites() }
                         )
                     }
-                )
+                    is NetworkResult.Loading<*> -> {
+                        Column {
+                            Spacer(modifier = Modifier.height(Constants.TOOLBAR_HEIGHT + 15.dp))
+                            LoadingBarComponent()
+                        }
+                    }
+                    else -> {}
+                }
             }
         }
     )

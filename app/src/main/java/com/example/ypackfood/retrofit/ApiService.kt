@@ -28,7 +28,10 @@ interface ApiService {
     ): Response<DetailContent>
 
     @GET("my/favorites")
-    suspend fun getFavorites(@Header(HEADER_AUTH) token: String): Response<MutableList<Int>>
+    suspend fun getFavoritesId(@Header(HEADER_AUTH) token: String): Response<MutableList<Int>>
+
+    @GET("my/favorite/dishes")
+    suspend fun getFavorites(@Header(HEADER_AUTH) token: String): Response<MutableList<Dish>>
 
     @POST("my/favorites/{dishId}")
     suspend fun addFavorite(

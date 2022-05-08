@@ -4,12 +4,6 @@ import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.createDataStore
-import androidx.room.Database
-import androidx.room.RoomDatabase
-import com.example.ypackfood.room.dao.FavoritesDao
-import com.example.ypackfood.room.dao.CartDao
-import com.example.ypackfood.room.entities.CartEntity
-import com.example.ypackfood.room.entities.FavoritesEntity
 
 abstract class DataSettings {
     companion object {

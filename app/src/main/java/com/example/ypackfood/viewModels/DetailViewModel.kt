@@ -10,7 +10,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.ypackfood.common.Auth
 import com.example.ypackfood.common.Components
-import com.example.ypackfood.common.RequestTemplate.TOKEN
 import com.example.ypackfood.common.RequestTemplate.mainRepository
 import com.example.ypackfood.models.detailContent.DetailContent
 import com.example.ypackfood.room.entities.CartEntity
@@ -67,12 +66,12 @@ class DetailViewModel : ViewModel() {
         }
     }
 
-    fun getFavorites() {
+    fun getFavoritesId() {
         Log.d("getFavorites", "getFavorites")
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 favoritesState.postValue(NetworkResult.Loading())
-                val response = mainRepository.getFavorites(Auth.authInfo.token)
+                val response = mainRepository.getFavoritesId(Auth.authInfo.token)
                 if (response.isSuccessful) {
                     favoritesState.postValue(NetworkResult.Success(response.body()!!))
                 }

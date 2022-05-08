@@ -5,14 +5,12 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.example.ypackfood.common.Constants
-import com.example.ypackfood.room.dao.FavoritesDao
 import com.example.ypackfood.room.dao.CartDao
 import com.example.ypackfood.room.entities.CartEntity
-import com.example.ypackfood.room.entities.FavoritesEntity
 
-@Database(entities = [FavoritesEntity::class, CartEntity::class], version = 4)
+@Database(entities = [CartEntity::class], version = 5)
 abstract class DishDatabase : RoomDatabase() {
-    abstract fun favoritesDao(): FavoritesDao
+    //abstract fun favoritesDao(): FavoritesDao
     abstract fun shoppingCartDao(): CartDao
 
     companion object {

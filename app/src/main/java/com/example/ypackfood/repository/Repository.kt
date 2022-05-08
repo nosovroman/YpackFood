@@ -10,6 +10,7 @@ class Repository(private val apiService: ApiService) {
     suspend fun getMainContent(token: String) = apiService.getMainContent(token)
     suspend fun getActions(token: String) = apiService.getActions(token)
     suspend fun getDetailContent(token: String, dishId: Int) = apiService.getDetailContent(token, dishId)
+    suspend fun getFavoritesId(token: String) = apiService.getFavoritesId(token)
     suspend fun getFavorites(token: String) = apiService.getFavorites(token)
     suspend fun addFavorite(token: String, contentId: Int) = apiService.addFavorite(token, contentId)
     suspend fun deleteFavorite(token: String, contentId: Int) = apiService.deleteFavorite(token, contentId)

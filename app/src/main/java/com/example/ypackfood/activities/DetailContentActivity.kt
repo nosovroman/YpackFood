@@ -42,7 +42,7 @@ fun DetailContentScreen(
 
     LaunchedEffect(true) {
         detailViewModel.getDetailContent(contentId)
-        detailViewModel.getFavorites()
+        detailViewModel.getFavoritesId()
     }
 
     LaunchedEffect(favoritesState) {
@@ -82,7 +82,7 @@ fun DetailContentScreen(
                             Log.d("detailDishState", "null or error: ${favoritesState?.data}")
                             IconButton(
                                 onClick = {
-                                    detailViewModel.getFavorites()
+                                    detailViewModel.getFavoritesId()
                                 },
                                 content = {
                                     Icon(
