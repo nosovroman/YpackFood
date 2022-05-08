@@ -84,12 +84,7 @@ fun OrderAddressComponent(orderViewModel: OrderViewModel, deliveryState: TabRowS
                     //modifier = Modifier.clickable { orderViewModel.setDeliveryDialog(true) }
                 )
             }
-            else -> {
-                TextRectangleComponent(
-                    text = "Ошибочка $deliveryState",
-                    //modifier = Modifier.clickable { orderViewModel.setDeliveryDialog(true) }
-                )
-            }
+            else -> {}
         }
     }
 }

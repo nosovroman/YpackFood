@@ -25,26 +25,29 @@ import java.lang.Exception
 import java.util.*
 
 class OrderViewModel : ViewModel() {
-    var successPostResp: MutableLiveData<NetworkResult<Order>> = MutableLiveData()
+    var createOrderState: MutableLiveData<NetworkResult<Order>> = MutableLiveData()
+    fun createOrderInit() {
+        createOrderState.postValue(NetworkResult.Empty())
+    }
 
     fun createOrder(order: OrderMin) {
         Log.d("createOrder param", "$order")
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                successPostResp.postValue(NetworkResult.Loading())
+                createOrderState.postValue(NetworkResult.Loading())
                 val response = mainRepository.createOrder(Auth.authInfo.token, order)
                 if (response.isSuccessful) {
                     Log.d("createOrder ok ", response.body()!!.toString())
-                    successPostResp.postValue(NetworkResult.Success(response.body()!!))
+                    createOrderState.postValue(NetworkResult.Success(response.body()!!))
                 }
                 else {
                     Log.d("createOrder not ok ", response.raw().toString())
                     Log.d("createOrder not ok ", response.errorBody()?.string().toString())
-                    successPostResp.postValue(NetworkResult.Error(response.message()))
+                    createOrderState.postValue(NetworkResult.Error(response.message()))
                 }
             } catch (e: Exception) {
                 Log.d("createOrder error ", e.toString() + "|||message: " + e.message)
-                successPostResp.postValue(NetworkResult.Error(e.message))
+                createOrderState.postValue(NetworkResult.Error(e.message))
             }
         }
     }

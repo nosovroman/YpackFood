@@ -27,14 +27,24 @@ fun ShoppingCartScreen(
     orderViewModel: OrderViewModel,
     roomViewModel: RoomViewModel
 ) {
+    val shopList = roomViewModel.shopList.observeAsState(listOf()).value
+    val requestState = cartViewModel.contentResp.observeAsState().value
+    val deletingDishList = roomViewModel.deletingCartListState
+    val createOrderState = orderViewModel.createOrderState.observeAsState().value
 
     LaunchedEffect(true) {
         cartViewModel.initContentResp()
     }
 
-    val shopList = roomViewModel.shopList.observeAsState(listOf()).value
-    val requestState = cartViewModel.contentResp.observeAsState().value
-    val deletingDishList = roomViewModel.deletingCartListState
+    LaunchedEffect(createOrderState) {
+        if (createOrderState is NetworkResult.Success<*>) {
+            roomViewModel.deleteAllFromCart()
+            orderViewModel.createOrderInit()
+            navController.navigate(route = Screens.History.route) {
+                popUpTo(Screens.ShoppingCart.route) { inclusive = true }
+            }
+        }
+    }
 
     LaunchedEffect(shopList) {
         if (shopList.size > cartViewModel.dishesRoomState.size) {

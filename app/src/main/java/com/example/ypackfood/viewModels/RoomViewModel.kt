@@ -68,4 +68,11 @@ class RoomViewModel(application: Application) : AndroidViewModel(application) {
             repositoryRoom.deleteFromCartByListId(ids)
         }
     }
+
+    fun deleteAllFromCart() {
+        Log.d("Cart", "deleteAllFromCart")
+        viewModelScope.launch (Dispatchers.IO) {
+            repositoryRoom.deleteAllFromCart()
+        }
+    }
 }
