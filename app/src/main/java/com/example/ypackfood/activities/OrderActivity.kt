@@ -84,7 +84,12 @@ fun OrderAddressComponent(orderViewModel: OrderViewModel, deliveryState: TabRowS
                     //modifier = Modifier.clickable { orderViewModel.setDeliveryDialog(true) }
                 )
             }
-            else -> {}
+            else -> {
+                TextRectangleComponent(
+                    text = "Ошибочка $deliveryState",
+                    //modifier = Modifier.clickable { orderViewModel.setDeliveryDialog(true) }
+                )
+            }
         }
     }
 }
@@ -95,7 +100,7 @@ fun OrderContent(orderViewModel: OrderViewModel, cartViewModel: ShoppingCartView
         modifier = Modifier.padding(horizontal = 20.dp, vertical = 5.dp),
         content = {
             item {
-                OrderAddressComponent(orderViewModel = orderViewModel, deliveryState)
+                OrderAddressComponent(orderViewModel = orderViewModel, deliveryState = deliveryState)
             }
             item {
                 Spacer(modifier = Modifier.size(10.dp))

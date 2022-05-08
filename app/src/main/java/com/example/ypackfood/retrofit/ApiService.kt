@@ -15,11 +15,9 @@ import retrofit2.Response
 import retrofit2.http.*
 
 interface ApiService {
+        // Блюдо
     @GET("dishes")
     suspend fun getMainContent(@Header(HEADER_AUTH) token: String): Response<MutableList<Category>>
-
-    @GET("actions")
-    suspend fun getActions(@Header(HEADER_AUTH) token: String): Response<MutableList<ActionsItem>>
 
     @GET("dishes/{dishId}")
     suspend fun getDetailContent(
@@ -27,6 +25,25 @@ interface ApiService {
         @Path("dishId") dishId: Int
     ): Response<DetailContent>
 
+    @GET("specificDishes")
+    suspend fun getContentByListId(
+        @Header(HEADER_AUTH) token: String,
+        @Query("ids") contentIdList: List<Int>
+    ): Response<MutableList<Dish>>
+
+
+        // Акции
+    @GET("actions")
+    suspend fun getActions(@Header(HEADER_AUTH) token: String): Response<MutableList<ActionsItem>>
+
+    @GET("actions/{actionId}")
+    suspend fun getDetailAction(
+        @Header(HEADER_AUTH) token: String,
+        @Path("actionId") actionId: Int
+    ): Response<DetailAction>
+
+
+        // Пользователь
     @GET("my/favorites")
     suspend fun getFavoritesId(@Header(HEADER_AUTH) token: String): Response<MutableList<Int>>
 
@@ -45,24 +62,16 @@ interface ApiService {
         @Path("dishId") dishId: Int
     ): Response<Favorites>
 
-    @GET("actions/{actionId}")
-    suspend fun getDetailAction(
-        @Header(HEADER_AUTH) token: String,
-        @Path("actionId") actionId: Int
-    ): Response<DetailAction>
 
-    @GET("specificDishes")
-    suspend fun getContentByListId(
-        @Header(HEADER_AUTH) token: String,
-        @Query("ids") contentIdList: List<Int>
-    ): Response<MutableList<Dish>>
-
+        // Заказ
     @POST("my/orders")
     suspend fun createOrder(
         @Header(HEADER_AUTH) token: String,
         @Body order: OrderMin
     ): Response<Order>
 
+
+        // Авторизация
     @POST("auth/login")
     suspend fun authorizeUser(
         @Body auth: Authorization
