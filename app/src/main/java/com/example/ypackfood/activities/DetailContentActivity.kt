@@ -15,7 +15,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.example.ypackfood.common.Components
 import com.example.ypackfood.components.*
+import com.example.ypackfood.sealedClasses.NetworkResult
 import com.example.ypackfood.viewModels.DetailViewModel
 import com.example.ypackfood.viewModels.RoomViewModel
 
@@ -32,19 +34,23 @@ fun DetailContentScreen(
         detailViewModel.initCountWish()
     }
 
-    val requestState = detailViewModel.detailDishState.observeAsState().value
-    val favorites = roomViewModel.favorites.observeAsState(listOf()).value
+    val detailDishState = detailViewModel.detailDishState.observeAsState().value
+    val favoritesState = detailViewModel.favoritesState.observeAsState().value
+    val favoritesToggledState = detailViewModel.favoritesToggledState.observeAsState().value
+    //val favorites = roomViewModel.favorites.observeAsState(listOf()).value
     val cartDishes = roomViewModel.shopList.observeAsState(listOf()).value
 
-    LaunchedEffect(contentId) {
+    LaunchedEffect(true) {
         detailViewModel.getDetailContent(contentId)
+        detailViewModel.getFavorites()
     }
 
-    LaunchedEffect(favorites) {
-        Log.d("checkFavorites", favorites.toString())
-        roomViewModel.initFavoriteIcon(contentId)
+    LaunchedEffect(favoritesState) {
+        Log.d("checkFavorites", favoritesState.toString())
+        //roomViewModel.initFavoriteIcon(contentId)
     }
 
+        // отслеживает добавления в корзину
     LaunchedEffect(cartDishes) {
         Log.d("shopList", cartDishes.toString())
     }
@@ -55,26 +61,43 @@ fun DetailContentScreen(
             ToolbarComponent(
                 navController = navController,
                 rightIcon = {
-                    favorites.let {
-                        Log.d("roomRequest", favorites.toString())
-                        IconButton(
-                            onClick = {
-                                roomViewModel.setFavoritesIcon(contentId)
-                            },
-                            content = {
-                                Icon(
-                                    imageVector = roomViewModel.currentIcon,
-                                    contentDescription = "Избранное",
-                                    modifier = Modifier.size(35.dp)
-                                )
-                            }
-                        )
+                    when (favoritesState) {
+                        is NetworkResult.Success<*> -> {
+                            Log.d("detailDishState", "success ${favoritesState.data}")
+                            IconButton(
+                                onClick = {
+                                    detailViewModel.onClickFavoritesIcon(contentId, favoritesState.data!!)
+                                },
+                                content = {
+                                    Icon(
+                                        imageVector =  detailViewModel.getRealCurrentIcon(contentId, favoritesState.data!!),
+                                        contentDescription = "Избранное",
+                                        modifier = Modifier.size(35.dp)
+                                    )
+                                }
+                            )
+                        }
+                        else -> {
+                            Log.d("detailDishState", "null or error: ${favoritesState?.data}")
+                            IconButton(
+                                onClick = {
+                                    detailViewModel.getFavorites()
+                                },
+                                content = {
+                                    Icon(
+                                        imageVector = Components.defaultIcon,
+                                        contentDescription = "Избранное",
+                                        modifier = Modifier.size(35.dp)
+                                    )
+                                }
+                            )
+                        }
                     }
                 },
             )
         },
         floatingActionButton = {
-            if (!requestState?.data?.name.isNullOrEmpty()) {
+            if (!detailDishState?.data?.name.isNullOrEmpty()) {
                 ShoppingRowComponent(
                     navController,
                     detailViewModel,
@@ -84,18 +107,19 @@ fun DetailContentScreen(
         },
         floatingActionButtonPosition = FabPosition.Center,
         content = {
-            if (!requestState?.data?.name.isNullOrEmpty()) {
+            if (!detailDishState?.data?.name.isNullOrEmpty()) {
                 Log.d("networkAnswer", "Display data")
                 Column (
-                    Modifier.verticalScroll(scrollState)
-                ) {
-                    PictureTwoComponent(url = requestState!!.data!!.picturePaths.large)
-                    DetailDescription(detailViewModel, Modifier.padding(start = 20.dp, end = 20.dp))
-                }
+                    Modifier.verticalScroll(scrollState),
+                    content = {
+                        PictureTwoComponent(url = detailDishState!!.data!!.picturePaths.large)
+                        DetailDescription(detailViewModel, Modifier.padding(start = 20.dp, end = 20.dp))
+                    }
+                )
             }
 
             RequestStateComponent(
-                requestState = requestState,
+                requestState = detailDishState,
                 byError = {
                     ShowErrorComponent(onButtonClick = { detailViewModel.getDetailContent(contentId) })
                 }
@@ -167,32 +191,3 @@ fun DetailDescription(detailViewModel: DetailViewModel, modifier: Modifier = Mod
         }
     }
 }
-
-//@Composable
-//fun CounterComponent3()//(ind: Int, shoppingCartViewModel: ShoppingCartViewModel)
-//{
-//    val counterButtonSize: Dp = 30.dp
-//    Row (
-//        verticalAlignment = Alignment.CenterVertically
-//    ) {
-//          IconButton(
-//            modifier = Modifier
-//                .border(width = 1.dp, color = MaterialTheme.colors.primary, shape = CircleShape)
-//                .size(counterButtonSize),
-//            onClick = {  },
-//            content = {
-//                Icon(imageVector = Icons.Default.Remove, contentDescription = "-", tint = MaterialTheme.colors.primary)
-//            }
-//        )
-//        Text(text = "1 шт.", fontSize = 16.sp, modifier = Modifier.padding(start = 5.dp, end = 5.dp))
-//        IconButton(
-//            modifier = Modifier
-//                .background(color = MaterialTheme.colors.primary, shape = CircleShape)
-//                .size(counterButtonSize),
-//            onClick = { },
-//            content = {
-//                Icon(imageVector = Icons.Default.Add, contentDescription = "+", tint = MaterialTheme.colors.onPrimary)
-//            }
-//        )
-//    }
-//}

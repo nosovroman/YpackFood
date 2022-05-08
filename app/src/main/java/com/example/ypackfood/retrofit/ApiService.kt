@@ -26,6 +26,21 @@ interface ApiService {
         @Path("dishId") dishId: Int
     ): Response<DetailContent>
 
+    @GET("my/favorites")
+    suspend fun getFavorites(@Header(HEADER_AUTH) token: String): Response<MutableList<Int>>
+
+    @POST("my/favorites/{dishId}")
+    suspend fun addFavorite(
+        @Header(HEADER_AUTH) token: String,
+        @Path("dishId") dishId: Int
+    ): Response<Boolean>
+
+    @DELETE("my/favorites/{dishId}")
+    suspend fun deleteFavorite(
+        @Header(HEADER_AUTH) token: String,
+        @Path("dishId") dishId: Int
+    ): Response<Boolean>
+
     @GET("actions/{actionId}")
     suspend fun getDetailAction(
         @Header(HEADER_AUTH) token: String,

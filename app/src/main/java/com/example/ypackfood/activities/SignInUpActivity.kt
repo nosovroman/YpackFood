@@ -143,13 +143,8 @@ class SignInUpViewModel : ViewModel() {
 fun SignInUpScreen(navController: NavHostController, signViewModel: SignInUpViewModel, datastoreViewModel: DatastoreViewModel) {
 
     val signState = signViewModel.signSwitcherState.observeAsState().value!!
-    val authInfoState = datastoreViewModel.authInfoState.observeAsState().value
+    val authInfoState = datastoreViewModel.authInfoState.observeAsState().value // не используется в принципе
     val registerState = signViewModel.registerState.observeAsState().value
-
-//    LaunchedEffect(true) {
-//        Log.d("SignInUp", "LaunchedEffect(true)")
-//        signViewModel.registerStateInit()
-//    }
 
     LaunchedEffect(registerState) {
         if (registerState is NetworkResult.Success<*>) {
