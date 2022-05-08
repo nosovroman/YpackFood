@@ -11,7 +11,6 @@ import androidx.lifecycle.viewModelScope
 import com.example.ypackfood.common.Auth
 import com.example.ypackfood.common.Constants.END_DELIVERY
 import com.example.ypackfood.common.Constants.START_DELIVERY
-import com.example.ypackfood.common.RequestTemplate.TOKEN
 import com.example.ypackfood.common.RequestTemplate.mainRepository
 import com.example.ypackfood.enumClasses.getCityNames
 import com.example.ypackfood.enumClasses.getPaymentOptions
@@ -78,7 +77,7 @@ class OrderViewModel : ViewModel() {
         else null
 
         return OrderMin(
-            targetProduction = "$hourState:$minuteState",
+            deliveryTime = "$hourState:$minuteState",
             totalPrice = totalCost,
             address = address, // строка или id
             dishes = dishesMin,
