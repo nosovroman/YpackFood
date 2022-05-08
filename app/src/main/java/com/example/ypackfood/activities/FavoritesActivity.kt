@@ -23,29 +23,11 @@ import com.example.ypackfood.viewModels.RoomViewModel
 @Composable
 fun FavoritesScreen(navController: NavHostController, favoritesViewModel: FavoritesViewModel, roomViewModel: RoomViewModel) {
 
-    //val favorites = roomViewModel.favorites.observeAsState(listOf()).value
     val favoritesState = favoritesViewModel.favoritesState.observeAsState().value
-    //val deletingDishList = roomViewModel.deletingFavListState
 
     LaunchedEffect(true) {
-        //favoritesViewModel.initContentResp()
         favoritesViewModel.getFavorites()
     }
-
-//    LaunchedEffect(favorites) {
-//        if (favorites.isNotEmpty()) {
-//            favoritesViewModel.getContentByListId(
-//                contentIdList = favorites,
-//                roomViewModel = roomViewModel
-//            )
-//        }
-//    }
-
-//    LaunchedEffect(deletingDishList) {
-//        if (deletingDishList.isNotEmpty()) {
-//            roomViewModel.deleteFromFavoritesByListId(deletingDishList)
-//        }
-//    }
 
     Scaffold (
         topBar = { ToolbarComponent(navController = navController, title = Screens.Favorites.title) },

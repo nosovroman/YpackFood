@@ -15,7 +15,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class RoomViewModel(application: Application) : AndroidViewModel(application) {
-    //var favorites: LiveData<List<Int>>
     var shopList: LiveData<List<CartEntity>>
     private var repositoryRoom: RepositoryRoom
 
@@ -36,10 +35,8 @@ class RoomViewModel(application: Application) : AndroidViewModel(application) {
 
     init {
         val instanceDB = DishDatabase.getFavoritesInstance(application)
-        //val favoritesDao = instanceDB.favoritesDao()
         val shoppingCartDao = instanceDB.shoppingCartDao()
         repositoryRoom = RepositoryRoom(shoppingCartDao)
-        //favorites = repositoryRoom.favorites
         shopList = repositoryRoom.shopList
     }
 
@@ -71,70 +68,4 @@ class RoomViewModel(application: Application) : AndroidViewModel(application) {
             repositoryRoom.deleteFromCartByListId(ids)
         }
     }
-
-//    // ------------------ Favorites
-//    private fun addFavorite(favoriteId: Int) {
-//        viewModelScope.launch (Dispatchers.IO) {
-//            repositoryRoom.addFavorite(favoriteId)
-//        }
-//        Log.d("roomRequest", "adding $favoriteId")
-//    }
-//
-//    private fun deleteFavorite(favoriteId: Int) {
-//        viewModelScope.launch (Dispatchers.IO) {
-//            repositoryRoom.deleteFavorite(favoriteId)
-//        }
-//        Log.d("roomRequest", "deleting $favoriteId")
-//    }
-//
-//    fun deleteFromFavoritesByListId(ids: List<Int>) {
-//        Log.d("Cart", "deleteFromFavoritesByListId")
-//        viewModelScope.launch (Dispatchers.IO) {
-//            repositoryRoom.deleteFromFavoritesByListId(ids)
-//        }
-//    }
-//
-//    private fun checkExistFavoriteById(favoriteId: Int): Boolean {
-//        return favorites.value?.contains(favoriteId) ?: false
-//    }
-//
-//    fun initFavoriteIcon(contentId: Int) {
-//        currentIcon = if (checkExistFavoriteById(contentId)) {
-//            Components.filledFavoriteIcon
-//        } else {
-//            Components.outlinedFavoriteIcon
-//        }
-//    }
-//
-//    fun setFavoritesIcon(contentId: Int) {
-//        try {
-//            currentIcon = if (!checkExistFavoriteById(contentId)) {
-//                addFavorite(contentId)
-//                Components.filledFavoriteIcon
-//            } else {
-//                deleteFavorite(contentId)
-//                Components.outlinedFavoriteIcon
-//            }
-//            Log.d("roomRequest", currentIcon.name)
-//        } catch (e: Exception) {
-//            Log.d("roomRequest", "error setFavoritesIcon")
-//        }
-//    }
 }
-
-
-//    fun checkFavoriteById(favoriteId: Int) {
-//        val oldData = contentResp.value?.data ?: Components.outlinedFavoriteIcon
-//
-//        viewModelScope.launch (Dispatchers.IO) {
-//            try {
-//                //contentResp.postValue(NetworkResult.Loading(oldData))
-//                val response = checkExistFavoriteById(favoriteId)// repositoryRoom.checkFavoriteById(favoriteId)
-//                Log.d("roomRequest $favoriteId", response.toString())
-//                val renderingIcon = if (response) Components.filledFavoriteIcon else Components.outlinedFavoriteIcon
-//                contentResp.postValue(NetworkResult.Success(renderingIcon))
-//            } catch (e: Exception) {
-//                contentResp.postValue(NetworkResult.Error(e.message, oldData))
-//            }
-//        }
-//    }

@@ -42,38 +42,4 @@ class FavoritesViewModel: ViewModel() {
             }
         }
     }
-
-//    fun getContentByListId(contentIdList: List<Int>?, roomViewModel: RoomViewModel) {
-//        Log.d("requestFavorites", "getContentByListId")
-//        contentIdList?.let {
-//            viewModelScope.launch(Dispatchers.IO) {
-//                try {
-//                    favoritesState.postValue(NetworkResult.Loading())
-//                    val response = mainRepository.getContentByListId(Auth.authInfo.token, contentIdList)
-//                    when(response.code()) {
-//                        in 200..299 -> {
-//                            favoritesState.postValue(NetworkResult.Success(response.body()!!))
-//                            Log.d("getContentByListId", response.body()!!.toString())
-//                        }
-//                        400 -> {
-//                            val jsonString = response.errorBody()!!.string()
-//                            val res = RequestTemplate.getErrorFromJson(jsonString)
-//                            Log.d("getContentByListId x = ", res.ids.toString())
-//                            roomViewModel.setDeletingFavList(res.ids!!)
-//                            favoritesState.postValue(NetworkResult.Loading())
-//                        }
-//                        else -> {
-//                            Log.d("getContentByListId not ok ${response.code()}", response.raw().toString())
-//                            Log.d("getContentByListId not ok ", response.errorBody()?.string().toString())
-//                            favoritesState.postValue(NetworkResult.Error(response.message()))
-//                        }
-//                    }
-//
-//                } catch (e: Exception) {
-//                    Log.d("getContentByListId error ", e.toString())
-//                    favoritesState.postValue(NetworkResult.Error(e.message))
-//                }
-//            }
-//        }
-//    }
 }

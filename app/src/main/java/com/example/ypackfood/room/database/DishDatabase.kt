@@ -30,22 +30,5 @@ abstract class DishDatabase : RoomDatabase() {
                 return instance
             }
         }
-
-//        private var INSTANCE_CART: DishDatabase? = null
-//        fun getCartInstance(context: Context): DishDatabase {
-//            synchronized(this) {
-//                var instance = INSTANCE_CART
-//                if (instance == null) {
-//                    instance = Room.databaseBuilder(
-//                        context.applicationContext,
-//                        DishDatabase::class.java,
-//                        Constants.ROOM_CART
-//                    ).fallbackToDestructiveMigration()
-//                        .build()
-//                    INSTANCE_CART = instance
-//                }
-//                return instance
-//            }
-//        }
     }
 }

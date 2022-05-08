@@ -5,7 +5,6 @@ import com.example.ypackfood.room.dao.CartDao
 import com.example.ypackfood.room.entities.CartEntity
 
 class RepositoryRoom(private val cartDao: CartDao) {
-    //val favorites: LiveData<List<Int>> = favoritesDao.getFavorites()
     val shopList: LiveData<List<CartEntity>> = cartDao.getShoppingCart()
 
 
@@ -25,22 +24,4 @@ class RepositoryRoom(private val cartDao: CartDao) {
     suspend fun deleteFromCartByListId(ids: List<Int>) {
         return cartDao.deleteFromCartByListId(ids)
     }
-
-
-//    // ------------------ Favorites
-//    suspend fun addFavorite(favoriteId: Int) {
-//        return favoritesDao.addFavorite(FavoritesEntity(favoriteId))
-//    }
-//
-//    suspend fun deleteFavorite(favoriteId: Int) {
-//        return favoritesDao.deleteFavorite(FavoritesEntity(favoriteId))
-//    }
-//
-//    suspend fun deleteFromFavoritesByListId(ids: List<Int>) {
-//        return cartDao.deleteFromFavoritesByListId(ids)
-//    }
 }
-
-//suspend fun checkFavoriteById(favoriteId: Int): Boolean {
-//    return favoritesDao.checkFavoriteById(favoriteId)// ?: false
-//}
