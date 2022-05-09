@@ -70,11 +70,13 @@ class OrderViewModel : ViewModel() {
     }
 
     fun composeOrder(dishMinList: List<CartDish>, addressMerged: String, totalCost: Int): OrderMin {
-        val dishesMin = dishMinList.map { DishMin(
-            id = it.dishId,
-            count = it.count,
-            portion = BasePortionMin(id = it.portionId, price = PriceNowMin(it.priceId))
-        ) }
+        val dishesMin = dishMinList.map {
+            DishMin(
+                id = it.dishId,
+                count = it.count,
+                portion = BasePortionMin(id = it.portionId, price = PriceNowMin(it.priceId))
+            )
+        }
 
         val address = if (deliveryState.value is DeliveryOptions.DELIVERY) AddressMin(address = addressMerged)
         else null

@@ -1,14 +1,13 @@
 package com.example.ypackfood.activities
 
 import android.util.Log
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.Button
+import androidx.compose.material.Divider
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -55,6 +54,7 @@ fun HistoryScreen(navController: NavHostController, historyViewModel: HistoryVie
                         is NetworkResult.Success<*> -> {
                             itemsIndexed(historyDishesState.data as MutableList<Order>) { index, item ->
                                 Log.d("NetworkResult ok", item.toString())
+                                Spacer(modifier = Modifier.height(10.dp))
                                 HistoryCardComponent(
                                     orderNumber = index.toString(),
                                     status = item.status ?: "Готовится",
@@ -69,6 +69,8 @@ fun HistoryScreen(navController: NavHostController, historyViewModel: HistoryVie
                                         historyViewModel.setAddedToCart(true)
                                     }
                                 )
+                                Spacer(modifier = Modifier.height(10.dp))
+                                Divider()
                             }
                         }
                         is NetworkResult.Error<*> -> {
@@ -99,9 +101,7 @@ fun HistoryCardComponent(
 ) {
     Log.d("NetworkResult", "HistoryCardComponent")
     Column(
-        modifier = Modifier
-            .padding(top = 50.dp)
-            .fillMaxWidth(),
+        modifier = Modifier.fillMaxWidth(),
         content = {
             Text(text = "Заказ № $orderNumber | $status")
             PictureRowComponent(imageList)
@@ -122,7 +122,7 @@ fun HistoryCardComponent(
 fun PictureRowComponent(imageList: List<String>) {
     LazyRow {
         items(imageList) { url ->
-            PictureOneComponent(size = 45.dp, url = url)
+            PictureOneComponent(size = 55.dp, url = url)
         }
     }
 }

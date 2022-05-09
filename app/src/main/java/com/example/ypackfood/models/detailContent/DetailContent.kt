@@ -10,6 +10,7 @@ data class DetailContent(
     val basePortion: BasePortion,
     val category: String,
     val composition: String,
+    val count: Int?,
     val deleted: Boolean,
     val description: String,
     val dishes: List<Dish>,

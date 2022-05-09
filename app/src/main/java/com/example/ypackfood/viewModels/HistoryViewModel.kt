@@ -61,12 +61,13 @@ class HistoryViewModel : ViewModel() {
         dishList.forEach() {
             resultCartList.add(
                 with (it) {
+                    Log.d("DetailContentDishList", it.toString())
                     CartEntity(
                         dishId = id,
                         portionId = basePortion.id,
                         dishPriceId = basePortion.priceNow.id,
                         dishPrice = basePortion.priceNow.price,
-                        dishCount = 1,
+                        dishCount = count ?: 1,
                         dishAddons = null
                     )
                 }
