@@ -24,7 +24,11 @@ import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
 @Composable
-fun ToolbarScrollComponent(navController: NavHostController, mvvmViewModel: MainViewModel) {
+fun ToolbarScrollComponent(
+    navController: NavHostController,
+    mvvmViewModel: MainViewModel,
+    rightIcon: @Composable () -> Unit
+) {
     val scope = rememberCoroutineScope()
 
     TopAppBar (modifier = Modifier
@@ -45,11 +49,6 @@ fun ToolbarScrollComponent(navController: NavHostController, mvvmViewModel: Main
         Text(Constants.APP_NAME_RUS, fontSize = 22.sp)
         Spacer(Modifier.weight(1f, true))
 
-        IconButton(
-            onClick = { navController.navigate(route = Screens.ShoppingCart.route) },
-            content = {
-                Icon(Icons.Outlined.ShoppingCart, contentDescription = "Корзина", Modifier.scale(-1.0f, 1.0f) )
-            }
-        )
+        rightIcon()
     }
 }

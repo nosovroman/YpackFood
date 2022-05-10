@@ -2,13 +2,24 @@ package com.example.ypackfood.activities
 
 
 import android.util.Log
+import androidx.compose.animation.animateColor
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.ShoppingCart
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -19,19 +30,24 @@ import com.example.ypackfood.common.Constants
 import com.example.ypackfood.common.Constants.TOOLBAR_HEIGHT
 import com.example.ypackfood.components.*
 import com.example.ypackfood.components.inOrder.ContentListComponent2
-import com.example.ypackfood.components.specific.ActionsRowComponent
 import com.example.ypackfood.components.specific.DishesColumnComponent
 import com.example.ypackfood.enumClasses.ErrorEnum
-import com.example.ypackfood.models.actionsContent.ActionsItem
 import com.example.ypackfood.models.mainContent.Category
 import com.example.ypackfood.sealedClasses.NetworkResult
 import com.example.ypackfood.sealedClasses.Screens
+import com.example.ypackfood.ui.theme.Orange
 import com.example.ypackfood.viewModels.DatastoreViewModel
 import com.example.ypackfood.viewModels.MainViewModel
+import com.example.ypackfood.viewModels.RoomViewModel
 
 
 @Composable
-fun MainScreen(navController: NavHostController, mainViewModel: MainViewModel, datastoreViewModel: DatastoreViewModel) {
+fun MainScreen(
+    navController: NavHostController,
+    mainViewModel: MainViewModel,
+    datastoreViewModel: DatastoreViewModel,
+    roomViewModel: RoomViewModel
+) {
     mainViewModel.listContentStateInit(rememberLazyListState())
     mainViewModel.listCategoryStateInit(rememberLazyListState())
     mainViewModel.scaffoldStateInit(rememberScaffoldState())
@@ -50,6 +66,7 @@ fun MainScreen(navController: NavHostController, mainViewModel: MainViewModel, d
 
     val dishesState = mainViewModel.dishesState.observeAsState().value
     val actionsState = mainViewModel.actionsState.observeAsState().value
+    val shopList = roomViewModel.shopList.observeAsState().value
 
     LaunchedEffect(true) {
         Log.d("dishesStateLog", "Launched")
@@ -139,7 +156,43 @@ fun MainScreen(navController: NavHostController, mainViewModel: MainViewModel, d
 //                    }
 //                )
 
-                ToolbarScrollComponent(navController, mainViewModel)
+                ToolbarScrollComponent(
+                    navController,
+                    mainViewModel,
+                    rightIcon = {
+                        val infiniteTransition = rememberInfiniteTransition()
+                        val animatedBackground by infiniteTransition.animateColor (
+                            initialValue = MaterialTheme.colors.primary,
+                            targetValue = Orange,
+                            animationSpec = infiniteRepeatable(
+                                animation = tween(1000),
+                                repeatMode = RepeatMode.Reverse
+                            )
+                        )
+
+                        val modifierForAnimatedBackground = Modifier
+                            .background(
+                                color = if (shopList.isNullOrEmpty()) {
+                                    MaterialTheme.colors.primary
+                                } else {
+                                    animatedBackground
+                                },
+                                shape = CircleShape
+                            )
+
+                        IconButton(
+                            modifier = modifierForAnimatedBackground,
+                            onClick = { navController.navigate(route = Screens.ShoppingCart.route) },
+                            content = {
+                                Icon(
+                                    imageVector = Icons.Outlined.ShoppingCart,
+                                    contentDescription = "Корзина",
+                                    modifier = Modifier.scale(-1.0f, 1.0f)
+                                )
+                            }
+                        )
+                    }
+                )
             }
         }
     )
