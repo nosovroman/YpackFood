@@ -38,8 +38,11 @@ class DetailViewModel : ViewModel() {
         enabledIButtonState = newState
     }
 
-    var currentIcon by mutableStateOf(Components.defaultIcon)
+    var currentIconState by mutableStateOf(Components.defaultIcon)
         private set
+    fun setCurrentIcon(newState: ImageVector) {
+        currentIconState = newState
+    }
 
     var detailDishState: MutableLiveData<NetworkResult<DetailContent>> = MutableLiveData()
     var favoritesState: MutableLiveData<NetworkResult<MutableList<Int>>> = MutableLiveData()
@@ -147,7 +150,7 @@ class DetailViewModel : ViewModel() {
 
     fun onClickFavoritesIcon(contentId: Int, listOfFavorites: MutableList<Int>) {
         try {
-            currentIcon = if (!listOfFavorites.contains(contentId)) {
+            currentIconState = if (!listOfFavorites.contains(contentId)) {
                 addFavorite(contentId)
                 Components.filledFavoriteIcon
             } else {
@@ -158,17 +161,24 @@ class DetailViewModel : ViewModel() {
     }
 
     fun getRealCurrentIcon(contentId: Int, listOfFavorites: MutableList<Int>): ImageVector {
-        currentIcon = if (listOfFavorites.contains(contentId)) {
+        currentIconState = if (listOfFavorites.contains(contentId)) {
             Components.filledFavoriteIcon
         } else {
             Components.outlinedFavoriteIcon
         }
-        return currentIcon
+        return currentIconState
     }
 
-    fun buildDishInfo(id: Int, portionId: Int, priceId: Int, price: Int, count: Int, addons: String? = null): CartEntity {
+    fun buildDishInfo(
+        dishId: Int,
+        portionId: Int,
+        priceId: Int,
+        price: Int,
+        count: Int,
+        addons: String? = null
+    ): CartEntity {
         return CartEntity(
-            dishId = id,
+            dishId = dishId,
             portionId = portionId,
             dishPriceId = priceId,
             dishPrice = price,

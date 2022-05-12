@@ -49,7 +49,7 @@ class MainViewModel : ViewModel() {
     }
 
     fun computeCategoryList(): List<String> {
-        val dishes = dishesState.value?.data?.map { it.categoryType } ?: listOf()
+        val dishes = dishesState.value?.data?.map { it.categoryTypeDto } ?: listOf()
         val action = if (actionsState.value?.data.isNullOrEmpty()) listOf() else listOf("Акции")
         return action+dishes
     }

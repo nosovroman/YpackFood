@@ -146,7 +146,7 @@ fun ShoppingRowComponent(navController: NavHostController, detailViewModel: Deta
                 onClick = {
                     roomViewModel.addToCart(
                         detailViewModel.buildDishInfo(
-                            id = detailDishState.id,
+                            dishId = detailDishState.id,
                             portionId = detailDishState.basePortion.id,
                             priceId = detailDishState.basePortion.priceNow.id,
                             price = detailDishState.basePortion.priceNow.price,

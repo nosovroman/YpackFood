@@ -16,16 +16,16 @@ import retrofit2.http.*
 
 interface ApiService {
         // Блюдо
-    @GET("dishes")
+    @GET("client/dishes/actual/categories")
     suspend fun getMainContent(@Header(HEADER_AUTH) token: String): Response<MutableList<Category>>
 
-    @GET("dishes/{dishId}")
+    @GET("client/dishes/{dishId}")
     suspend fun getDetailContent(
         @Header(HEADER_AUTH) token: String,
         @Path("dishId") dishId: Int
     ): Response<DetailContent>
 
-    @GET("specificDishes")
+    @GET("client/specificDishes")
     suspend fun getContentByListId(
         @Header(HEADER_AUTH) token: String,
         @Query("ids") contentIdList: List<Int>
@@ -33,10 +33,10 @@ interface ApiService {
 
 
         // Акции
-    @GET("actions")
+    @GET("client/actions")
     suspend fun getActions(@Header(HEADER_AUTH) token: String): Response<MutableList<ActionsItem>>
 
-    @GET("actions/{actionId}")
+    @GET("client/actions/{actionId}")
     suspend fun getDetailAction(
         @Header(HEADER_AUTH) token: String,
         @Path("actionId") actionId: Int
@@ -44,19 +44,19 @@ interface ApiService {
 
 
         // Пользователь
-    @GET("my/favorites")
+    @GET("client/my/favorites")
     suspend fun getFavoritesId(@Header(HEADER_AUTH) token: String): Response<MutableList<Int>>
 
-    @GET("my/favorites/dishes")
+    @GET("client/my/favorites/dishes")
     suspend fun getFavorites(@Header(HEADER_AUTH) token: String): Response<MutableList<Dish>>
 
-    @POST("my/favorites/{dishId}")
+    @POST("client/my/favorites/{dishId}")
     suspend fun addFavorite(
         @Header(HEADER_AUTH) token: String,
         @Path("dishId") dishId: Int
     ): Response<Favorites>
 
-    @DELETE("my/favorites/{dishId}")
+    @DELETE("client/my/favorites/{dishId}")
     suspend fun deleteFavorite(
         @Header(HEADER_AUTH) token: String,
         @Path("dishId") dishId: Int
@@ -64,13 +64,13 @@ interface ApiService {
 
 
         // Заказ
-    @POST("my/orders")
+    @POST("client/my/orders")
     suspend fun createOrder(
         @Header(HEADER_AUTH) token: String,
         @Body order: OrderMin
     ): Response<Order>
 
-    @GET("my/orders")
+    @GET("client/my/orders")
     suspend fun getHistory(@Header(HEADER_AUTH) token: String): Response<MutableList<Order>>
 
 
