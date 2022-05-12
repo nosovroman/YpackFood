@@ -25,10 +25,10 @@ class DetailViewModel : ViewModel() {
     fun initCountWish() {
         countWishDishes = 1
     }
-    fun incCountWish() {
+    fun incrementCounter() {
         countWishDishes++
     }
-    fun decCountWish() {
+    fun decrementCounter() {
         countWishDishes--
     }
 
@@ -46,7 +46,6 @@ class DetailViewModel : ViewModel() {
 
     var detailDishState: MutableLiveData<NetworkResult<DetailContent>> = MutableLiveData()
     var favoritesState: MutableLiveData<NetworkResult<MutableList<Int>>> = MutableLiveData()
-    //var favoritesToggledState: MutableLiveData<NetworkResult<Boolean>> = MutableLiveData()
 
     fun getDetailContent(contentId: Int) {
         Log.d("requestDetail", "getDetailContent")
@@ -169,14 +168,7 @@ class DetailViewModel : ViewModel() {
         return currentIconState
     }
 
-    fun buildDishInfo(
-        dishId: Int,
-        portionId: Int,
-        priceId: Int,
-        price: Int,
-        count: Int,
-        addons: String? = null
-    ): CartEntity {
+    fun buildDishInfo(dishId: Int, portionId: Int, priceId: Int, price: Int, count: Int, addons: String? = null): CartEntity {
         return CartEntity(
             dishId = dishId,
             portionId = portionId,

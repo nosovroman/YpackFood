@@ -4,7 +4,6 @@ import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.core.text.isDigitsOnly
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -14,6 +13,7 @@ import com.example.ypackfood.common.Constants.START_DELIVERY
 import com.example.ypackfood.common.RequestTemplate.mainRepository
 import com.example.ypackfood.enumClasses.getCityNames
 import com.example.ypackfood.enumClasses.getPaymentOptions
+import com.example.ypackfood.extensions.isDigitsOnly
 import com.example.ypackfood.extensions.toTimeString
 import com.example.ypackfood.models.commonData.CartDish
 import com.example.ypackfood.models.orders.OrderFull.Order
@@ -57,7 +57,6 @@ class OrderViewModel : ViewModel() {
             if (checkIsFaster() || checkIsForTime() && checkTimeIsNotEmpty()) {
                 validateTime()
                 emptyFieldMsgState = ""
-                //Log.d("enumCLass", deliveryState.value?.javaClass?.simpleName)
                 createOrder(composeOrder(dishMinList, addressMerged, totalCost))
             } else {
                 emptyFieldMsgState = "Установите время доставки"
@@ -84,7 +83,7 @@ class OrderViewModel : ViewModel() {
         return OrderMin(
             deliveryTime = "$hourState:$minuteState",
             totalPrice = totalCost,
-            address = address, // строка или id
+            address = address,
             dishes = dishesMin,
             wayToGet = deliveryState.value?.javaClass?.simpleName.toString()
         )
@@ -112,6 +111,9 @@ class OrderViewModel : ViewModel() {
 
         // DELIVERY CHOOSING
     var deliveryState: MutableLiveData<TabRowSwitchable> = MutableLiveData(DeliveryOptions.DELIVERY())
+    fun setDelivery(newState: TabRowSwitchable) {
+        deliveryState.postValue(newState)
+    }
     var deliveryDialogState by mutableStateOf(false)
         private set
     fun setDeliveryDialog(newState: Boolean) {
@@ -238,7 +240,7 @@ class OrderViewModel : ViewModel() {
 
     fun convertToMinutes(hours: Int, minutes: Int): Int = hours * 60 + minutes
     fun convertToHours(minutes: Int): Pair<Int, Int> = Pair(minutes / 60, minutes % 60)
-    fun computeMinTimeForOrder(hours: Int, minutes: Int): Int = convertToMinutes(hours, minutes) + 45
+    fun computeMinTimeForOrder(currentHours: Int, currentMinutes: Int): Int = convertToMinutes(currentHours, currentMinutes) + 45
 
 
         // ADDRESS_FIELD
@@ -260,7 +262,7 @@ class OrderViewModel : ViewModel() {
         private set
     fun setHoursField(newState: String) {
         if (newState.length in 0..2 && newState.isDigitsOnly()) {
-            hoursFieldState = newState
+            hoursFieldState = if (newState.toInt() < 24) newState else "23"
         }
     }
 
@@ -269,7 +271,7 @@ class OrderViewModel : ViewModel() {
         private set
     fun setMinutesField(newState: String) {
         if (newState.length in 0..2 && newState.isDigitsOnly()) {
-            minutesFieldState = newState
+            minutesFieldState = if (newState.toInt() < 60) newState else "59"
         }
     }
 }

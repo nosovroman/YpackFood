@@ -6,22 +6,22 @@ import org.junit.Assert.*
 
 import org.junit.Test
 
-class MainViewModelTest {
-    private val viewModel: DetailViewModel = DetailViewModel()
+class DetailViewModelTest {
+    private val detailViewModel = DetailViewModel()
 
     @Test
-    fun getRealCurrentIcon_Test() {
+    fun getRealCurrentIcon() {
         val contentId1 = 5
         val contentId2 = 10
         val listOfFavorites = mutableListOf(1, 2, 3, 5, 8, 11)
-        viewModel.setCurrentIcon(Components.defaultIcon)
+        detailViewModel.setCurrentIcon(Components.defaultIcon)
 
-        val filledIcon = viewModel.getRealCurrentIcon(
+        val filledIcon = detailViewModel.getRealCurrentIcon(
             contentId = contentId1,
             listOfFavorites = listOfFavorites
         )
 
-        val outlinedIcon = viewModel.getRealCurrentIcon(
+        val outlinedIcon = detailViewModel.getRealCurrentIcon(
             contentId = contentId2,
             listOfFavorites = listOfFavorites
         )
@@ -33,7 +33,7 @@ class MainViewModelTest {
     }
 
     @Test
-    fun buildDishInfo_Test() {
+    fun buildDishInfo() {
         val dishId = 1
         val portionId = 10
         val priceId = 13
@@ -41,7 +41,7 @@ class MainViewModelTest {
         val count = 5
 
 
-        val composedCart = viewModel.buildDishInfo(
+        val composedCart = detailViewModel.buildDishInfo(
             dishId = dishId,
             portionId = portionId,
             priceId = priceId,
@@ -60,5 +60,21 @@ class MainViewModelTest {
         assertTrue(composedCart == wishedCart)
     }
 
+    @Test
+    fun incrementCounter() {
+        val incremented = 2
+        detailViewModel.initCountWish()
 
+        detailViewModel.incrementCounter()
+        assertTrue(detailViewModel.countWishDishes == incremented)
+    }
+
+    @Test
+    fun decrementCounter() {
+        val decremented = 0
+        detailViewModel.initCountWish()
+
+        detailViewModel.decrementCounter()
+        assertTrue(detailViewModel.countWishDishes == decremented)
+    }
 }

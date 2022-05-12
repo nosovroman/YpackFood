@@ -138,8 +138,8 @@ fun ShoppingRowComponent(navController: NavHostController, detailViewModel: Deta
             val detailDishState = detailViewModel.detailDishState.value!!.data!!
             CounterComponent(
                 count = detailViewModel.countWishDishes,
-                onIncClick = { detailViewModel.incCountWish() },
-                onDecClick = { detailViewModel.decCountWish() }
+                onIncClick = { detailViewModel.incrementCounter() },
+                onDecClick = { detailViewModel.decrementCounter() }
             )
             Spacer(modifier = Modifier.width(10.dp))
             Button(

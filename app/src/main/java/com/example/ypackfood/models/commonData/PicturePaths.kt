@@ -1,7 +1,7 @@
 package com.example.ypackfood.models.commonData
 
 data class PicturePaths(
-    val large: String,
-    val medium: Any,
-    val small: Any
+    val large: String = "",
+    val medium: String = "",
+    val small: String = ""
 )
