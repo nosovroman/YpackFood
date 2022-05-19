@@ -78,6 +78,12 @@ fun MainScreen(
         if (dishesState is NetworkResult.HandledError<*>) {
             when (val errorCode = dishesState.message.toString()) {
                 ErrorEnum.TOKEN_EXPIRED_OR_INVALID.title -> {
+//                    Log.d("dishesStateLog errorCode", errorCode)
+//                    navController.navigate(route = Screens.SignInUp.route) {
+//                        popUpTo(Screens.Main.route) { inclusive = true }
+//                    }
+                }
+                ErrorEnum.AUTHENTICATION_REQUIRED.title -> {
                     Log.d("dishesStateLog errorCode", errorCode)
                     navController.navigate(route = Screens.SignInUp.route) {
                         popUpTo(Screens.Main.route) { inclusive = true }
@@ -95,9 +101,9 @@ fun MainScreen(
         drawerContent = { DrawerComponent(navController) { datastoreViewModel.clearAuthInfo() } },
         content = {
             Box(
-                Modifier
+                modifier = Modifier
                     .fillMaxSize()
-                    .nestedScroll(nestedScrollConnection)
+                    .nestedScroll(nestedScrollConnection),
             ) {
                 ContentListComponent2(
                     navController = navController,
@@ -125,15 +131,10 @@ fun MainScreen(
                                     DishesColumnComponent(navController, item, index)
                                 }
                             }
-                            is NetworkResult.Empty<*> -> {}
                             is NetworkResult.HandledError<*> -> {
                                 when (val errorCode = dishesState.message.toString()) {
                                     ErrorEnum.TOKEN_EXPIRED_OR_INVALID.title -> {
                                         Log.d("dishesStateLog errorCode", errorCode)
-
-//                                        navController.navigate(route = Screens.ShoppingCart.route) {
-//                                            popUpTo(Screens.Main.route) { inclusive = true }
-//                                        }
                                     }
                                     else -> {
                                         Log.d("dishesStateLog unhandled errorCode", errorCode)

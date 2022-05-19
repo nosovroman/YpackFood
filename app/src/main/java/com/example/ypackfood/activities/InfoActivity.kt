@@ -1,6 +1,7 @@
 package com.example.ypackfood.activities
 
 import android.util.Log
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
@@ -58,7 +59,12 @@ fun InfoScreen(
 
                 Spacer(modifier = Modifier.height(space))
 
-                Text(text = "Политика конфиденциальности", fontSize = contentSize, color = Color.Blue)
+                Text(
+                    modifier = Modifier.clickable {  },
+                    text = "Политика конфиденциальности",
+                    fontSize = contentSize,
+                    color = Color.Blue,
+                )
                 Text(text = "Пользовательское соглашение", fontSize = contentSize, color = Color.Blue)
 
                 Spacer(modifier = Modifier.height(space))
