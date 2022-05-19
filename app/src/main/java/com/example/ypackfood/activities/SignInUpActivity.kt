@@ -26,6 +26,7 @@ import com.example.ypackfood.common.Constants.MIN_PASSWORD_LEN
 import com.example.ypackfood.common.Constants.REGEX_EMAIL
 import com.example.ypackfood.common.RequestTemplate
 import com.example.ypackfood.components.*
+import com.example.ypackfood.extensions.isDigitsOnly
 import com.example.ypackfood.models.auth.AuthInfo
 import com.example.ypackfood.models.auth.AuthorizationData
 import com.example.ypackfood.models.auth.RegistrationData
@@ -55,12 +56,6 @@ class SignInUpViewModel : ViewModel() {
         errorEnteringState = ""
     }
 
-    var emailFieldState by mutableStateOf("")
-        private set
-    fun setEmailField(newEmailField: String) {
-        emailFieldState = newEmailField
-    }
-
     var passwordFieldState by mutableStateOf("")
         private set
     fun setPasswordField(newPasswordField: String) {
@@ -76,22 +71,15 @@ class SignInUpViewModel : ViewModel() {
     var phoneFieldState by mutableStateOf("")
         private set
     fun setPhoneField(newState: String) {
-        phoneFieldState = newState
-    }
-
-    fun validateFields(email: String, password: String): Boolean {
-        return validateEmail(email) && validatePassword(password)
-    }
-
-    fun validateFields(email: String, password: String, phone: String): Boolean {
-        return validateEmail(email) && validatePassword(password) && validatePhone(phone)
-    }
-
-    fun validateEmail(email: String): Boolean {
-        return REGEX_EMAIL.matches(email).also {
-            if (!it) setErrorEntering("Некорректный формат почты") else clearErrorEntering()
+        if (newState.length <= 12) {
+            phoneFieldState = newState
         }
     }
+
+    fun validateFields(phone: String, password: String): Boolean {
+        return validatePhone(phone) && validatePassword(password)
+    }
+
 
     fun validatePassword(password: String): Boolean {
         return (password.trim().length >= MIN_PASSWORD_LEN).also {
@@ -100,10 +88,12 @@ class SignInUpViewModel : ViewModel() {
     }
 
     fun validatePhone(value: String): Boolean {
-        return true
-//        (password.trim().length >= MIN_PASSWORD_LEN).also {
-//            if (!it) setErrorEntering("Длина пароля должна быть не менее $MIN_PASSWORD_LEN символов") else clearErrorEntering()
-//        }
+        val phone = value//.trim()
+        //return true
+        return (phone.length == 12 && phone.substring(0, 2) == "+7" && phone.substringAfter("+").isDigitsOnly()).also {
+            Log.d("validatePhone", phone + "${phone.length} ${phone.substring(0, 2)} ${phone.substringAfter("+").isDigitsOnly()}")
+            if (!it) setErrorEntering("Номер телефона должен начинаться с '+7'") else clearErrorEntering()
+        }
     }
 
     fun authorizeUser(auth: AuthorizationData) {
@@ -202,17 +192,19 @@ fun SignInUpScreen(navController: NavHostController, signViewModel: SignInUpView
                             )
                             when(signState) {
                                 is SignOptions.SignIn -> {
+                                    signViewModel.clearErrorEntering()
                                     SignFormComponent(
                                         signViewModel = signViewModel,
                                         datastoreViewModel,
                                         buttonText = stringResource(R.string.sign_in_btn),
                                         onClick = {
-                                            signViewModel.authorizeUser(AuthorizationData(signViewModel.emailFieldState, signViewModel.passwordFieldState))
+                                            signViewModel.authorizeUser(AuthorizationData(signViewModel.phoneFieldState, signViewModel.passwordFieldState))
                                             Log.d("SignInUp", "Вход успешен")
                                         }
                                     )
                                 }
                                 is SignOptions.SignUp -> {
+                                    signViewModel.clearErrorEntering()
                                     SignUpFormComponent(
                                         signViewModel = signViewModel,
                                         datastoreViewModel,
@@ -220,7 +212,7 @@ fun SignInUpScreen(navController: NavHostController, signViewModel: SignInUpView
                                         onClick = {
                                             signViewModel.registerUser(
                                                 RegistrationData(
-                                                    email = signViewModel.emailFieldState,
+                                                    email = signViewModel.phoneFieldState,
                                                     password = signViewModel.passwordFieldState,
                                                     name = signViewModel.userFieldState,
                                                     phoneNumber = signViewModel.phoneFieldState
@@ -256,16 +248,16 @@ fun FieldsComponent(signViewModel: SignInUpViewModel) {
         content = {
             TextFieldComponent(
                 modifier = Modifier.fillMaxWidth(),
-                currentValue = signViewModel.emailFieldState,
-                onValueChange = { newEmail -> signViewModel.setEmailField(newEmail) },
-                placeholder =  stringResource(R.string.enter_email_field),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
+                currentValue = signViewModel.phoneFieldState,
+                onValueChange = { value -> signViewModel.setPhoneField(value) },
+                placeholder =  stringResource(R.string.enter_number_field),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone)
             )
             Spacer(modifier = Modifier.height(10.dp))
             TextFieldComponent(
                 modifier = Modifier.fillMaxWidth(),
                 currentValue = signViewModel.passwordFieldState,
-                onValueChange = { newPassword -> signViewModel.setPasswordField(newPassword) },
+                onValueChange = { value -> signViewModel.setPasswordField(value) },
                 placeholder =  stringResource(R.string.enter_password_field),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                 visualTransformation = PasswordVisualTransformation(),
@@ -292,20 +284,15 @@ fun FieldsUserComponent(signViewModel: SignInUpViewModel) {
                 placeholder =  stringResource(R.string.enter_userName_field),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text)
             )
-            Spacer(modifier = Modifier.height(10.dp))
-            TextFieldComponent(
-                modifier = Modifier.fillMaxWidth(),
-                currentValue = signViewModel.phoneFieldState,
-                onValueChange = { value -> signViewModel.setPhoneField(value) },
-                placeholder =  stringResource(R.string.enter_number_field),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone)
-                //visualTransformation = PasswordVisualTransformation(),
-            )
-            if (signViewModel.errorEnteringState.isNotBlank()) {
-                Spacer(modifier = Modifier.height(5.dp))
-                Text(text = signViewModel.errorEnteringState)
-                Spacer(modifier = Modifier.height(5.dp))
-            }
+//            Spacer(modifier = Modifier.height(10.dp))
+//            TextFieldComponent(
+//                modifier = Modifier.fillMaxWidth(),
+//                currentValue = signViewModel.phoneFieldState,
+//                onValueChange = { value -> signViewModel.setPhoneField(value) },
+//                placeholder =  stringResource(R.string.enter_number_field),
+//                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone)
+//                //visualTransformation = PasswordVisualTransformation(),
+//            )
         }
     )
 }
@@ -334,7 +321,7 @@ fun SignFormComponent(
                 onClick = {
 //                    datastoreViewModel.updateAuthInfo(idValue = 12, tokenValue = "revenger11_TOKEN")
 //                    datastoreViewModel.getAuthInfo()
-                    if (signViewModel.validateFields(signViewModel.emailFieldState, signViewModel.passwordFieldState)) onClick()
+                    if (signViewModel.validateFields(phone = signViewModel.phoneFieldState, password = signViewModel.passwordFieldState)) onClick()
                 }
             )
         }
@@ -365,7 +352,7 @@ fun SignUpFormComponent(
                 text = buttonText,
                 shape = RoundedCornerShape(10.dp),
                 onClick = {
-                    if (signViewModel.validateFields(signViewModel.emailFieldState, signViewModel.passwordFieldState, signViewModel.phoneFieldState)) onClick()
+                    if (signViewModel.validateFields(phone = signViewModel.phoneFieldState, password = signViewModel.passwordFieldState)) onClick()
                 }
             )
         }

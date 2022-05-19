@@ -6,18 +6,22 @@ import androidx.compose.ui.unit.dp
 
 object Constants {
     const val ROOM_FAVORITES = "Favorites" // это название БД
-    const val APP_NAME_RUS = "Упак.Еда"
+    const val APP_NAME_RUS = "Теремок"
     const val YPACK_ADDRESS = "Старая Станица, парк Лога"
     val TOOLBAR_HEIGHT = 48.dp
     const val START_DELIVERY = 2
     const val END_DELIVERY = 23
     const val MIN_PASSWORD_LEN = 6
 
+    const val PERSON_ID_DEFAULT = -1
+    const val TOKEN_DEFAULT = ""
+
     val fontFamily = FontFamily(
         Font(R.font.beauty_font_one)
     )
 
     val REGEX_EMAIL = Regex("""\w+[\w_.%+-]+@[\w]+\.[a-z]{2,4}""")
+//    val REGEX_PHONE = Regex("""\w+[\w_.%+-]+@[\w]+\.[a-z]{2,4}""")
 
     const val ERROR_INTERNET = "Проблема с интернет-подключением"
 

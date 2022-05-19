@@ -74,7 +74,7 @@ fun DrawerHeader() {
                 text = Constants.APP_NAME_RUS,
                 textAlign = TextAlign.Center,
                 style = TextStyle(
-                    fontSize = 40.sp,
+                    fontSize = 45.sp,
                     fontFamily = Constants.fontFamily,
                     fontStyle = FontStyle.Normal
                 )

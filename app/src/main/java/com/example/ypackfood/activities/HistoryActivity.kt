@@ -27,8 +27,11 @@ import com.example.ypackfood.viewModels.HistoryViewModel
 import com.example.ypackfood.viewModels.RoomViewModel
 
 @Composable
-fun HistoryScreen(navController: NavHostController, historyViewModel: HistoryViewModel, roomViewModel: RoomViewModel) {
-
+fun HistoryScreen(
+    navController: NavHostController,
+    historyViewModel: HistoryViewModel,
+    roomViewModel: RoomViewModel
+) {
     val historyDishesState = historyViewModel.historyDishesState.observeAsState().value
 
     LaunchedEffect(true) {
