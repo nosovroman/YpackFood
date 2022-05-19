@@ -41,15 +41,6 @@ class SignInUpViewModel : ViewModel() {
         errorEnteringState = ""
     }
 
-//    var errorRegisterState by mutableStateOf("")
-//        private set
-//    fun setErrorRegister(newState: String) {
-//        errorRegisterState = newState
-//    }
-//    fun clearRegisterState() {
-//        errorRegisterState = ""
-//    }
-
     var passwordFieldState by mutableStateOf("")
         private set
     fun setPasswordField(newPasswordField: String) {

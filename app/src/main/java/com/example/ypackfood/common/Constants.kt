@@ -20,6 +20,8 @@ object Constants {
         Font(R.font.beauty_font_one)
     )
 
+    const val PDPP = "https://docs.google.com/document/d/1dz6SKzs8CzYGhz5m89zkWEtqKegnDj0q/edit"
+
     val REGEX_EMAIL = Regex("""\w+[\w_.%+-]+@[\w]+\.[a-z]{2,4}""")
 //    val REGEX_PHONE = Regex("""\w+[\w_.%+-]+@[\w]+\.[a-z]{2,4}""")
 
@@ -46,4 +48,10 @@ object Constants {
     const val BASE_URL = "https://super-food17.herokuapp.com/"
     val baseUrlPictureCategory = "https://sun9-26.userapi.com/impf/c849020/v849020562/12056a/xOiO0cHdtkk.jpg?size=604x604&quality=96&sign=2c11f0e48c64e290d0bde943da845fd6&type=album"
     val baseUrlPictureContent = "https://yesofcorsa.com/wp-content/uploads/2018/09/Chicken-Burger-Desktop-Wallpaper.jpg"
+
+    const val INFO_CONTENT = "\t\tВы проголодались на работе? Или удобно устроились перед телевизором, " +
+            "чтобы посмотреть фильм? А может, к Вам внезапно нагрянули друзья, а в холодильнике пусто?" +
+            " Большой асортимент блюд от ресторана Теремок – отличный выход для любой из этих ситуаций!" +
+            " Вам остается только определиться, что Вы хотите попробовать сегодня.\r\n\t\t" +
+            "Приходите всей семьёй и отведайте вкуснейших блюд в ресторане Теремок!"
 }
