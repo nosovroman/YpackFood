@@ -46,7 +46,7 @@ fun ToolbarScrollComponent(
         )
 
         Spacer(Modifier.weight(1f, true))
-        Text(Constants.APP_NAME_RUS, fontSize = 22.sp)
+        Text("Меню", fontSize = 22.sp)
         Spacer(Modifier.weight(1f, true))
 
         rightIcon()

@@ -2,7 +2,6 @@ package com.example.ypackfood.viewModels
 
 
 import android.app.Application
-import android.util.Log
 import androidx.datastore.preferences.core.clear
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.preferencesKey
@@ -36,7 +35,7 @@ class DatastoreViewModel(context: Application) : AndroidViewModel(context) {
             val idKey = preferencesKey<Int>(Auth.ID_KEY)
             val tokenKey = preferencesKey<String>(Auth.TOKEN_KEY)
             val data = dataStore.data.first()
-            val authInfo = AuthInfo(personId = data[idKey] ?: -1, token = data[tokenKey] ?: "")
+            val authInfo = AuthInfo(personId = data[idKey] ?: -1, accessToken = data[tokenKey] ?: "")
 
             setAuthInfoState(authInfo)
         }

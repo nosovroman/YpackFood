@@ -134,6 +134,8 @@ fun ContentCart(
                     cartViewModel = cartViewModel,
                     roomViewModel = roomViewModel
                 )
+
+                Spacer(modifier = Modifier.height(50.dp))
             }
 
             RequestStateComponent(

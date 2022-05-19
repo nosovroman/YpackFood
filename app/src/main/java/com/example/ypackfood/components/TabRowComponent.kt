@@ -39,7 +39,7 @@ fun TabRowComponent(
                 unselectedContentColor = MaterialTheme.colors.onBackground,
                 modifier = Modifier
                     .background(
-                        color = if (state == index) Color.Blue else Color.Transparent,
+                        color = if (state == index) MaterialTheme.colors.primary else Color.Transparent,
                         shape = RoundedCornerShape(topStart = 10.dp, topEnd = 10.dp)
                     )
             )

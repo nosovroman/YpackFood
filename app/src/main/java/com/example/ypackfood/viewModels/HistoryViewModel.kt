@@ -11,10 +11,9 @@ import com.example.ypackfood.common.Auth
 import com.example.ypackfood.common.Constants.ERROR_INTERNET
 import com.example.ypackfood.common.RequestTemplate
 import com.example.ypackfood.common.RequestTemplate.mainRepository
-import com.example.ypackfood.models.commonData.Dish
 import com.example.ypackfood.models.detailContent.DetailContent
-import com.example.ypackfood.models.mainContent.Category
 import com.example.ypackfood.models.orders.OrderFull.Order
+import com.example.ypackfood.models.orders.OrderMin.DishForOrderGet
 import com.example.ypackfood.room.entities.CartEntity
 import com.example.ypackfood.sealedClasses.NetworkResult
 import kotlinx.coroutines.Dispatchers
@@ -36,38 +35,39 @@ class HistoryViewModel : ViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 historyDishesState.postValue(NetworkResult.Loading(oldData))
-                val response = mainRepository.getHistory(Auth.authInfo.token)
+                val response = mainRepository.getHistory(Auth.authInfo.accessToken)
                 if (response.isSuccessful) {
-                    Log.d("getMainContent ok", response.body().toString())
+                    Log.d("getHistoryContent ok", response.body().toString())
                     historyDishesState.postValue(NetworkResult.Success(response.body()!!))
                 }
                 else {
-                    Log.d("getMainContent not ok ", Auth.authInfo.toString())
+                    Log.d("getHistoryContent not ok ", Auth.authInfo.toString())
 
                     val jsonString = response.errorBody()!!.string()
                     val errorCode = RequestTemplate.getErrorFromJson(jsonString).errorCode.toString()
-                    Log.d("getMainContent errorCode", errorCode)
+                    Log.d("getHistoryContent errorCode", errorCode)
                     historyDishesState.postValue(NetworkResult.HandledError(errorCode))
                 }
             } catch (e: Exception) {
-                Log.d("getMainContent error ", e.toString())
+                Log.d("getHistoryContent error ", e.toString())
                 historyDishesState.postValue(NetworkResult.Error(ERROR_INTERNET, oldData))
             }
         }
     }
 
-    fun buildCartEntity(dishList: List<DetailContent>): List<CartEntity> {
+    fun buildCartEntity(dishForOrderGet: List<DishForOrderGet>): List<CartEntity> {
+        val dishList = dishForOrderGet.map { it.dish }
         val resultCartList = mutableListOf<CartEntity>()
-        dishList.forEach() {
+        dishList.forEachIndexed() { index, elem ->
             resultCartList.add(
-                with (it) {
-                    Log.d("DetailContentDishList", it.toString())
+                with (elem) {
+                    //Log.d("DetailContentDishList", it.toString())
                     CartEntity(
                         dishId = id,
-                        portionId = basePortion.id,
-                        dishPriceId = basePortion.priceNow.id,
-                        dishPrice = basePortion.priceNow.price,
-                        dishCount = count ?: 1,
+                        portionId = portion!!.id,
+                        dishPriceId = portion!!.priceNow.id,
+                        dishPrice = portion!!.priceNow.price,
+                        dishCount = dishForOrderGet[index].count ?: 1,
                         dishAddons = null
                     )
                 }

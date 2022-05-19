@@ -1,12 +1,13 @@
 package com.example.ypackfood.repository
 
-import com.example.ypackfood.models.auth.Authorization
+import com.example.ypackfood.models.auth.AuthorizationData
+import com.example.ypackfood.models.auth.RegistrationData
 import com.example.ypackfood.models.orders.OrderMin.OrderMin
 import com.example.ypackfood.retrofit.ApiService
 
 class Repository(private val apiService: ApiService) {
-    suspend fun authorizeUser(auth: Authorization) = apiService.authorizeUser(auth)
-    suspend fun registerUser(auth: Authorization) = apiService.registerUser(auth)
+    suspend fun authorizeUser(auth: AuthorizationData) = apiService.authorizeUser(auth)
+    suspend fun registerUser(auth: RegistrationData) = apiService.registerUser(auth)
     suspend fun getMainContent(token: String) = apiService.getMainContent(token)
     suspend fun getHistory(token: String) = apiService.getHistory(token)
     suspend fun getActions(token: String) = apiService.getActions(token)

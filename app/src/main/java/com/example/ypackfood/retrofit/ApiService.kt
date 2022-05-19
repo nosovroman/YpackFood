@@ -3,7 +3,8 @@ package com.example.ypackfood.retrofit
 import com.example.ypackfood.common.Constants.HEADER_AUTH
 import com.example.ypackfood.models.actionsContent.ActionsItem
 import com.example.ypackfood.models.auth.AuthInfo
-import com.example.ypackfood.models.auth.Authorization
+import com.example.ypackfood.models.auth.AuthorizationData
+import com.example.ypackfood.models.auth.RegistrationData
 import com.example.ypackfood.models.commonData.Dish
 import com.example.ypackfood.models.commonData.Favorites
 import com.example.ypackfood.models.detailAction.DetailAction
@@ -77,11 +78,11 @@ interface ApiService {
         // Авторизация
     @POST("auth/login")
     suspend fun authorizeUser(
-        @Body auth: Authorization
+        @Body auth: AuthorizationData
     ): Response<AuthInfo>
 
     @POST("auth/register")
     suspend fun registerUser(
-        @Body auth: Authorization
+        @Body auth: RegistrationData
     ): Response<AuthInfo>
 }

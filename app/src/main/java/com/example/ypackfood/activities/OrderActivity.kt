@@ -196,12 +196,12 @@ fun OrderContent(orderViewModel: OrderViewModel, cartViewModel: ShoppingCartView
             item {
                 val totalCostResult = if (orderViewModel.checkIsDELIVERY()) totalCost + DELIVERY_COST else totalCost
                 val addressMerged = "${orderViewModel.cityState}, ${orderViewModel.addressState}"
-                Button(
-                    onClick = { orderViewModel.makeOrder(dishMinList = cartViewModel.resultDishState, addressMerged = addressMerged, totalCost = totalCostResult) },
-                    content = {
-                        if (totalCostResult > 0) Text(text = "Оформить на $totalCostResult ₽", color = MaterialTheme.colors.onPrimary)
-                    }
-                )
+                if (totalCostResult > 0) {
+                    ButtonComponent(
+                        text = "Оформить на $totalCostResult ₽",
+                        onClick = { orderViewModel.makeOrder(dishMinList = cartViewModel.resultDishState, addressMerged = addressMerged, totalCost = totalCostResult) },
+                    )
+                }
             }
         }
     )

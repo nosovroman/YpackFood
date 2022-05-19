@@ -5,8 +5,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.ypackfood.common.Auth
-import com.example.ypackfood.common.RequestTemplate
-import com.example.ypackfood.common.RequestTemplate.TOKEN
 import com.example.ypackfood.common.RequestTemplate.mainRepository
 import com.example.ypackfood.models.commonData.Dish
 import com.example.ypackfood.sealedClasses.NetworkResult
@@ -22,8 +20,9 @@ class FavoritesViewModel: ViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 favoritesState.postValue(NetworkResult.Loading())
-                val response = mainRepository.getFavorites(Auth.authInfo.token)
-                if(response.isSuccessful) {
+                val response = mainRepository.getFavorites(Auth.authInfo.accessToken)
+                Log.d("getFavorites", "get response")
+                if (response.isSuccessful) {
                     if (!response.body().isNullOrEmpty()) {
                         favoritesState.postValue(NetworkResult.Success(response.body()!!))
                     } else {

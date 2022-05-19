@@ -35,7 +35,7 @@ class OrderViewModel : ViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 createOrderState.postValue(NetworkResult.Loading())
-                val response = mainRepository.createOrder(Auth.authInfo.token, order)
+                val response = mainRepository.createOrder(Auth.authInfo.accessToken, order)
                 if (response.isSuccessful) {
                     Log.d("createOrder ok ", response.body()!!.toString())
                     createOrderState.postValue(NetworkResult.Success(response.body()!!))
@@ -70,10 +70,12 @@ class OrderViewModel : ViewModel() {
 
     fun composeOrder(dishMinList: List<CartDish>, addressMerged: String, totalCost: Int): OrderMin {
         val dishesMin = dishMinList.map {
-            DishMin(
-                id = it.dishId,
+            DishForOrderPost(
                 count = it.count,
-                portion = BasePortionMin(id = it.portionId, price = PriceNowMin(it.priceId))
+                dish = DishMin(
+                    id = it.dishId,
+                    portion = BasePortionMin(id = it.portionId, price = PriceNowMin(it.priceId))
+                )
             )
         }
 

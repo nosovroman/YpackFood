@@ -8,12 +8,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.ypackfood.common.Auth
-import com.example.ypackfood.common.RequestTemplate
-import com.example.ypackfood.common.RequestTemplate.TOKEN
 import com.example.ypackfood.common.RequestTemplate.mainRepository
 import com.example.ypackfood.models.detailAction.DetailAction
-import com.example.ypackfood.repository.Repository
-import com.example.ypackfood.retrofit.RetrofitBuilder
 import com.example.ypackfood.sealedClasses.NetworkResult
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -40,7 +36,7 @@ class OfferViewModel : ViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 contentResp.postValue(NetworkResult.Loading())
-                val response = mainRepository.getDetailAction(Auth.authInfo.token, actionId)
+                val response = mainRepository.getDetailAction(Auth.authInfo.accessToken, actionId)
                 if (response.isSuccessful) {
                     contentResp.postValue(NetworkResult.Success(response.body()!!))
                 }

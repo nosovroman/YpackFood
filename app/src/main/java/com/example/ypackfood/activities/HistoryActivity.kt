@@ -16,6 +16,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.example.ypackfood.components.EmptyContentComponent
 import com.example.ypackfood.components.PictureOneComponent
 import com.example.ypackfood.components.ShowErrorComponent
 import com.example.ypackfood.components.ToolbarComponent
@@ -45,13 +46,19 @@ fun HistoryScreen(navController: NavHostController, historyViewModel: HistoryVie
     }
 
     Scaffold(
-        topBar = { ToolbarComponent(navController = navController) },
+        topBar = { ToolbarComponent(title = "Мои заказы", navController = navController) },
         content = {
             LazyColumn (
                 modifier = Modifier.padding(horizontal = 15.dp),
                 content = {
                     when(historyDishesState) {
                         is NetworkResult.Success<*> -> {
+                            if (historyDishesState.data?.isEmpty() == true) {
+                                item {
+                                    EmptyContentComponent(message = "Заказов пока что не было")
+                                }
+                            }
+
                             itemsIndexed(historyDishesState.data as MutableList<Order>) { index, item ->
                                 Log.d("NetworkResult ok", item.toString())
                                 Spacer(modifier = Modifier.height(10.dp))
@@ -60,8 +67,8 @@ fun HistoryScreen(navController: NavHostController, historyViewModel: HistoryVie
                                     status = item.status ?: "Готовится",
                                     totalPrice = item.totalPrice,
                                     time = "${item.created.substringBefore("T")}, ${item.deliveryTime}",
-                                    imageList = item.dishes.map { it.picturePaths.large },
-                                    listOfId = item.dishes.map { it.id },
+                                    imageList = item.dishes.map { it.dish.picturePaths.large },
+                                    listOfId = item.dishes.map { it.dish.id },
                                     onClick = {
                                         roomViewModel.addToCartMany(
                                             historyViewModel.buildCartEntity(item.dishes)

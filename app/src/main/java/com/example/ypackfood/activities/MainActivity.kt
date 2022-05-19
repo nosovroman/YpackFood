@@ -126,19 +126,20 @@ fun MainScreen(
                                 }
                             }
                             is NetworkResult.Empty<*> -> {}
-//                            is NetworkResult.HandledError<*> -> {
-//                                when (val errorCode = dishesState.message.toString()) {
-//                                    ErrorEnum.TOKEN_EXPIRED_OR_INVALID.title -> {
-//                                        Log.d("dishesStateLog errorCode", errorCode)
-////                                        navController.navigate(route = Screens.ShoppingCart.route) {
-////                                            popUpTo(Screens.Main.route) { inclusive = true }
-////                                        }
-//                                    }
-//                                    else -> {
-//                                        Log.d("dishesStateLog unhandled errorCode", errorCode)
-//                                    }
-//                                }
-//                            }
+                            is NetworkResult.HandledError<*> -> {
+                                when (val errorCode = dishesState.message.toString()) {
+                                    ErrorEnum.TOKEN_EXPIRED_OR_INVALID.title -> {
+                                        Log.d("dishesStateLog errorCode", errorCode)
+
+//                                        navController.navigate(route = Screens.ShoppingCart.route) {
+//                                            popUpTo(Screens.Main.route) { inclusive = true }
+//                                        }
+                                    }
+                                    else -> {
+                                        Log.d("dishesStateLog unhandled errorCode", errorCode)
+                                    }
+                                }
+                            }
                             is NetworkResult.Error<*> -> {
                                 item { ShowErrorComponent(message = dishesState.message, onButtonClick = { mainViewModel.getMainContent() }) }
                             }

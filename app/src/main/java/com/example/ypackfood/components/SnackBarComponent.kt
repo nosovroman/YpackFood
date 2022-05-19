@@ -1,10 +1,7 @@
 package com.example.ypackfood.components
 
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
@@ -17,9 +14,8 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun SnackBarComponent(message: String, buttonText: String, onButtonClick: () -> Unit) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        //horizontalArrangement = Arrangement.SpaceBetween,
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
             .fillMaxWidth()
             .border(

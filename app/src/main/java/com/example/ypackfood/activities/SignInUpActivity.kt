@@ -16,7 +16,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
-import androidx.datastore.preferences.protobuf.Empty
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -28,7 +27,8 @@ import com.example.ypackfood.common.Constants.REGEX_EMAIL
 import com.example.ypackfood.common.RequestTemplate
 import com.example.ypackfood.components.*
 import com.example.ypackfood.models.auth.AuthInfo
-import com.example.ypackfood.models.auth.Authorization
+import com.example.ypackfood.models.auth.AuthorizationData
+import com.example.ypackfood.models.auth.RegistrationData
 import com.example.ypackfood.sealedClasses.NetworkResult
 import com.example.ypackfood.sealedClasses.Screens
 import com.example.ypackfood.sealedClasses.SignOptions
@@ -67,8 +67,24 @@ class SignInUpViewModel : ViewModel() {
         passwordFieldState = newPasswordField
     }
 
+    var userFieldState by mutableStateOf("")
+        private set
+    fun setUserField(newState: String) {
+        userFieldState = newState
+    }
+
+    var phoneFieldState by mutableStateOf("")
+        private set
+    fun setPhoneField(newState: String) {
+        phoneFieldState = newState
+    }
+
     fun validateFields(email: String, password: String): Boolean {
         return validateEmail(email) && validatePassword(password)
+    }
+
+    fun validateFields(email: String, password: String, phone: String): Boolean {
+        return validateEmail(email) && validatePassword(password) && validatePhone(phone)
     }
 
     fun validateEmail(email: String): Boolean {
@@ -83,7 +99,14 @@ class SignInUpViewModel : ViewModel() {
         }
     }
 
-    fun authorizeUser(auth: Authorization) {
+    fun validatePhone(value: String): Boolean {
+        return true
+//        (password.trim().length >= MIN_PASSWORD_LEN).also {
+//            if (!it) setErrorEntering("Длина пароля должна быть не менее $MIN_PASSWORD_LEN символов") else clearErrorEntering()
+//        }
+    }
+
+    fun authorizeUser(auth: AuthorizationData) {
         Log.d("authorizeUser param", "$auth")
         viewModelScope.launch(Dispatchers.IO) {
             try {
@@ -111,7 +134,7 @@ class SignInUpViewModel : ViewModel() {
         }
     }
 
-    fun registerUser(auth: Authorization) {
+    fun registerUser(auth: RegistrationData) {
         Log.d("registerUser param", "$auth")
         viewModelScope.launch(Dispatchers.IO) {
             try {
@@ -149,13 +172,15 @@ fun SignInUpScreen(navController: NavHostController, signViewModel: SignInUpView
     LaunchedEffect(registerState) {
         if (registerState is NetworkResult.Success<*>) {
             Log.d("SignInUp", "registerState is NetworkResult.Success<*>")
-            datastoreViewModel.setAuthInfoState(AuthInfo(registerState.data!!.personId, registerState.data.token)).also { Log.d("SignInUp", "setAuthInfoState") }
-            datastoreViewModel.updateAuthInfo(idValue = registerState.data!!.personId, tokenValue = registerState.data.token)
+            datastoreViewModel.setAuthInfoState(AuthInfo(registerState.data!!.personId, registerState.data.accessToken)).also { Log.d("SignInUp", "setAuthInfoState") }
+            datastoreViewModel.updateAuthInfo(idValue = registerState.data!!.personId, tokenValue = registerState.data.accessToken)
             //signViewModel.registerStateInit()
             Log.d("SignInUp LaunchedEffect(registerState)", Auth.authInfo.toString())
             navController.navigate(route = Screens.Main.route) {
                 popUpTo(Screens.SignInUp.route) { inclusive = true }
             }
+        } else {
+            //refresh token
         }
     }
 
@@ -182,18 +207,25 @@ fun SignInUpScreen(navController: NavHostController, signViewModel: SignInUpView
                                         datastoreViewModel,
                                         buttonText = stringResource(R.string.sign_in_btn),
                                         onClick = {
-                                            signViewModel.authorizeUser(Authorization(signViewModel.emailFieldState, signViewModel.passwordFieldState))
+                                            signViewModel.authorizeUser(AuthorizationData(signViewModel.emailFieldState, signViewModel.passwordFieldState))
                                             Log.d("SignInUp", "Вход успешен")
                                         }
                                     )
                                 }
                                 is SignOptions.SignUp -> {
-                                    SignFormComponent(
+                                    SignUpFormComponent(
                                         signViewModel = signViewModel,
                                         datastoreViewModel,
                                         buttonText = stringResource(R.string.sign_up_btn),
                                         onClick = {
-                                            signViewModel.registerUser(Authorization(signViewModel.emailFieldState, signViewModel.passwordFieldState))
+                                            signViewModel.registerUser(
+                                                RegistrationData(
+                                                    email = signViewModel.emailFieldState,
+                                                    password = signViewModel.passwordFieldState,
+                                                    name = signViewModel.userFieldState,
+                                                    phoneNumber = signViewModel.phoneFieldState
+                                                )
+                                            )
                                             Log.d("SignInUp", "Регистрация успешна")
                                         }
                                     )
@@ -248,6 +280,37 @@ fun FieldsComponent(signViewModel: SignInUpViewModel) {
 }
 
 @Composable
+fun FieldsUserComponent(signViewModel: SignInUpViewModel) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.fillMaxWidth(),
+        content = {
+            TextFieldComponent(
+                modifier = Modifier.fillMaxWidth(),
+                currentValue = signViewModel.userFieldState,
+                onValueChange = { value -> signViewModel.setUserField(value) },
+                placeholder =  stringResource(R.string.enter_userName_field),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text)
+            )
+            Spacer(modifier = Modifier.height(10.dp))
+            TextFieldComponent(
+                modifier = Modifier.fillMaxWidth(),
+                currentValue = signViewModel.phoneFieldState,
+                onValueChange = { value -> signViewModel.setPhoneField(value) },
+                placeholder =  stringResource(R.string.enter_number_field),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone)
+                //visualTransformation = PasswordVisualTransformation(),
+            )
+            if (signViewModel.errorEnteringState.isNotBlank()) {
+                Spacer(modifier = Modifier.height(5.dp))
+                Text(text = signViewModel.errorEnteringState)
+                Spacer(modifier = Modifier.height(5.dp))
+            }
+        }
+    )
+}
+
+@Composable
 fun SignFormComponent(
     signViewModel: SignInUpViewModel,
     datastoreViewModel: DatastoreViewModel,
@@ -272,6 +335,37 @@ fun SignFormComponent(
 //                    datastoreViewModel.updateAuthInfo(idValue = 12, tokenValue = "revenger11_TOKEN")
 //                    datastoreViewModel.getAuthInfo()
                     if (signViewModel.validateFields(signViewModel.emailFieldState, signViewModel.passwordFieldState)) onClick()
+                }
+            )
+        }
+    )
+}
+
+@Composable
+fun SignUpFormComponent(
+    signViewModel: SignInUpViewModel,
+    datastoreViewModel: DatastoreViewModel,
+    buttonText: String,
+    onClick: () -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .border(
+                width = 1.dp,
+                color = MaterialTheme.colors.onBackground,
+                shape = RoundedCornerShape(20.dp)
+            )
+            .padding(15.dp),
+        content = {
+            FieldsUserComponent(signViewModel)
+            Spacer(modifier = Modifier.height(10.dp))
+            FieldsComponent(signViewModel)
+            Spacer(modifier = Modifier.height(10.dp))
+            ButtonComponent(
+                text = buttonText,
+                shape = RoundedCornerShape(10.dp),
+                onClick = {
+                    if (signViewModel.validateFields(signViewModel.emailFieldState, signViewModel.passwordFieldState, signViewModel.phoneFieldState)) onClick()
                 }
             )
         }

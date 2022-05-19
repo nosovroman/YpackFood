@@ -52,7 +52,7 @@ class DetailViewModel : ViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 detailDishState.postValue(NetworkResult.Loading())
-                val response = mainRepository.getDetailContent(Auth.authInfo.token, contentId)
+                val response = mainRepository.getDetailContent(Auth.authInfo.accessToken, contentId)
                 if (response.isSuccessful) {
                     detailDishState.postValue(NetworkResult.Success(response.body()!!))
                 }
@@ -73,7 +73,7 @@ class DetailViewModel : ViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 favoritesState.postValue(NetworkResult.Loading())
-                val response = mainRepository.getFavoritesId(Auth.authInfo.token)
+                val response = mainRepository.getFavoritesId(Auth.authInfo.accessToken)
                 if (response.isSuccessful) {
                     favoritesState.postValue(NetworkResult.Success(response.body()!!))
                 }
@@ -94,7 +94,7 @@ class DetailViewModel : ViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 //favoritesToggledState.postValue(NetworkResult.Loading())
-                val response = mainRepository.addFavorite(Auth.authInfo.token, contentId)
+                val response = mainRepository.addFavorite(Auth.authInfo.accessToken, contentId)
                 if (response.isSuccessful) {
                     //favoritesToggledState.postValue(NetworkResult.Success(response.body()!!))
                     val newFavoritesList = favoritesState.value!!.data!!//.add(contentId)
@@ -123,7 +123,7 @@ class DetailViewModel : ViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 //favoritesState.postValue(NetworkResult.Loading())
-                val response = mainRepository.deleteFavorite(Auth.authInfo.token, contentId)
+                val response = mainRepository.deleteFavorite(Auth.authInfo.accessToken, contentId)
                 if (response.isSuccessful) {
                     //favoritesState.postValue(NetworkResult.Success(response.body()!!))
                     val newFavoritesList = favoritesState.value!!.data!!//.add(contentId)

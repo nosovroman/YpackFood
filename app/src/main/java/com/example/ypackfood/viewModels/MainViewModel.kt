@@ -9,16 +9,13 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.NavHostController
 import com.example.ypackfood.common.Auth
 import com.example.ypackfood.common.Constants.ERROR_INTERNET
 import com.example.ypackfood.common.RequestTemplate
 import com.example.ypackfood.common.RequestTemplate.mainRepository
-import com.example.ypackfood.enumClasses.ErrorEnum
 import com.example.ypackfood.models.actionsContent.ActionsItem
 import com.example.ypackfood.models.mainContent.Category
 import com.example.ypackfood.sealedClasses.NetworkResult
-import com.example.ypackfood.sealedClasses.Screens
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.lang.Exception
@@ -64,7 +61,7 @@ class MainViewModel : ViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 dishesState.postValue(NetworkResult.Loading(oldData))
-                val response = mainRepository.getMainContent(Auth.authInfo.token)
+                val response = mainRepository.getMainContent(Auth.authInfo.accessToken)
                 if (response.isSuccessful) {
                     Log.d("getMainContent ok", response.body().toString())
                     dishesState.postValue(NetworkResult.Success(response.body()!!))
@@ -73,6 +70,7 @@ class MainViewModel : ViewModel() {
                     Log.d("getMainContent not ok ", Auth.authInfo.toString())
 
                     val jsonString = response.errorBody()!!.string()
+                    Log.d("getMainContent errorCode1", "jsonString: $jsonString")
                     val errorCode = RequestTemplate.getErrorFromJson(jsonString).errorCode.toString()
                     Log.d("getMainContent errorCode", errorCode)
                     dishesState.postValue(NetworkResult.HandledError(errorCode))

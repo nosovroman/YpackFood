@@ -2,6 +2,8 @@
     <string name="app_name">YpackFood</string>
     <string name="enter_email_field">Введите адрес эл.почты</string>
     <string name="enter_password_field">Введите пароль</string>
+    <string name="enter_userName_field">Введите Ваше имя</string>
+    <string name="enter_number_field">Введите номер телефона</string>
     <string name="sign_up_btn">Зарегистрироваться</string>
     <string name="sign_in_btn">Войти</string>
     <string name="sign_up_lbl">Регистрация</string>
