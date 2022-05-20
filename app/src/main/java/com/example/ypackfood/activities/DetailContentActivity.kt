@@ -138,6 +138,7 @@ fun ShoppingRowComponent(navController: NavHostController, detailViewModel: Deta
             val detailDishState = detailViewModel.detailDishState.value!!.data!!
             CounterComponent(
                 count = detailViewModel.countWishDishes,
+                unit = "шт.",
                 onIncClick = { detailViewModel.incrementCounter() },
                 onDecClick = { detailViewModel.decrementCounter() }
             )

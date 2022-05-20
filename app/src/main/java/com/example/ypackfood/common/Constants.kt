@@ -14,6 +14,7 @@ object Constants {
     const val START_DELIVERY = 2
     const val END_DELIVERY = 23
     const val MIN_PASSWORD_LEN = 6
+    const val MAX_ORDERS_ON_PAGE = 10
 
     val STANDARD_PADDING = 15.dp
     val CARDS_PADDING = 25.dp

@@ -8,8 +8,11 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.ypackfood.common.Auth
+import com.example.ypackfood.common.Constants
+import com.example.ypackfood.common.Constants.MAX_ORDERS_ON_PAGE
 import com.example.ypackfood.common.RequestTemplate
 import com.example.ypackfood.common.RequestTemplate.mainRepository
+import com.example.ypackfood.extensions.translateException
 import com.example.ypackfood.models.orders.OrderFull.OrderList
 import com.example.ypackfood.models.orders.OrderMin.DishForOrderGet
 import com.example.ypackfood.room.entities.CartEntity
@@ -28,10 +31,19 @@ class HistoryViewModel : ViewModel() {
         updateButtonState.postValue(newState)
     }
 
-    var currentPageState by mutableStateOf(0)
+    var currentPageState by mutableStateOf(1)
         private set
-    fun setCurrentPage(newState: Int) {
-        currentPageState = newState
+    fun incrementCounter() {
+        currentPageState++
+    }
+    fun decrementCounter() {
+        currentPageState--
+    }
+
+    fun computeMaxPage(orders: Int): Int {
+        var result = orders / MAX_ORDERS_ON_PAGE
+        result += if (orders % MAX_ORDERS_ON_PAGE == 0) 0 else 1
+        return result
     }
 
     fun setTimerForStatusUpdate() {
@@ -75,8 +87,12 @@ class HistoryViewModel : ViewModel() {
                 historyDishesState.postValue(NetworkResult.Loading())
                 val response = mainRepository.getHistory(Auth.authInfo.accessToken, page)
                 if (response.isSuccessful) {
+                    if (response.body()!!.orders.isNullOrEmpty()) {
+                        historyDishesState.postValue(NetworkResult.Empty())
+                    } else {
+                        historyDishesState.postValue(NetworkResult.Success(response.body()!!))
+                    }
                     Log.d("getHistoryContent ok", response.body().toString())
-                    historyDishesState.postValue(NetworkResult.Success(response.body()!!))
                 }
                 else {
                     Log.d("getHistoryContent not ok ", Auth.authInfo.toString())
@@ -87,8 +103,9 @@ class HistoryViewModel : ViewModel() {
                     historyDishesState.postValue(NetworkResult.HandledError(errorCode))
                 }
             } catch (e: Exception) {
+                val error = e.translateException()
                 Log.d("getHistoryContent error ", e.toString())
-                historyDishesState.postValue(NetworkResult.Error())
+                historyDishesState.postValue(NetworkResult.Error(error))
             }
         }
     }

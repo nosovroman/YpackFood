@@ -11,20 +11,27 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.NavigateNext
 import androidx.compose.material.icons.filled.Remove
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
 fun CounterComponent(
     count: Int,
+    unit: String = "",
     lowerLimit: Int = 1,
     upperLimit: Int = 5,
     onIncClick: () -> Unit = {},
-    onDecClick: () -> Unit = {}
+    onDecClick: () -> Unit = {},
+    incImgVector: ImageVector = Icons.Filled.NavigateNext,
+    decImgVector: ImageVector = Icons.Default.Remove,
+    incSymbol: String = "+",
+    decSymbol: String = "-"
 ) {
     Row (
         verticalAlignment = Alignment.CenterVertically
@@ -33,11 +40,13 @@ fun CounterComponent(
             count = count,
             isIncrement = false,
             limit = lowerLimit,
-            onClick = onDecClick
+            onClick = onDecClick,
+            decImgVector = decImgVector,
+            decSymbol = decSymbol
         )
 
         Text(
-            text = "$count шт.",
+            text = "$count" + " $unit".ifBlank { "" },
             fontSize = 16.sp,
             modifier = Modifier
                 .align(alignment = Alignment.CenterVertically)
@@ -48,7 +57,9 @@ fun CounterComponent(
             count = count,
             isIncrement = true,
             limit = upperLimit,
-            onClick = onIncClick
+            onClick = onIncClick,
+            incImgVector = incImgVector,
+            incSymbol = incSymbol
         )
     }
 }
@@ -58,7 +69,11 @@ fun CounterButtonComponent(
     count: Int,
     isIncrement: Boolean,
     limit: Int,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    incImgVector: ImageVector = Icons.Default.Add,
+    decImgVector: ImageVector = Icons.Filled.NavigateNext,
+    incSymbol: String = "+",
+    decSymbol: String = "-"
 ) {
     IconButton(
         modifier = Modifier
@@ -67,8 +82,8 @@ fun CounterButtonComponent(
         enabled = if (isIncrement) count < limit else count > limit,
         onClick = onClick,
         content = {
-            if (isIncrement) Icon(imageVector = Icons.Default.Add, contentDescription = "+", tint = MaterialTheme.colors.onBackground)
-            else Icon(imageVector = Icons.Default.Remove, contentDescription = "-", tint = MaterialTheme.colors.primary)
+            if (isIncrement) Icon(imageVector = incImgVector, contentDescription = incSymbol, tint = MaterialTheme.colors.onBackground)
+            else Icon(imageVector = decImgVector, contentDescription = decSymbol, tint = MaterialTheme.colors.primary)
         }
     )
 }

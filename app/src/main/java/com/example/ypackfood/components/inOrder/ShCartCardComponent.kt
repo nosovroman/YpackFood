@@ -35,6 +35,7 @@ fun ShCartCardComponent(
 
                 CounterComponent(
                     count = cartDish.count,
+                    unit = "шт.",
                     lowerLimit = 0,
                     onIncClick = {  //updateRoom
                         roomViewModel.updateCart(

@@ -11,6 +11,9 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.NavigateBefore
+import androidx.compose.material.icons.filled.NavigateNext
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.livedata.observeAsState
@@ -20,6 +23,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.ypackfood.common.Constants
+import com.example.ypackfood.common.Constants.MAX_ORDERS_ON_PAGE
 import com.example.ypackfood.common.Constants.STANDARD_PADDING
 import com.example.ypackfood.common.Constants.TITLE_SIZE
 import com.example.ypackfood.components.*
@@ -42,9 +46,13 @@ fun HistoryScreen(
     val updateButtonState = historyViewModel.updateButtonState.observeAsState().value
 
     LaunchedEffect(true) {
-        historyViewModel.getHistoryContent(historyViewModel.currentPageState)
+        historyViewModel.getHistoryContent(historyViewModel.currentPageState-1)
         historyViewModel.setUpdateButton(false)
     }
+
+//    LaunchedEffect(historyViewModel.chosenOrderDialogState) {
+//
+//    }
 
     LaunchedEffect(historyViewModel.addedToCartState) {
         if (historyViewModel.addedToCartState) {
@@ -58,6 +66,7 @@ fun HistoryScreen(
 
     LaunchedEffect(historyDishesState) {
         Log.d("historyDishesState", historyDishesState.toString())
+        historyViewModel.setUpdateButton(false)
         val orders = historyDishesState?.data?.orders
         if (!orders.isNullOrEmpty()) {
             if (orders.any { order -> order.status != "Завершен" && order.status != "Отменён" }) {
@@ -96,19 +105,19 @@ fun HistoryScreen(
                                     text = "Обновить статусы ожидаемых заказов",
                                     onClick = {
                                         historyViewModel.setUpdateButton(false)
-                                        historyViewModel.getHistoryContent(historyViewModel.currentPageState)
+                                        historyViewModel.getHistoryContent(historyViewModel.currentPageState-1)
                                     }
                                 )
                             }
                             when(historyDishesState) {
+                                is NetworkResult.Empty<*> -> {
+                                    EmptyContentComponent(message = "Заказов пока что не было")
+                                }
                                 is NetworkResult.Success<*> -> {
-                                    if (historyDishesState.data?.orders?.isEmpty() == true) {
-                                        EmptyContentComponent(message = "Заказов пока что не было")
-                                    }
 
                                     LazyColumn (
                                         content = {
-                                            itemsIndexed(historyDishesState.data?.orders as MutableList<Order>) { index, item ->
+                                            itemsIndexed(historyDishesState.data!!.orders) { index, item ->
                                                 Log.d("NetworkResult ok", item.toString())
                                                 Spacer(modifier = Modifier.height(10.dp))
                                                 HistoryCardComponent(
@@ -139,7 +148,31 @@ fun HistoryScreen(
                                                 Divider()
                                             }
                                             item {
-                                                
+                                                if (historyDishesState.data.totalCount > MAX_ORDERS_ON_PAGE) {
+                                                    Spacer(modifier = Modifier.height(5.dp))
+                                                    Row(
+                                                        modifier = Modifier.fillMaxWidth(),
+                                                        horizontalArrangement = Arrangement.Center,
+                                                        content = {
+                                                            CounterComponent(
+                                                                count = historyViewModel.currentPageState,
+                                                                upperLimit = historyViewModel.computeMaxPage(historyDishesState.data.totalCount),
+                                                                onIncClick = {
+                                                                    historyViewModel.incrementCounter()
+                                                                    historyViewModel.getHistoryContent(historyViewModel.currentPageState-1)
+                                                                },
+                                                                onDecClick = {
+                                                                    historyViewModel.decrementCounter()
+                                                                    historyViewModel.getHistoryContent(historyViewModel.currentPageState-1)
+                                                                },
+                                                                incImgVector = Icons.Filled.NavigateNext,
+                                                                incSymbol = ">",
+                                                                decImgVector = Icons.Filled.NavigateBefore,
+                                                                decSymbol = "<"
+                                                            )
+                                                        }
+                                                    )
+                                                }
                                             }
                                         }
                                     )
@@ -152,7 +185,7 @@ fun HistoryScreen(
                                     Log.d("NetworkResult", "error")
                                     ShowErrorComponent(
                                         message = historyDishesState.message,
-                                        onButtonClick = { historyViewModel.getHistoryContent(historyViewModel.currentPageState) }
+                                        onButtonClick = { historyViewModel.getHistoryContent(historyViewModel.currentPageState-1) }
                                     )
                                 }
                                 else -> {}
@@ -165,10 +198,13 @@ fun HistoryScreen(
     )
 }
 
-@Composable
-fun PageControllerComponent() {
-    
-}
+//@Composable
+//fun PageControllerComponent(historyViewModel: HistoryViewModel) {
+//    CounterComponent(
+//        count = historyViewModel.currentPageState,
+//        upperLimit = historyViewModel.
+//    )
+//}
 
 @Composable
 fun DetailOrder(
