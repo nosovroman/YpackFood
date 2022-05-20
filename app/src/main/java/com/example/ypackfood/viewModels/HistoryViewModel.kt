@@ -44,17 +44,6 @@ class HistoryViewModel : ViewModel() {
                     setUpdateButton(true)
                     this.cancel()
                 }
-//                val timer = object: CountDownTimer(10*1000, 1000) {
-//                    override fun onTick(millisUntilFinished: Long) {
-//                        Log.d("Timer", "Tick")
-//                    }
-//
-//                    override fun onFinish() {
-//                        Log.d("Timer", "SetupButton")
-//                        setUpdateButton(true)
-//                    }
-//                }
-//                timer.start()
             } catch (e: Exception) {
                 Log.d("errorTimer", e.toString())
             }

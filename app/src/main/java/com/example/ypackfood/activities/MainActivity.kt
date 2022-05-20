@@ -39,6 +39,7 @@ import com.example.ypackfood.ui.theme.Orange
 import com.example.ypackfood.viewModels.DatastoreViewModel
 import com.example.ypackfood.viewModels.MainViewModel
 import com.example.ypackfood.viewModels.RoomViewModel
+import kotlinx.coroutines.launch
 
 
 @Composable
@@ -98,7 +99,13 @@ fun MainScreen(
 
     Scaffold(
         scaffoldState = mainViewModel.scaffoldState,
-        drawerContent = { DrawerComponent(navController) { datastoreViewModel.clearAuthInfo() } },
+        drawerContent = {
+            DrawerComponent(
+                navController = navController,
+                onExitClick = { datastoreViewModel.clearAuthInfo() },
+                mainViewModel = mainViewModel
+            )
+        },
         content = {
             Box(
                 modifier = Modifier

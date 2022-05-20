@@ -4,6 +4,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.Divider
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedButton
 import androidx.compose.material.Text
@@ -36,7 +37,9 @@ fun ContentCardComponent(
             Spacer(modifier = Modifier.width(15.dp))
             Column {
                 Text(text = cardName, fontSize = 16.sp)
-                hint?.let { Text(text = hint, fontSize = 12.sp, color = Color.Gray) }
+                if (!hint.isNullOrBlank()) {
+                    Text(text = hint, fontSize = 12.sp, color = Color.Gray)
+                }
                 Text(text = description, fontSize = 14.sp)
                 if (price != -1) {
                     Text(

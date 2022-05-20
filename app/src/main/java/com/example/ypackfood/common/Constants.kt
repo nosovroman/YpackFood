@@ -3,6 +3,8 @@ import com.example.ypackfood.R
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import java.lang.reflect.Modifier
 
 object Constants {
     const val ROOM_FAVORITES = "Favorites" // это название БД
@@ -12,6 +14,10 @@ object Constants {
     const val START_DELIVERY = 2
     const val END_DELIVERY = 23
     const val MIN_PASSWORD_LEN = 6
+
+    val STANDARD_PADDING = 15.dp
+    val CARDS_PADDING = 25.dp
+    val TITLE_SIZE = 20.sp
 
     const val PERSON_ID_DEFAULT = -1
     const val TOKEN_DEFAULT = ""

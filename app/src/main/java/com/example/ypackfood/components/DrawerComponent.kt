@@ -10,6 +10,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -26,14 +27,21 @@ import com.example.ypackfood.common.Constants
 import com.example.ypackfood.enumClasses.MainDrawer
 import com.example.ypackfood.enumClasses.getDrawerItems
 import com.example.ypackfood.sealedClasses.Screens
+import com.example.ypackfood.viewModels.MainViewModel
+import kotlinx.coroutines.launch
 
 @Composable
-fun DrawerComponent(navController: NavHostController, onExitClick: () -> Unit) {
+fun DrawerComponent(
+    navController: NavHostController,
+    onExitClick: () -> Unit,
+    mainViewModel: MainViewModel
+) {
     val itemsDrawer = getDrawerItems()
+    val scope = rememberCoroutineScope()
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(start = 24.dp, end = 24.dp),
+            .padding(horizontal = 24.dp),
         content = {
             DrawerHeader()
             Divider()
@@ -53,6 +61,9 @@ fun DrawerComponent(navController: NavHostController, onExitClick: () -> Unit) {
                                 popUpTo(Screens.Main.route) { inclusive = true }
                             }
                         } else {
+                            scope.launch {
+                                mainViewModel.scaffoldState.drawerState.close()
+                            }
                             navController.navigate(route = currentItem.route) { launchSingleTop = true }
                         }
                     }
