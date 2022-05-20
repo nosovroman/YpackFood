@@ -1,6 +1,8 @@
 package com.example.ypackfood.models.orders.OrderMin
 
-import com.example.ypackfood.models.detailContent.DetailContent
+import com.example.ypackfood.models.commonData.Dish
+import com.example.ypackfood.models.orders.OrderFull.temp.DishOrder
+
 
 data class DishForOrderPost(
     val count: Int,
@@ -9,5 +11,5 @@ data class DishForOrderPost(
 
 data class DishForOrderGet(
     val count: Int,
-    val dish: DetailContent
+    val dish: DishOrder//DetailContent
 )

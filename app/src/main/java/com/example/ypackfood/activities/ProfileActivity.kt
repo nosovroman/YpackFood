@@ -46,8 +46,7 @@ fun ProfileScreen(navController: NavHostController) {
 @Composable
 fun ProfileContent() {
     LazyColumn (
-        Modifier
-            .padding(start = 20.dp, end = 20.dp),
+        modifier = Modifier.padding(start = 20.dp, end = 20.dp),
         content = {
             item {
                 Spacer(modifier = Modifier.size(20.dp))

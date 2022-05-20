@@ -9,7 +9,7 @@ class Repository(private val apiService: ApiService) {
     suspend fun authorizeUser(auth: AuthorizationData) = apiService.authorizeUser(auth)
     suspend fun registerUser(auth: RegistrationData) = apiService.registerUser(auth)
     suspend fun getMainContent(token: String) = apiService.getMainContent(token)
-    suspend fun getHistory(token: String) = apiService.getHistory(token)
+    suspend fun getHistory(token: String, page: Int) = apiService.getHistory(token, page)
     suspend fun getActions(token: String) = apiService.getActions(token)
     suspend fun getDetailContent(token: String, dishId: Int) = apiService.getDetailContent(token, dishId)
     suspend fun getFavoritesId(token: String) = apiService.getFavoritesId(token)

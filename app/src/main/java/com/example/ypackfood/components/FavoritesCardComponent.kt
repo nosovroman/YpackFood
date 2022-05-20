@@ -23,9 +23,7 @@ fun FavoritesCardComponent(
         modifier = Modifier
             .padding(top = 25.dp)
             .fillMaxWidth()
-            .clickable {
-                onCardClick()
-            },
+            .clickable { onCardClick() },
         content = {
             PictureOneComponent(url = urlPicture)
             Spacer(modifier = Modifier.width(15.dp))

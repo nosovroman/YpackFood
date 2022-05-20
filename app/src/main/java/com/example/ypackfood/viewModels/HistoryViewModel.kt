@@ -1,5 +1,6 @@
 package com.example.ypackfood.viewModels
 
+import android.os.CountDownTimer
 import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -11,18 +12,68 @@ import com.example.ypackfood.common.Auth
 import com.example.ypackfood.common.Constants.ERROR_INTERNET
 import com.example.ypackfood.common.RequestTemplate
 import com.example.ypackfood.common.RequestTemplate.mainRepository
-import com.example.ypackfood.models.detailContent.DetailContent
-import com.example.ypackfood.models.orders.OrderFull.Order
+import com.example.ypackfood.models.orders.OrderFull.OrderList
 import com.example.ypackfood.models.orders.OrderMin.DishForOrderGet
 import com.example.ypackfood.room.entities.CartEntity
 import com.example.ypackfood.sealedClasses.NetworkResult
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.lang.Exception
+import java.util.*
+import kotlin.concurrent.schedule
 
 class HistoryViewModel : ViewModel() {
 
-    var historyDishesState: MutableLiveData<NetworkResult<MutableList<Order>>> = MutableLiveData()
+    var historyDishesState: MutableLiveData<NetworkResult<OrderList>> = MutableLiveData()
+    var updateButtonState: MutableLiveData<Boolean> = MutableLiveData(false)
+    fun setUpdateButton(newState: Boolean) {
+        updateButtonState.postValue(newState)
+    }
+
+    var currentPageState by mutableStateOf(0)
+        private set
+    fun setCurrentPage(newState: Int) {
+        currentPageState = newState
+    }
+
+    fun setTimerForStatusUpdate() {
+        viewModelScope.launch (Dispatchers.IO) {
+            try {
+                val timer = Timer().schedule(2000) {
+                    Log.d("Timer", "SetupButton")
+                    setUpdateButton(true)
+                    this.cancel()
+                }
+//                val timer = object: CountDownTimer(10*1000, 1000) {
+//                    override fun onTick(millisUntilFinished: Long) {
+//                        Log.d("Timer", "Tick")
+//                    }
+//
+//                    override fun onFinish() {
+//                        Log.d("Timer", "SetupButton")
+//                        setUpdateButton(true)
+//                    }
+//                }
+//                timer.start()
+            } catch (e: Exception) {
+                Log.d("errorTimer", e.toString())
+            }
+        }
+    }
+
+
+    var detailOrderDialogState by mutableStateOf(false)//mutableListOf<DishForOrderGet>()
+        private set
+    var chosenOrderDialogState by mutableStateOf(mutableListOf<DishForOrderGet>())//mutableListOf<DishForOrderGet>()
+        private set
+    fun setDetailOrderDialog(newState: Boolean, orderDishList: MutableList<DishForOrderGet>) {
+        detailOrderDialogState = newState
+        chosenOrderDialogState = orderDishList
+    }
+    fun clearDetailOrderDialog() {
+        setDetailOrderDialog(false, mutableListOf())
+    }
+    fun detailOrderDialogIsEmpty() = !detailOrderDialogState
 
     var addedToCartState by mutableStateOf(false)
         private set
@@ -30,12 +81,12 @@ class HistoryViewModel : ViewModel() {
         addedToCartState = newState
     }
 
-    fun getMainContent() {
-        val oldData = historyDishesState.value?.data ?: mutableListOf()
+    fun getHistoryContent(page: Int) {
+        //val oldData = historyDishesState.value?.data ?: mutableListOf()
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                historyDishesState.postValue(NetworkResult.Loading(oldData))
-                val response = mainRepository.getHistory(Auth.authInfo.accessToken)
+                historyDishesState.postValue(NetworkResult.Loading())
+                val response = mainRepository.getHistory(Auth.authInfo.accessToken, page)
                 if (response.isSuccessful) {
                     Log.d("getHistoryContent ok", response.body().toString())
                     historyDishesState.postValue(NetworkResult.Success(response.body()!!))
@@ -50,7 +101,7 @@ class HistoryViewModel : ViewModel() {
                 }
             } catch (e: Exception) {
                 Log.d("getHistoryContent error ", e.toString())
-                historyDishesState.postValue(NetworkResult.Error(ERROR_INTERNET, oldData))
+                historyDishesState.postValue(NetworkResult.Error(ERROR_INTERNET))
             }
         }
     }
@@ -64,9 +115,9 @@ class HistoryViewModel : ViewModel() {
                     //Log.d("DetailContentDishList", it.toString())
                     CartEntity(
                         dishId = id,
-                        portionId = portion!!.id,
-                        dishPriceId = portion!!.priceNow.id,
-                        dishPrice = portion!!.priceNow.price,
+                        portionId = portion.id,
+                        dishPriceId = portion.priceNow.id,
+                        dishPrice = portion.priceNow.price,
                         dishCount = dishForOrderGet[index].count ?: 1,
                         dishAddons = null
                     )

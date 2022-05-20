@@ -5,7 +5,7 @@ import com.example.ypackfood.models.commonData.Dish
 import com.example.ypackfood.models.commonData.PicturePaths
 import com.example.ypackfood.models.detailContent.Addon
 
-data class Dish(
+data class DishOrder(
     val category: String,
     val deleted: Boolean,
     val dishes: List<Dish>,

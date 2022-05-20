@@ -11,6 +11,7 @@ import com.example.ypackfood.models.detailAction.DetailAction
 import com.example.ypackfood.models.detailContent.DetailContent
 import com.example.ypackfood.models.mainContent.Category
 import com.example.ypackfood.models.orders.OrderFull.Order
+import com.example.ypackfood.models.orders.OrderFull.OrderList
 import com.example.ypackfood.models.orders.OrderMin.OrderMin
 import retrofit2.Response
 import retrofit2.http.*
@@ -72,7 +73,11 @@ interface ApiService {
     ): Response<Order>
 
     @GET("client/my/orders")
-    suspend fun getHistory(@Header(HEADER_AUTH) token: String): Response<MutableList<Order>>
+    suspend fun getHistory(
+        @Header(HEADER_AUTH) token: String,
+        @Query("page") page: Int
+    ): Response<OrderList>
+    //suspend fun getHistory(@Header(HEADER_AUTH) token: String): Response<MutableList<Order>>
 
 
         // Авторизация

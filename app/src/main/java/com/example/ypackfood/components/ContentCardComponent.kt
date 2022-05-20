@@ -36,7 +36,7 @@ fun ContentCardComponent(
             Spacer(modifier = Modifier.width(15.dp))
             Column {
                 Text(text = cardName, fontSize = 16.sp)
-                Text(text = hint!!, fontSize = 12.sp, color = Color.Gray)
+                hint?.let { Text(text = hint, fontSize = 12.sp, color = Color.Gray) }
                 Text(text = description, fontSize = 14.sp)
                 if (price != -1) {
                     Text(
