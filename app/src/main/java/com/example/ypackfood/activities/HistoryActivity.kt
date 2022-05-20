@@ -21,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.example.ypackfood.common.Constants
 import com.example.ypackfood.components.*
 import com.example.ypackfood.models.orders.OrderFull.Order
 import com.example.ypackfood.models.orders.OrderMin.DishForOrderGet
@@ -80,17 +81,20 @@ fun HistoryScreen(
                         )
                     }
 
-                    LazyColumn (
-                        //modifier = Modifier.padding(horizontal = 15.dp),
-                        content = {
-                            when(historyDishesState) {
-                                is NetworkResult.Success<*> -> {
-                                    if (historyDishesState.data?.orders?.isEmpty() == true) {
-                                        item {
-                                            EmptyContentComponent(message = "Заказов пока что не было")
-                                        }
-                                    }
+                    if (!historyViewModel.detailOrderDialogIsEmpty()) {
+                        DetailOrder(
+                            contentList = historyViewModel.chosenOrderDialogState,
+                            historyViewModel = historyViewModel
+                        )
+                    }
+                    when(historyDishesState) {
+                        is NetworkResult.Success<*> -> {
+                            if (historyDishesState.data?.orders?.isEmpty() == true) {
+                                EmptyContentComponent(message = "Заказов пока что не было")
+                            }
 
+                            LazyColumn (
+                                content = {
                                     itemsIndexed(historyDishesState.data?.orders as MutableList<Order>) { index, item ->
                                         Log.d("NetworkResult ok", item.toString())
                                         Spacer(modifier = Modifier.height(10.dp))
@@ -102,8 +106,14 @@ fun HistoryScreen(
                                             imageList = item.dishes.map { it.dish.picturePaths.large },
                                             listOfId = item.dishes.map { it.dish.id },
                                             onCardClick = {
-                                                Log.d("HistoryCardComponent", item.dishes.toString())
-                                                historyViewModel.setDetailOrderDialog(true, item.dishes as MutableList<DishForOrderGet>)
+                                                Log.d(
+                                                    "HistoryCardComponent",
+                                                    item.dishes.toString()
+                                                )
+                                                historyViewModel.setDetailOrderDialog(
+                                                    true,
+                                                    item.dishes as MutableList<DishForOrderGet>
+                                                )
                                             },
                                             onButtonClick = {
                                                 roomViewModel.addToCartMany(
@@ -115,27 +125,22 @@ fun HistoryScreen(
                                         Spacer(modifier = Modifier.height(10.dp))
                                         Divider()
                                     }
-                                    if (!historyViewModel.detailOrderDialogIsEmpty()) {
-                                        item {
-                                            DetailOrder(
-                                                contentList = historyViewModel.chosenOrderDialogState,
-                                                historyViewModel = historyViewModel
-                                            )
-                                        }
-                                    }
                                 }
-                                is NetworkResult.Error<*> -> {
-                                    item {Log.d("NetworkResult", "error")
-                                        ShowErrorComponent(
-                                            message = historyDishesState.message,
-                                            onButtonClick = { historyViewModel.getHistoryContent(historyViewModel.currentPageState) }
-                                        )
-                                    }
-                                }
-                                else -> {}
-                            }
+                            )
                         }
-                    )
+                        is NetworkResult.Loading<*> -> {
+                            Spacer(modifier = Modifier.height(Constants.TOOLBAR_HEIGHT + 15.dp))
+                            LoadingBarComponent()
+                        }
+                        is NetworkResult.Error<*> -> {
+                            Log.d("NetworkResult", "error")
+                            ShowErrorComponent(
+                                message = historyDishesState.message,
+                                onButtonClick = { historyViewModel.getHistoryContent(historyViewModel.currentPageState) }
+                            )
+                        }
+                        else -> {}
+                    }
                 }
             )
         }
