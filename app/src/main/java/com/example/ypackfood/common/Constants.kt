@@ -31,7 +31,9 @@ object Constants {
     val REGEX_EMAIL = Regex("""\w+[\w_.%+-]+@[\w]+\.[a-z]{2,4}""")
 //    val REGEX_PHONE = Regex("""\w+[\w_.%+-]+@[\w]+\.[a-z]{2,4}""")
 
-    const val ERROR_INTERNET = "Проблема с интернет-подключением"
+    const val SOCKET_TIMEOUT_EXCEPTION = "Проблема с интернет-подключением"
+    const val UNKNOWN_HOST_EXCEPTION = "Проблема с интернет-подключением"
+    const val ERROR_SERVER = "Проблема с сервером"
 
     const val HEADER_AUTH = "Authorization"
 

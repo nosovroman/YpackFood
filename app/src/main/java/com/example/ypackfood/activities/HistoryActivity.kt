@@ -138,6 +138,9 @@ fun HistoryScreen(
                                                 Spacer(modifier = Modifier.height(10.dp))
                                                 Divider()
                                             }
+                                            item {
+                                                
+                                            }
                                         }
                                     )
                                 }
@@ -160,6 +163,11 @@ fun HistoryScreen(
             )
         }
     )
+}
+
+@Composable
+fun PageControllerComponent() {
+    
 }
 
 @Composable

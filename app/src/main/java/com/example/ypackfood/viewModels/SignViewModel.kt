@@ -9,10 +9,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.ypackfood.common.Auth
 import com.example.ypackfood.common.Constants
+import com.example.ypackfood.common.Constants.ERROR_SERVER
+import com.example.ypackfood.common.Constants.SOCKET_TIMEOUT_EXCEPTION
+import com.example.ypackfood.common.Constants.UNKNOWN_HOST_EXCEPTION
 import com.example.ypackfood.common.RequestTemplate
 import com.example.ypackfood.common.RequestTemplate.mainRepository
 import com.example.ypackfood.enumClasses.ErrorEnum
 import com.example.ypackfood.extensions.isDigitsOnly
+import com.example.ypackfood.extensions.translateException
 import com.example.ypackfood.models.auth.AuthInfo
 import com.example.ypackfood.models.auth.AuthorizationData
 import com.example.ypackfood.models.auth.RegistrationData
@@ -23,6 +27,8 @@ import com.example.ypackfood.sealedClasses.TabRowSwitchable
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.lang.Exception
+import java.net.SocketTimeoutException
+import java.net.UnknownHostException
 
 class SignInUpViewModel : ViewModel() {
     var signSwitcherState: MutableLiveData<TabRowSwitchable> = MutableLiveData(SignOptions.SignIn())
@@ -109,9 +115,9 @@ class SignInUpViewModel : ViewModel() {
                     registerState.postValue(NetworkResult.HandledError(errorCode))
                 }
             } catch (e: Exception) {
-                setErrorEntering("Какая-то ошибка")
-                Log.d("authorizeUser error ", e.toString() + "|||message: " + e.message)
-                registerState.postValue(NetworkResult.Error(e.message))
+                val error = e.translateException()
+                setErrorEntering(error)
+                registerState.postValue(NetworkResult.Error(error))
             }
         }
     }
@@ -135,9 +141,9 @@ class SignInUpViewModel : ViewModel() {
                     registerState.postValue(NetworkResult.HandledError(errorCode))
                 }
             } catch (e: Exception) {
-                setErrorEntering("Какая-то ошибка")
-                Log.d("registerUser error ", e.toString() + "|||message: " + e.message)
-                registerState.postValue(NetworkResult.Error(e.message))
+                val error = e.translateException()
+                setErrorEntering(error)
+                registerState.postValue(NetworkResult.Error(error))
             }
         }
     }

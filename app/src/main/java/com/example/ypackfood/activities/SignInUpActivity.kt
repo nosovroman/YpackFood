@@ -69,10 +69,7 @@ fun SignInUpScreen(
                         }
                         is NetworkResult.Empty<*> -> {
                         }
-                        is NetworkResult.Error<*> -> {
-                            signViewModel.registerState.postValue(NetworkResult.Empty())
-                        }
-                        is NetworkResult.HandledError<*>, null -> {
+                        is NetworkResult.HandledError<*>, is NetworkResult.Error<*>, null -> {
                             TabRowComponent(
                                 currentOption = signState,
                                 listOptions = SignOptions.getOptions(),
@@ -83,27 +80,28 @@ fun SignInUpScreen(
                             )
                             when(signState) {
                                 is SignOptions.SignIn -> {
-                                    //signViewModel.clearErrorEntering()
                                     SignFormComponent(
                                         signViewModel = signViewModel,
                                         buttonText = stringResource(R.string.sign_in_btn),
                                         onClick = {
-                                            signViewModel.authorizeUser(AuthorizationData(signViewModel.phoneFieldState, signViewModel.passwordFieldState))
+                                            signViewModel.authorizeUser(
+                                                AuthorizationData(
+                                                    phoneNumber = signViewModel.phoneFieldState,
+                                                    password = signViewModel.passwordFieldState))
                                             Log.d("SignInUp", "Вход успешен")
                                         }
                                     )
                                 }
                                 is SignOptions.SignUp -> {
-                                    //signViewModel.clearErrorEntering()
                                     SignUpFormComponent(
                                         signViewModel = signViewModel,
                                         buttonText = stringResource(R.string.sign_up_btn),
                                         onClick = {
                                             signViewModel.registerUser(
                                                 RegistrationData(
+                                                    phoneNumber = signViewModel.phoneFieldState,
                                                     password = signViewModel.passwordFieldState,
                                                     name = signViewModel.userFieldState,
-                                                    phoneNumber = signViewModel.phoneFieldState
                                                 )
                                             )
                                             Log.d("SignInUp", "Регистрация успешна")

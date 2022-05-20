@@ -1,6 +1,5 @@
 package com.example.ypackfood.viewModels
 
-import android.os.CountDownTimer
 import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -9,7 +8,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.ypackfood.common.Auth
-import com.example.ypackfood.common.Constants.ERROR_INTERNET
 import com.example.ypackfood.common.RequestTemplate
 import com.example.ypackfood.common.RequestTemplate.mainRepository
 import com.example.ypackfood.models.orders.OrderFull.OrderList
@@ -90,7 +88,7 @@ class HistoryViewModel : ViewModel() {
                 }
             } catch (e: Exception) {
                 Log.d("getHistoryContent error ", e.toString())
-                historyDishesState.postValue(NetworkResult.Error(ERROR_INTERNET))
+                historyDishesState.postValue(NetworkResult.Error())
             }
         }
     }

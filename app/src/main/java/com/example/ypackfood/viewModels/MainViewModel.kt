@@ -10,7 +10,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.ypackfood.common.Auth
-import com.example.ypackfood.common.Constants.ERROR_INTERNET
+import com.example.ypackfood.common.Constants.ERROR_SERVER
+import com.example.ypackfood.common.Constants.SOCKET_TIMEOUT_EXCEPTION
+import com.example.ypackfood.common.Constants.UNKNOWN_HOST_EXCEPTION
 import com.example.ypackfood.common.RequestTemplate
 import com.example.ypackfood.common.RequestTemplate.mainRepository
 import com.example.ypackfood.models.actionsContent.ActionsItem
@@ -19,6 +21,8 @@ import com.example.ypackfood.sealedClasses.NetworkResult
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.lang.Exception
+import java.net.SocketTimeoutException
+import java.net.UnknownHostException
 
 class MainViewModel : ViewModel() {
     lateinit var listContentState: LazyListState
@@ -55,12 +59,10 @@ class MainViewModel : ViewModel() {
     var dishesState: MutableLiveData<NetworkResult<MutableList<Category>>> = MutableLiveData()
     var actionsState: MutableLiveData<NetworkResult<MutableList<ActionsItem>>> = MutableLiveData()
 
-
     fun getMainContent() {
-        val oldData = dishesState.value?.data ?: mutableListOf()
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                dishesState.postValue(NetworkResult.Loading(oldData))
+                dishesState.postValue(NetworkResult.Loading())
                 val response = mainRepository.getMainContent(Auth.authInfo.accessToken)
                 if (response.isSuccessful) {
                     Log.d("getMainContent ok", response.body().toString())
@@ -75,9 +77,14 @@ class MainViewModel : ViewModel() {
                     Log.d("getMainContent errorCode", errorCode)
                     dishesState.postValue(NetworkResult.HandledError(errorCode))
                 }
-            } catch (e: Exception) {
+            }
+            catch (e: Exception) {
                 Log.d("getMainContent error ", e.toString())
-                dishesState.postValue(NetworkResult.Error(ERROR_INTERNET, oldData))
+                when (e) {
+                    is SocketTimeoutException -> { dishesState.postValue(NetworkResult.Error(SOCKET_TIMEOUT_EXCEPTION)) }
+                    is UnknownHostException -> { dishesState.postValue(NetworkResult.Error(UNKNOWN_HOST_EXCEPTION)) }
+                    else -> { dishesState.postValue(NetworkResult.Error(ERROR_SERVER)) }
+                }
             }
         }
     }
