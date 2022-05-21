@@ -20,6 +20,7 @@ import androidx.navigation.NavHostController
 import com.example.ypackfood.R
 import com.example.ypackfood.common.Auth
 import com.example.ypackfood.components.*
+import com.example.ypackfood.extensions.translateError
 import com.example.ypackfood.models.auth.AuthInfo
 import com.example.ypackfood.models.auth.AuthorizationData
 import com.example.ypackfood.models.auth.RegistrationData
@@ -38,19 +39,44 @@ fun SignInUpScreen(
 ) {
     val signState = signViewModel.signSwitcherState.observeAsState().value!!
     val registerState = signViewModel.registerState.observeAsState().value
+    val authInfoState = datastoreViewModel.authInfoState.observeAsState().value
 
-    LaunchedEffect(registerState) {
-        if (registerState is NetworkResult.Success<*>) {
-            Log.d("SignInUp", "registerState is NetworkResult.Success<*>")
-            datastoreViewModel.setAuthInfoState(AuthInfo(registerState.data!!.personId, registerState.data.accessToken)).also { Log.d("SignInUp", "setAuthInfoState") }
-            datastoreViewModel.updateAuthInfo(idValue = registerState.data.personId, tokenValue = registerState.data.accessToken, refreshTokenValue = registerState.data.refreshToken)
-            //signViewModel.registerStateInit()
-            Log.d("SignInUp LaunchedEffect(registerState)", Auth.authInfo.toString())
+
+    LaunchedEffect(true) {
+        Log.d("registerStateInit", "registerStateInit")
+        signViewModel.registerStateInit()
+        datastoreViewModel.clearAuthInfo()
+    }
+
+    LaunchedEffect(authInfoState) {
+        if (authInfoState is NetworkResult.Success<*>) {
+            Log.d("SignInUp LaunchedEffect(authInfoState)", Auth.authInfo.toString())
             navController.navigate(route = Screens.Main.route) {
                 popUpTo(Screens.SignInUp.route) { inclusive = true }
             }
-        } else {
-            //refresh token
+        }
+    }
+
+    LaunchedEffect(registerState) {
+        if (registerState is NetworkResult.Success<*>) {
+            Log.d("SignInUp", "${registerState.data}")
+            Log.d("SignInUp", "registerState is NetworkResult.Success<*>")
+//            datastoreViewModel.setAuthInfoState(
+//                AuthInfo(
+//                    personId = registerState.data!!.personId,
+//                    accessToken = registerState.data.accessToken,
+//                    refreshToken = registerState.data.refreshToken,
+//                )
+//            )
+            datastoreViewModel.updateAuthInfo(
+                idValue = registerState.data!!.personId,
+                tokenValue = registerState.data.accessToken,
+                refreshTokenValue = registerState.data.refreshToken
+            )
+            Log.d("SignInUp LaunchedEffect(registerState)", Auth.authInfo.toString())
+//            navController.navigate(route = Screens.Main.route) {
+//                popUpTo(Screens.SignInUp.route) { inclusive = true }
+//            }
         }
     }
 
@@ -64,11 +90,8 @@ fun SignInUpScreen(
                 verticalArrangement = Arrangement.Center,
                 content = {
                     when (registerState) {
-                        is NetworkResult.Loading<*> -> {
-                            LoadingBarComponent()
-                        }
-                        is NetworkResult.Empty<*> -> {
-                        }
+                        is NetworkResult.Loading<*> -> { LoadingBarComponent() }
+                        is NetworkResult.Empty<*> -> {}
                         is NetworkResult.HandledError<*>, is NetworkResult.Error<*>, null -> {
                             TabRowComponent(
                                 currentOption = signState,
@@ -87,8 +110,8 @@ fun SignInUpScreen(
                                             signViewModel.authorizeUser(
                                                 AuthorizationData(
                                                     phoneNumber = signViewModel.phoneFieldState,
-                                                    password = signViewModel.passwordFieldState))
-                                            Log.d("SignInUp", "Вход успешен")
+                                                    password = signViewModel.passwordFieldState)
+                                            )
                                         }
                                     )
                                 }
@@ -146,7 +169,7 @@ fun FieldsComponent(
             )
             if (errorMessage.isNotBlank()) {
                 Spacer(modifier = Modifier.height(5.dp))
-                Text(text = signViewModel.translateError(errorMessage))
+                Text(text = errorMessage.translateError())//signViewModel.translateError(errorMessage))
                 Spacer(modifier = Modifier.height(5.dp))
             }
         }

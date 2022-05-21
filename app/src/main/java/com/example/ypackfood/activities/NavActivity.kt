@@ -4,12 +4,14 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.runtime.LaunchedEffect
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.ypackfood.common.Auth
 import com.example.ypackfood.common.Constants
 import com.example.ypackfood.sealedClasses.Screens
 import com.example.ypackfood.ui.theme.YpackFoodTheme
@@ -21,6 +23,9 @@ class NavActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        val datastoreViewModel = ViewModelProvider(this).get(DatastoreViewModel::class.java)
+        datastoreViewModel.getAuthInfo()
+
         val signViewModel = ViewModelProvider(this).get(SignInUpViewModel::class.java)
         val mainViewModel = ViewModelProvider(this).get(MainViewModel::class.java)
         val detailViewModel = ViewModelProvider(this).get(DetailViewModel::class.java)
@@ -29,11 +34,11 @@ class NavActivity : ComponentActivity() {
         val orderViewModel = ViewModelProvider(this).get(OrderViewModel::class.java)
         val historyViewModel = ViewModelProvider(this).get(HistoryViewModel::class.java)
         val favoritesViewModel = ViewModelProvider(this).get(FavoritesViewModel::class.java)
+        val profileViewModel = ViewModelProvider(this).get(ProfileViewModel::class.java)
 
         val roomViewModel = ViewModelProvider(this).get(RoomViewModel::class.java)
-        val datastoreViewModel = ViewModelProvider(this).get(DatastoreViewModel::class.java)
 
-        datastoreViewModel.getAuthInfo()
+
 
 
         setContent {
@@ -79,7 +84,7 @@ class NavActivity : ComponentActivity() {
                         }
                     }
                     composable(route = Screens.History.route) { HistoryScreen(navController, historyViewModel, roomViewModel) }
-                    composable(route = Screens.Profile.route) { ProfileScreen(navController) }
+                    composable(route = Screens.Profile.route) { ProfileScreen(navController, profileViewModel) }
                     composable(route = Screens.Favorites.route) { FavoritesScreen(navController, favoritesViewModel, roomViewModel) }
                     composable(route = Screens.Info.route) { InfoScreen(navController) }
                 }

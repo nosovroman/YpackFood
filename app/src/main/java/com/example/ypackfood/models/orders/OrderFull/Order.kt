@@ -1,5 +1,6 @@
 package com.example.ypackfood.models.orders.OrderFull
 
+import com.example.ypackfood.models.commonData.Address
 import com.example.ypackfood.models.detailContent.DetailContent
 import com.example.ypackfood.models.orders.OrderMin.DishForOrderGet
 

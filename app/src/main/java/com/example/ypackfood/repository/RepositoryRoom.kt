@@ -1,11 +1,16 @@
 package com.example.ypackfood.repository
 
 import androidx.lifecycle.LiveData
+import com.example.ypackfood.common.Auth
 import com.example.ypackfood.room.dao.CartDao
 import com.example.ypackfood.room.entities.CartEntity
 
 class RepositoryRoom(private val cartDao: CartDao) {
-    val shopList: LiveData<List<CartEntity>> = cartDao.getShoppingCart()
+    var shopList: LiveData<List<CartEntity>> = cartDao.getShoppingCart(Auth.authInfo.personId)// = cartDao.getShoppingCart(Auth.authInfo.personId)
+
+    suspend fun initShopList() {
+        shopList = cartDao.getShoppingCart(Auth.authInfo.personId)
+    }
 
 
     // ------------------ ShoppingCart
@@ -25,8 +30,8 @@ class RepositoryRoom(private val cartDao: CartDao) {
         return cartDao.deleteFromCart(cartEntity)
     }
 
-    suspend fun deleteFromCartByListId(ids: List<Int>) {
-        return cartDao.deleteFromCartByListId(ids)
+    suspend fun deleteFromCartByListId(userId: Int, ids: List<Int>) {
+        return cartDao.deleteFromCartByListId(userId, ids)
     }
 
     suspend fun deleteAllFromCart() {

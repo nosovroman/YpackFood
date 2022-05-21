@@ -9,3 +9,7 @@ data class RegistrationData(
     val password: String,
     val name: String
 )
+
+data class TokenData(
+    val token: String,
+)

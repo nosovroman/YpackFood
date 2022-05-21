@@ -33,7 +33,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun DrawerComponent(
     navController: NavHostController,
-    onExitClick: () -> Unit,
+    onExitClick: () -> Unit = {},
     mainViewModel: MainViewModel
 ) {
     val itemsDrawer = getDrawerItems()

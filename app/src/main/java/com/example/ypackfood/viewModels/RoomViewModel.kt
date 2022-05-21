@@ -7,6 +7,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.*
+import com.example.ypackfood.common.Auth
 import com.example.ypackfood.common.Components
 import com.example.ypackfood.repository.RepositoryRoom
 import com.example.ypackfood.room.database.DishDatabase
@@ -40,6 +41,12 @@ class RoomViewModel(application: Application) : AndroidViewModel(application) {
         shopList = repositoryRoom.shopList
     }
 
+//    fun initShopList() {
+//        viewModelScope.launch (Dispatchers.IO) {
+//            repositoryRoom.initShopList()
+//        }
+//    }
+
     // ------------------ ShoppingCart
     fun addToCart(cartEntity: CartEntity) {
         Log.d("Cart", "addToCart")
@@ -71,7 +78,7 @@ class RoomViewModel(application: Application) : AndroidViewModel(application) {
     fun deleteFromCartByListId(ids: List<Int>) {
         Log.d("Cart", "deleteFromCartByListId")
         viewModelScope.launch (Dispatchers.IO) {
-            repositoryRoom.deleteFromCartByListId(ids)
+            repositoryRoom.deleteFromCartByListId(Auth.authInfo.personId, ids)
         }
     }
 

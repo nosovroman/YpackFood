@@ -35,7 +35,7 @@ class SignInUpViewModel : ViewModel() {
 
     var registerState: MutableLiveData<NetworkResult<AuthInfo>> = MutableLiveData()
     fun registerStateInit() {
-        registerState.postValue(NetworkResult.Empty())
+        registerState.postValue(null)
     }
 
     var errorEnteringState by mutableStateOf("")
@@ -146,16 +146,5 @@ class SignInUpViewModel : ViewModel() {
                 registerState.postValue(NetworkResult.Error(error))
             }
         }
-    }
-
-    fun translateError(value: String): String {
-        val error = when (value) {
-            ErrorEnum.INCORRECT_PHONE_NUMBER_OR_PASSWORD.title -> "Неправильный номер телефона или пароль"
-            ErrorEnum.USER_ALREADY_EXIST.title -> "Пользователь с таким номером телефона уже существует"
-            ErrorEnum.USER_IS_BANNED.title -> "Ваш аккаунт заблокирован"
-            ErrorEnum.ALLOWED_NUMBER_OF_LOGIN_ATTEMPTS_EXCEEDED.title -> "Ваша возможность входить в систему заморожена на 24 часа с момента последней безуспешной попытки"
-            else -> value
-        }
-        return error
     }
 }

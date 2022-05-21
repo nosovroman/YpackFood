@@ -15,7 +15,10 @@ import com.example.ypackfood.common.Constants.SOCKET_TIMEOUT_EXCEPTION
 import com.example.ypackfood.common.Constants.UNKNOWN_HOST_EXCEPTION
 import com.example.ypackfood.common.RequestTemplate
 import com.example.ypackfood.common.RequestTemplate.mainRepository
+import com.example.ypackfood.extensions.translateException
 import com.example.ypackfood.models.actionsContent.ActionsItem
+import com.example.ypackfood.models.auth.AuthInfo
+import com.example.ypackfood.models.auth.TokenData
 import com.example.ypackfood.models.mainContent.Category
 import com.example.ypackfood.sealedClasses.NetworkResult
 import kotlinx.coroutines.Dispatchers
@@ -55,9 +58,40 @@ class MainViewModel : ViewModel() {
         return action+dishes
     }
 
-
     var dishesState: MutableLiveData<NetworkResult<MutableList<Category>>> = MutableLiveData()
     var actionsState: MutableLiveData<NetworkResult<MutableList<ActionsItem>>> = MutableLiveData()
+    var refreshState: MutableLiveData<NetworkResult<AuthInfo>> = MutableLiveData()
+
+    fun initStates() {
+        dishesState.postValue(null)
+        refreshState.postValue(null)
+    }
+
+    fun refreshToken() {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                refreshState.postValue(NetworkResult.Loading(data = null))
+                Log.d("TokenRefresh with ", Auth.authInfo.refreshToken)
+                val response = mainRepository.refreshToken(TokenData(Auth.authInfo.refreshToken))
+                if (response.isSuccessful) {
+                    Log.d("refreshToken ok", response.body().toString())
+                    refreshState.postValue(NetworkResult.Success(response.body()!!))
+                }
+                else if (response.code() != 500) {
+                    Log.d("refreshToken not ok ", Auth.authInfo.toString())
+
+                    val jsonString = response.errorBody()!!.string()
+                    val errorCode = RequestTemplate.getErrorFromJson(jsonString).errorCode.toString()
+                    refreshState.postValue(NetworkResult.HandledError(errorCode, null))
+                }
+            }
+            catch (e: Exception) {
+                Log.d("refreshToken error ", e.toString())
+                val error = e.translateException()
+                refreshState.postValue(NetworkResult.Error(error, null))
+            }
+        }
+    }
 
     fun getMainContent() {
         viewModelScope.launch(Dispatchers.IO) {
@@ -68,11 +102,10 @@ class MainViewModel : ViewModel() {
                     Log.d("getMainContent ok", response.body().toString())
                     dishesState.postValue(NetworkResult.Success(response.body()!!))
                 }
-                else {
+                else if (response.code() != 500) {
                     Log.d("getMainContent not ok ", Auth.authInfo.toString())
 
                     val jsonString = response.errorBody()!!.string()
-                    Log.d("getMainContent errorCode1", "jsonString: $jsonString")
                     val errorCode = RequestTemplate.getErrorFromJson(jsonString).errorCode.toString()
                     Log.d("getMainContent errorCode", errorCode)
                     dishesState.postValue(NetworkResult.HandledError(errorCode))

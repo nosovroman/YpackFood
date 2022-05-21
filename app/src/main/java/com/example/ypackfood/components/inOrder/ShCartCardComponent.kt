@@ -6,6 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.ypackfood.common.Auth
 import com.example.ypackfood.components.CounterComponent
 import com.example.ypackfood.components.PictureOneComponent
 import com.example.ypackfood.models.commonData.CartDish
@@ -63,6 +64,7 @@ fun composeCartEntity(cartDish: CartDish, countIncrement: Int = 0): CartEntity {
     return with(cartDish) {
         CartEntity(
             dishId = dishId,
+            userId = Auth.authInfo.personId,
             portionId = portionId,
             dishPriceId = priceId,
             dishPrice = price,

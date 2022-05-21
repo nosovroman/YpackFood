@@ -177,6 +177,7 @@ class DetailViewModel : ViewModel() {
     fun buildDishInfo(dishId: Int, portionId: Int, priceId: Int, price: Int, count: Int, addons: String? = null): CartEntity {
         return CartEntity(
             dishId = dishId,
+            userId = Auth.authInfo.personId,
             portionId = portionId,
             dishPriceId = priceId,
             dishPrice = price,

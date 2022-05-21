@@ -5,14 +5,16 @@ import com.example.ypackfood.models.actionsContent.ActionsItem
 import com.example.ypackfood.models.auth.AuthInfo
 import com.example.ypackfood.models.auth.AuthorizationData
 import com.example.ypackfood.models.auth.RegistrationData
+import com.example.ypackfood.models.auth.TokenData
 import com.example.ypackfood.models.commonData.Dish
-import com.example.ypackfood.models.commonData.Favorites
+import com.example.ypackfood.models.commonData.Status
 import com.example.ypackfood.models.detailAction.DetailAction
 import com.example.ypackfood.models.detailContent.DetailContent
 import com.example.ypackfood.models.mainContent.Category
 import com.example.ypackfood.models.orders.OrderFull.Order
 import com.example.ypackfood.models.orders.OrderFull.OrderList
 import com.example.ypackfood.models.orders.OrderMin.OrderMin
+import com.example.ypackfood.models.user.ProfileInfo
 import retrofit2.Response
 import retrofit2.http.*
 
@@ -56,14 +58,22 @@ interface ApiService {
     suspend fun addFavorite(
         @Header(HEADER_AUTH) token: String,
         @Path("dishId") dishId: Int
-    ): Response<Favorites>
+    ): Response<Status>
 
     @DELETE("client/my/favorites/{dishId}")
     suspend fun deleteFavorite(
         @Header(HEADER_AUTH) token: String,
         @Path("dishId") dishId: Int
-    ): Response<Favorites>
+    ): Response<Status>
 
+    @GET("client/my")
+    suspend fun getProfile(@Header(HEADER_AUTH) token: String): Response<ProfileInfo>
+
+    @DELETE("client/my/addresses/{id}")
+    suspend fun deleteAddress(
+        @Header(HEADER_AUTH) token: String,
+        @Path("id") addressId: Int
+    ): Response<Status>
 
         // Заказ
     @POST("client/my/orders")
@@ -89,5 +99,10 @@ interface ApiService {
     @POST("auth/register")
     suspend fun registerUser(
         @Body auth: RegistrationData
+    ): Response<AuthInfo>
+
+    @POST("auth/refreshToken")
+    suspend fun refreshToken(
+        @Body refreshToken: TokenData
     ): Response<AuthInfo>
 }

@@ -119,6 +119,7 @@ class HistoryViewModel : ViewModel() {
                     //Log.d("DetailContentDishList", it.toString())
                     CartEntity(
                         dishId = id,
+                        userId = Auth.authInfo.personId,
                         portionId = portion.id,
                         dishPriceId = portion.priceNow.id,
                         dishPrice = portion.priceNow.price,
