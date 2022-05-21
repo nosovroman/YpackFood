@@ -43,6 +43,7 @@ fun DetailContentScreen(
     LaunchedEffect(true) {
         detailViewModel.getDetailContent(contentId)
         detailViewModel.getFavoritesId()
+        detailViewModel.setIndexOption(0)
     }
 
     LaunchedEffect(favoritesState) {
@@ -145,20 +146,21 @@ fun ShoppingRowComponent(navController: NavHostController, detailViewModel: Deta
             Spacer(modifier = Modifier.width(10.dp))
             Button(
                 onClick = {
+                    val chosenPortion = detailDishState.portions[detailViewModel.indexOptionState]
                     roomViewModel.addToCart(
                         detailViewModel.buildDishInfo(
                             dishId = detailDishState.id,
-                            portionId = detailDishState.basePortion.id,
-                            priceId = detailDishState.basePortion.priceNow.id,
-                            price = detailDishState.basePortion.priceNow.price,
+                            portionId = chosenPortion.id,
+                            priceId = chosenPortion.priceNow.id,
+                            price = chosenPortion.priceNow.price,
                             count = detailViewModel.countWishDishes
                         )
                     )
                     Log.d("Cart", "Корзина")
                     navController.popBackStack()
                 },
-                content = {
-                    Text("В корзину за ${detailDishState.basePortion.priceNow.price * detailViewModel.countWishDishes} ₽")
+                content = {// .basePortion.priceNow.price
+                    Text("В корзину за ${detailDishState.portions[detailViewModel.indexOptionState].priceNow.price * detailViewModel.countWishDishes} ₽")
                 },
                 shape = RoundedCornerShape(20.dp)
             )
@@ -169,27 +171,57 @@ fun ShoppingRowComponent(navController: NavHostController, detailViewModel: Deta
 
 @Composable
 fun DetailDescription(detailViewModel: DetailViewModel, modifier: Modifier = Modifier) {
-    val response = detailViewModel.detailDishState.value!!.data!!
-    val isCombo = response.category == "COMBO"
+    val detailDishState = detailViewModel.detailDishState.value!!.data!!
+    val isCombo = detailDishState.category == "COMBO"
 
     Column(modifier = modifier) {
         Spacer(modifier = Modifier.height(20.dp))
-        Text(text = response.name+response.id+response.category, fontSize = 16.sp)
+        Text(text = detailDishState.name+detailDishState.id+detailDishState.category, fontSize = 16.sp)
         Spacer(modifier = Modifier.height(10.dp))
         // if not combo
         if (!isCombo) {
-            Text(text = response.portions[0].size, fontSize = 14.sp, color = Color.Gray)
-            Spacer(modifier = Modifier.height(10.dp))
+            if (detailDishState.portions.size > 1) {
+                val state = detailViewModel.indexOptionState
+                TabRow(
+                    selectedTabIndex = state,
+                    modifier = Modifier
+                        .padding(horizontal = 20.dp)
+                        .height(40.dp)
+                        .border(1.dp, color = Color.LightGray, shape = RoundedCornerShape(10.dp)),
+                    backgroundColor = Color.Transparent,
+                    indicator = {  },
+                    divider = {  }
+                ) {
+                    val portionList = detailDishState.portions
+                    portionList.forEachIndexed { index, item ->
+                        Tab(
+                            text = { Text(item.size!!) },
+                            selected = state == index,
+                            onClick = { detailViewModel.setIndexOption(index) },
+                            selectedContentColor = Color.White,
+                            unselectedContentColor = MaterialTheme.colors.onBackground,
+                            modifier = Modifier
+                                .background(
+                                    color = if (state == index) MaterialTheme.colors.primary else Color.Transparent,
+                                    shape = RoundedCornerShape(10.dp)
+                                )
+                        )
+                    }
+                }
+            } else {
+                Text(text = detailDishState.portions[0].size!!, fontSize = 14.sp, color = Color.Gray)
+                Spacer(modifier = Modifier.height(10.dp))
+            }
         }
         Text(text = "Описание", fontSize = 16.sp)
-        Text(text = response.description, fontSize = 14.sp, color = Color.Gray)
+        Text(text = detailDishState.description, fontSize = 14.sp, color = Color.Gray)
         Spacer(modifier = Modifier.height(10.dp))
         // if not combo
         if (!isCombo) {
             Text(text = "Состав", fontSize = 16.sp)
-            Text(text = response.composition, fontSize = 14.sp, color = Color.Gray)
+            Text(text = detailDishState.composition, fontSize = 14.sp, color = Color.Gray)
         } else {// if combo
-            ContentSimpleListComponent(response.dishes)
+            ContentSimpleListComponent(detailDishState.dishes)
         }
     }
 }

@@ -50,10 +50,6 @@ fun HistoryScreen(
         historyViewModel.setUpdateButton(false)
     }
 
-//    LaunchedEffect(historyViewModel.chosenOrderDialogState) {
-//
-//    }
-
     LaunchedEffect(historyViewModel.addedToCartState) {
         if (historyViewModel.addedToCartState) {
             historyViewModel.setAddedToCart(false)
@@ -220,7 +216,7 @@ fun DetailOrder(
                     Log.d("ShowDetailOrder", item.toString())
                     ContentCardComponent(
                         cardName = name,
-                        description = "${item.count} шт = ${item.count * portion.priceNow.price} ₽",
+                        description = "${item.count} шт, ${portion.size} = ${item.count * portion.priceNow.price} ₽",
                         urlPicture = picturePaths.large
                     )
                 }

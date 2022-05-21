@@ -18,5 +18,5 @@ data class DetailContent(
     val id: Int,
     val name: String,
     val picturePaths: PicturePaths,
-    val portions: List<Portion>
+    val portions: List<BasePortion>
 )

@@ -20,7 +20,6 @@ fun TabRowComponent(
     listOptions: List<TabRowSwitchable>,
     onClick: (newChosenOption: TabRowSwitchable) -> Unit
 ) {
-    //val listOptions = DeliveryOptions.getOptions()
     val state = currentOption.index
 
     TabRow(

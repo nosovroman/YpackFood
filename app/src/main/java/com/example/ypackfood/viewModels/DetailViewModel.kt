@@ -32,6 +32,12 @@ class DetailViewModel : ViewModel() {
         countWishDishes--
     }
 
+    var indexOptionState by mutableStateOf(0)
+        private set
+    fun setIndexOption(newState: Int) {
+        indexOptionState = newState
+    }
+
     var enabledIButtonState by mutableStateOf(true)
         private set
     fun setEnabledIButton(newState: Boolean) {

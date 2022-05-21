@@ -53,7 +53,7 @@ class ShoppingCartViewModel : ViewModel() {
                 name = dishInfo.name,
                 portionId = it.portionId,
                 priceId = it.dishPriceId,
-                price = dishInfo.basePortion.priceNow.price,
+                price = it.dishPrice,//dishInfo.basePortion.priceNow.price,
                 count = it.dishCount,
                 category = dishInfo.category,
                 composition = dishInfo.composition,
