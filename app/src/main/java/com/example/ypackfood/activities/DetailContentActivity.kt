@@ -162,6 +162,7 @@ fun DetailContentScreen(
                 }
                 else -> {}
             }
+
             when(detailDishState) {
                 is NetworkResult.Loading<*> -> {
                     Column {

@@ -87,7 +87,7 @@ fun ShoppingCartScreen(
     LaunchedEffect(createOrderState) {
         if (createOrderState is NetworkResult.Success<*>) {
             roomViewModel.deleteAllFromCart()
-            orderViewModel.createOrderInit()
+            orderViewModel.initStates()
             navController.navigate(route = Screens.History.route) {
                 popUpTo(Screens.ShoppingCart.route) { inclusive = true }
             }
@@ -119,6 +119,7 @@ fun ShoppingCartScreen(
                 OrderScreen(
                     navController = navController,
                     orderViewModel = orderViewModel,
+                    datastoreViewModel = datastoreViewModel,
                     cartViewModel = cartViewModel,
                     totalCost = cartViewModel.totalPriceState
                 )

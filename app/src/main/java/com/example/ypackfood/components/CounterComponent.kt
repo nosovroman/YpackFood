@@ -28,7 +28,7 @@ fun CounterComponent(
     upperLimit: Int = 5,
     onIncClick: () -> Unit = {},
     onDecClick: () -> Unit = {},
-    incImgVector: ImageVector = Icons.Filled.NavigateNext,
+    incImgVector: ImageVector = Icons.Default.Add,
     decImgVector: ImageVector = Icons.Default.Remove,
     incSymbol: String = "+",
     decSymbol: String = "-"

@@ -10,11 +10,15 @@ import androidx.lifecycle.viewModelScope
 import com.example.ypackfood.common.Auth
 import com.example.ypackfood.common.Constants.END_DELIVERY
 import com.example.ypackfood.common.Constants.START_DELIVERY
+import com.example.ypackfood.common.RequestTemplate
 import com.example.ypackfood.common.RequestTemplate.mainRepository
 import com.example.ypackfood.enumClasses.getCityNames
 import com.example.ypackfood.enumClasses.getPaymentOptions
 import com.example.ypackfood.extensions.isDigitsOnly
 import com.example.ypackfood.extensions.toTimeString
+import com.example.ypackfood.extensions.translateException
+import com.example.ypackfood.models.auth.AuthInfo
+import com.example.ypackfood.models.auth.TokenData
 import com.example.ypackfood.models.commonData.CartDish
 import com.example.ypackfood.models.orders.OrderFull.Order
 import com.example.ypackfood.models.orders.OrderMin.*
@@ -26,8 +30,38 @@ import java.util.*
 
 class OrderViewModel : ViewModel() {
     var createOrderState: MutableLiveData<NetworkResult<Order>> = MutableLiveData()
-    fun createOrderInit() {
-        createOrderState.postValue(NetworkResult.Empty())
+
+    var refreshState: MutableLiveData<NetworkResult<AuthInfo>> = MutableLiveData()
+
+    fun initStates() {
+        createOrderState.postValue(null)
+        refreshState.postValue(null)
+    }
+
+    fun refreshToken() {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                refreshState.postValue(NetworkResult.Loading())
+                Log.d("TokenRefresh with ", Auth.authInfo.refreshToken)
+                val response = mainRepository.refreshToken(TokenData(Auth.authInfo.refreshToken))
+                if (response.isSuccessful) {
+                    Log.d("refreshToken ok", response.body().toString())
+                    refreshState.postValue(NetworkResult.Success(response.body()!!.copy(personId = Auth.authInfo.personId)))
+                }
+                else if (response.code() != 500) {
+                    Log.d("refreshToken not ok ", Auth.authInfo.toString())
+
+                    val jsonString = response.errorBody()!!.string()
+                    val errorCode = RequestTemplate.getErrorFromJson(jsonString).errorCode.toString()
+                    refreshState.postValue(NetworkResult.HandledError(errorCode))
+                }
+            }
+            catch (e: Exception) {
+                Log.d("refreshToken error ", e.toString())
+                val error = e.translateException()
+                refreshState.postValue(NetworkResult.Error(error))
+            }
+        }
     }
 
     fun createOrder(order: OrderMin) {
@@ -40,14 +74,14 @@ class OrderViewModel : ViewModel() {
                     Log.d("createOrder ok ", response.body()!!.toString())
                     createOrderState.postValue(NetworkResult.Success(response.body()!!))
                 }
-                else {
-                    Log.d("createOrder not ok ", response.raw().toString())
-                    Log.d("createOrder not ok ", response.errorBody()?.string().toString())
-                    createOrderState.postValue(NetworkResult.Error(response.message()))
+                else if (response.code() != 500) {
+                    val jsonString = response.errorBody()!!.string()
+                    val errorCode = RequestTemplate.getErrorFromJson(jsonString).errorCode.toString()
+                    createOrderState.postValue(NetworkResult.HandledError(errorCode))
                 }
             } catch (e: Exception) {
-                Log.d("createOrder error ", e.toString() + "|||message: " + e.message)
-                createOrderState.postValue(NetworkResult.Error(e.message))
+                val error = e.translateException()
+                createOrderState.postValue(NetworkResult.Error(error))
             }
         }
     }
