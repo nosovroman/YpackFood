@@ -84,13 +84,9 @@ class ProfileViewModel: ViewModel() {
 
                 val response = mainRepository.deleteAddress(Auth.authInfo.accessToken, addressId)
                 if (response.isSuccessful) {
-                    Log.d("deleteAddress1", newAddressList.toString())
-                    newAddressList.map { it.id != addressId }
-                    Log.d("deleteAddress2", newAddressList.toString())
-                    profile = profile.copy(addresses = newAddressList)
-                    Log.d("deleteAddress3", profile.toString())
-                    profileState.postValue(NetworkResult.Success(profile.copy(addresses = newAddressList)))
-                    Log.d("deleteAddress", response.body()!!.toString())
+                    val res = newAddressList.filter { it.id != addressId }
+                    profile = profile.copy(addresses = res)
+                    profileState.postValue(NetworkResult.Success(profile.copy(addresses = res)))
                 }
                 else if (response.code() != 500) {
                     val jsonString = response.errorBody()!!.string()

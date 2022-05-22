@@ -152,6 +152,10 @@ fun ShoppingCartScreen(
                     Column (
                         modifier = Modifier.padding(horizontal = 15.dp),
                         content = {
+                            if (shopListFiltered.isNullOrEmpty()) {
+                                EmptyContentComponent(message = "Корзина пуста")
+                            }
+
                             when(refreshState) {
                                 is NetworkResult.Error<*> -> {
                                     ShowErrorComponent(
@@ -188,9 +192,9 @@ fun ShoppingCartScreen(
                                         Spacer(modifier = Modifier.height(50.dp))
                                     }
                                 }
-                                is NetworkResult.Empty<*> -> {
-                                    EmptyContentComponent(message = "Корзина пуста")
-                                }
+//                                is NetworkResult.Empty<*> -> {
+//                                    EmptyContentComponent(message = "Корзина пуста")
+//                                }
                                 is NetworkResult.Error<*> -> {
                                     ShowErrorComponent(
                                         message = cartState.message,
