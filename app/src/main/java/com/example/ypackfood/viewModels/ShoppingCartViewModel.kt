@@ -9,8 +9,13 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.ypackfood.common.Auth
+import com.example.ypackfood.common.RequestTemplate
 import com.example.ypackfood.common.RequestTemplate.getErrorFromJson
 import com.example.ypackfood.common.RequestTemplate.mainRepository
+import com.example.ypackfood.enumClasses.ErrorEnum
+import com.example.ypackfood.extensions.translateException
+import com.example.ypackfood.models.auth.AuthInfo
+import com.example.ypackfood.models.auth.TokenData
 import com.example.ypackfood.models.commonData.CartDish
 import com.example.ypackfood.models.commonData.Dish
 import com.example.ypackfood.room.entities.CartEntity
@@ -66,11 +71,11 @@ class ShoppingCartViewModel : ViewModel() {
         setResultDish(resultDishList)
     }
 
-    var contentResp: MutableLiveData<NetworkResult<MutableList<Dish>>> = MutableLiveData()
+    var cartState: MutableLiveData<NetworkResult<MutableList<Dish>>> = MutableLiveData()
 
-    fun initContentResp() {
-        contentResp.postValue(NetworkResult.Empty())
-    }
+//    fun initContentResp() {
+//        cartState.postValue(NetworkResult.Empty())
+//    }
 
     fun computeTotalPrice() {
         var totalPrice = 0
@@ -81,35 +86,64 @@ class ShoppingCartViewModel : ViewModel() {
         setTotalPrice(totalPrice)
     }
 
+    var refreshState: MutableLiveData<NetworkResult<AuthInfo>> = MutableLiveData()
+
+    fun initStates() {
+        cartState.postValue(null)
+        refreshState.postValue(null)
+    }
+
+    fun refreshToken() {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                refreshState.postValue(NetworkResult.Loading())
+                Log.d("TokenRefresh with ", Auth.authInfo.refreshToken)
+                val response = mainRepository.refreshToken(TokenData(Auth.authInfo.refreshToken))
+                if (response.isSuccessful) {
+                    Log.d("refreshToken ok", response.body().toString())
+                    refreshState.postValue(NetworkResult.Success(response.body()!!.copy(personId = Auth.authInfo.personId)))
+                }
+                else if (response.code() != 500) {
+                    Log.d("refreshToken not ok ", Auth.authInfo.toString())
+
+                    val jsonString = response.errorBody()!!.string()
+                    val errorCode = RequestTemplate.getErrorFromJson(jsonString).errorCode.toString()
+                    refreshState.postValue(NetworkResult.HandledError(errorCode))
+                }
+            }
+            catch (e: Exception) {
+                Log.d("refreshToken error ", e.toString())
+                val error = e.translateException()
+                refreshState.postValue(NetworkResult.Error(error))
+            }
+        }
+    }
 
     fun getContentByListId(contentIdList: List<Int>?, roomViewModel: RoomViewModel) {
         contentIdList?.let {
             viewModelScope.launch(Dispatchers.IO) {
                 try {
                     Log.d("fe_dishMap getContentByListId", "loading...")
-                    contentResp.postValue(NetworkResult.Loading())
+                    cartState.postValue(NetworkResult.Loading())
                     val response = mainRepository.getContentByListId(Auth.authInfo.accessToken, contentIdList)
-                    when(response.code()) {
-                        in 200..299 -> {
-                            contentResp.postValue(NetworkResult.Success(response.body()!!))
-                            Log.d("getContentByListId ${response.code()}", response.raw().toString())
-                        }
-                        400 -> {
-                            val jsonString = response.errorBody()!!.string()
-                            val res = getErrorFromJson(jsonString)
-                            Log.d("getContentByListId x = ", res.ids.toString())
-                            roomViewModel.setDeletingCartList(res.ids!!)
-                            contentResp.postValue(NetworkResult.Error("Некоторые блюда были исключены из меню ресторана"))
-                        }
-                        else -> {
-                            Log.d("getContentByListId not ok ${response.code()}", response.raw().toString())
-                            Log.d("getContentByListId", response.errorBody()?.string().toString())
-                            contentResp.postValue(NetworkResult.Error(response.message()))
+                    if (response.isSuccessful) {
+                        if (!response.body().isNullOrEmpty()) {
+                            cartState.postValue(NetworkResult.Success(response.body()!!))
+                        } else {
+                            cartState.postValue(NetworkResult.Empty())
                         }
                     }
+                    else if (response.code() != 500) {
+                        val jsonString = response.errorBody()!!.string()
+                        val errorRes = getErrorFromJson(jsonString)
+                        if (errorRes.message == ErrorEnum.RESOURCE_NOT_FOUND.title) { //"Некоторые блюда были исключены из меню ресторана"
+                            roomViewModel.setDeletingCartList(errorRes.ids!!)
+                        }
+                        cartState.postValue(NetworkResult.HandledError(errorRes.errorCode.toString()))
+                    }
                 } catch (e: Exception) {
-                    Log.d("getContentByListId error ", e.toString())
-                    contentResp.postValue(NetworkResult.Error(e.message))
+                    val error = e.translateException()
+                    cartState.postValue(NetworkResult.Error(error))
                 }
             }
         }

@@ -72,7 +72,7 @@ class NavActivity : ComponentActivity() {
                         }
                     }
                     //composable(route = Screens.ShoppingCart.route) { ShoppingCartScreen(navController, shoppingCartViewModel, roomViewModel) }
-                    composable(route = Screens.ShoppingCart.route) { ShoppingCartScreen(navController, shoppingCartViewModel, orderViewModel, roomViewModel) }
+                    composable(route = Screens.ShoppingCart.route) { ShoppingCartScreen(navController, shoppingCartViewModel, datastoreViewModel, orderViewModel, roomViewModel) }
                     composable(
                         route = Screens.Order.route,
                         arguments = listOf(
@@ -84,7 +84,7 @@ class NavActivity : ComponentActivity() {
                         }
                     }
                     composable(route = Screens.History.route) { HistoryScreen(navController, historyViewModel, datastoreViewModel, roomViewModel) }
-                    composable(route = Screens.Profile.route) { ProfileScreen(navController, profileViewModel) }
+                    composable(route = Screens.Profile.route) { ProfileScreen(navController, profileViewModel, datastoreViewModel) }
                     composable(route = Screens.Favorites.route) { FavoritesScreen(navController, favoritesViewModel, datastoreViewModel, roomViewModel) }
                     composable(route = Screens.Info.route) { InfoScreen(navController) }
                 }

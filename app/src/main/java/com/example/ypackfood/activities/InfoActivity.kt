@@ -34,13 +34,6 @@ import com.example.ypackfood.viewModels.RoomViewModel
 fun InfoScreen(
     navController: NavHostController
 ) {
-
-    //val favoritesState = favoritesViewModel.favoritesState.observeAsState().value
-
-//    LaunchedEffect(true) {
-//        favoritesViewModel.getFavorites()
-//    }
-
     Scaffold (
         topBar = { ToolbarComponent(navController = navController, title = Screens.Info.title) },
         content = {

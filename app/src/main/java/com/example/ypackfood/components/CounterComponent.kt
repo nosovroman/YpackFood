@@ -71,7 +71,7 @@ fun CounterButtonComponent(
     limit: Int,
     onClick: () -> Unit,
     incImgVector: ImageVector = Icons.Default.Add,
-    decImgVector: ImageVector = Icons.Filled.NavigateNext,
+    decImgVector: ImageVector = Icons.Default.Remove,
     incSymbol: String = "+",
     decSymbol: String = "-"
 ) {
