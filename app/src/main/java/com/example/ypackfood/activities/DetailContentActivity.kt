@@ -15,9 +15,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.example.ypackfood.common.Auth
 import com.example.ypackfood.common.Components
+import com.example.ypackfood.common.Constants
+import com.example.ypackfood.common.Constants.STANDARD_PADDING
 import com.example.ypackfood.components.*
+import com.example.ypackfood.enumClasses.ErrorEnum
 import com.example.ypackfood.sealedClasses.NetworkResult
+import com.example.ypackfood.sealedClasses.Screens
+import com.example.ypackfood.viewModels.DatastoreViewModel
 import com.example.ypackfood.viewModels.DetailViewModel
 import com.example.ypackfood.viewModels.RoomViewModel
 
@@ -25,35 +31,79 @@ import com.example.ypackfood.viewModels.RoomViewModel
 fun DetailContentScreen(
     navController: NavHostController,
     detailViewModel: DetailViewModel,
+    datastoreViewModel: DatastoreViewModel,
     roomViewModel: RoomViewModel,
     contentId: Int
 ) {
-    Log.d("params", "result=$contentId")
-
-    LaunchedEffect(true) {
-        detailViewModel.initCountWish()
-    }
-
     val detailDishState = detailViewModel.detailDishState.observeAsState().value
     val favoritesState = detailViewModel.favoritesState.observeAsState().value
-    //val favoritesToggledState = detailViewModel.favoritesToggledState.observeAsState().value
-    //val favorites = roomViewModel.favorites.observeAsState(listOf()).value
-    val cartDishes = roomViewModel.shopList.observeAsState(listOf()).value
 
     LaunchedEffect(true) {
+        detailViewModel.initStates()
         detailViewModel.getDetailContent(contentId)
         detailViewModel.getFavoritesId()
         detailViewModel.setIndexOption(0)
     }
 
-    LaunchedEffect(favoritesState) {
-        Log.d("checkFavorites", favoritesState.toString())
-        //roomViewModel.initFavoriteIcon(contentId)
+    val refreshState = detailViewModel.refreshState.observeAsState().value
+    LaunchedEffect(refreshState) {
+        when (refreshState) {
+            is NetworkResult.Success<*> -> {
+                Log.d("TokenRefresh success ", Auth.authInfo.refreshToken)
+                datastoreViewModel.setAuthInfoState(refreshState.data!!)
+                detailViewModel.getDetailContent(contentId)
+                detailViewModel.getFavoritesId()
+            }
+            is NetworkResult.HandledError<*> -> {
+                Log.d("TokenRefresh HandledError ", refreshState.message.toString())
+                navController.navigate(route = Screens.SignInUp.route) {
+                    popUpTo(Screens.DetailContent.route) { inclusive = true }
+                }
+            }
+            else -> {}
+        }
     }
 
-        // отслеживает добавления в корзину
-    LaunchedEffect(cartDishes) {
-        Log.d("shopList", cartDishes.toString())
+    LaunchedEffect(favoritesState) {
+        when (favoritesState) {
+            is NetworkResult.HandledError<*> -> {
+                when (val errorCode = favoritesState.message.toString()) {
+                    ErrorEnum.ACCESS_TOKEN_EXPIRED_OR_INVALID.title -> {
+                        Log.d("TokenRefresh", "refreshing")
+                        detailViewModel.refreshToken()
+                    }
+                    ErrorEnum.AUTHENTICATION_REQUIRED.title -> {
+                        Log.d("TokenRefresh favoritesState Logout", errorCode)
+                        navController.navigate(route = Screens.SignInUp.route) {
+                            popUpTo(Screens.DetailContent.route) { inclusive = true }
+                        }
+                    }
+                    else -> {}
+                }
+            }
+            else -> {}
+        }
+    }
+
+    LaunchedEffect(detailDishState) {
+        when (detailDishState) {
+            is NetworkResult.HandledError<*> -> {
+                when (val errorCode = detailDishState.message.toString()) {
+                    ErrorEnum.ACCESS_TOKEN_EXPIRED_OR_INVALID.title -> {
+                        Log.d("TokenRefresh", "refreshing")
+                        detailViewModel.refreshToken()
+                    }
+                    ErrorEnum.AUTHENTICATION_REQUIRED.title -> {
+                        Log.d("TokenRefresh detailDishState Logout", errorCode)
+                        navController.navigate(route = Screens.SignInUp.route) {
+                            popUpTo(Screens.DetailContent.route) { inclusive = true }
+                        }
+                    }
+                    else -> {}
+                }
+            }
+            else -> {}
+        }
     }
 
     val scrollState = rememberScrollState()
@@ -64,7 +114,6 @@ fun DetailContentScreen(
                 rightIcon = {
                     when (favoritesState) {
                         is NetworkResult.Success<*> -> {
-                            Log.d("detailDishState", "success ${favoritesState.data}")
                             IconButton(
                                 onClick = {
                                     detailViewModel.onClickFavoritesIcon(contentId, favoritesState.data!!)
@@ -80,18 +129,10 @@ fun DetailContentScreen(
                             )
                         }
                         else -> {
-                            Log.d("detailDishState", "null or error: ${favoritesState?.data}")
-                            IconButton(
-                                onClick = {
-                                    detailViewModel.getFavoritesId()
-                                },
-                                content = {
-                                    Icon(
-                                        imageVector = Components.defaultIcon,
-                                        contentDescription = "Избранное",
-                                        modifier = Modifier.size(35.dp)
-                                    )
-                                }
+                            Icon(
+                                imageVector = Components.defaultIcon,
+                                contentDescription = "Избранное",
+                                modifier = Modifier.size(35.dp)
                             )
                         }
                     }
@@ -99,7 +140,7 @@ fun DetailContentScreen(
             )
         },
         floatingActionButton = {
-            if (!detailDishState?.data?.name.isNullOrEmpty()) {
+            if (detailDishState is NetworkResult.Success<*>) {//if (!detailDishState?.data?.name.isNullOrEmpty()) {
                 ShoppingRowComponent(
                     navController,
                     detailViewModel,
@@ -109,31 +150,39 @@ fun DetailContentScreen(
         },
         floatingActionButtonPosition = FabPosition.Center,
         content = {
-            if (!detailDishState?.data?.name.isNullOrEmpty()) {
-                Log.d("networkAnswer", "Display data")
-                Column (
-                    Modifier.verticalScroll(scrollState),
-                    content = {
-                        PictureTwoComponent(url = detailDishState!!.data!!.picturePaths.large)
-                        DetailDescription(detailViewModel, Modifier.padding(start = 20.dp, end = 20.dp))
+            when(detailDishState) {
+                is NetworkResult.Loading<*> -> {
+                    Column {
+                        Spacer(modifier = Modifier.height(Constants.TOOLBAR_HEIGHT + 15.dp))
+                        LoadingBarComponent()
                     }
-                )
-            }
-
-            RequestStateComponent(
-                requestState = detailDishState,
-                byError = {
-                    ShowErrorComponent(onButtonClick = { detailViewModel.getDetailContent(contentId) })
                 }
-            )
+                is NetworkResult.Success<*> -> {
+                    Log.d("networkAnswer", "Display data")
+                    Column (
+                        modifier = Modifier.verticalScroll(scrollState),
+                        content = {
+                            PictureTwoComponent(url = detailDishState.data!!.picturePaths.large)
+                            DetailDescription(detailViewModel, Modifier.padding(horizontal = STANDARD_PADDING))
+                        }
+                    )
+                }
+                is NetworkResult.Error<*> -> {
+                    ShowErrorComponent(message = detailDishState.message, onButtonClick = { detailViewModel.getDetailContent(contentId) })
+                }
+                else -> {}
+            }
         }
     )
 }
 
 @Composable
-fun ShoppingRowComponent(navController: NavHostController, detailViewModel: DetailViewModel, roomViewModel: RoomViewModel) {
+fun ShoppingRowComponent(
+    navController: NavHostController,
+    detailViewModel: DetailViewModel,
+    roomViewModel: RoomViewModel
+) {
     Row(
-        //horizontalAlignment = Alignment.CenterHorizontally
         verticalAlignment = Alignment.CenterVertically,
         content = {
             val detailDishState = detailViewModel.detailDishState.value!!.data!!
@@ -159,7 +208,7 @@ fun ShoppingRowComponent(navController: NavHostController, detailViewModel: Deta
                     Log.d("Cart", "Корзина")
                     navController.popBackStack()
                 },
-                content = {// .basePortion.priceNow.price
+                content = {
                     Text("В корзину за ${detailDishState.portions[detailViewModel.indexOptionState].priceNow.price * detailViewModel.countWishDishes} ₽")
                 },
                 shape = RoundedCornerShape(20.dp)
@@ -172,13 +221,13 @@ fun ShoppingRowComponent(navController: NavHostController, detailViewModel: Deta
 @Composable
 fun DetailDescription(detailViewModel: DetailViewModel, modifier: Modifier = Modifier) {
     val detailDishState = detailViewModel.detailDishState.value!!.data!!
-    val isCombo = detailDishState.category == "COMBO"
+    val isCombo = detailDishState.category == "Комбо"
 
     Column(modifier = modifier) {
         Spacer(modifier = Modifier.height(20.dp))
         Text(text = detailDishState.name+detailDishState.id+detailDishState.category, fontSize = 16.sp)
         Spacer(modifier = Modifier.height(10.dp))
-        // if not combo
+
         if (!isCombo) {
             if (detailDishState.portions.size > 1) {
                 val state = detailViewModel.indexOptionState
@@ -216,11 +265,11 @@ fun DetailDescription(detailViewModel: DetailViewModel, modifier: Modifier = Mod
         Text(text = "Описание", fontSize = 16.sp)
         Text(text = detailDishState.description, fontSize = 14.sp, color = Color.Gray)
         Spacer(modifier = Modifier.height(10.dp))
-        // if not combo
+
         if (!isCombo) {
             Text(text = "Состав", fontSize = 16.sp)
             Text(text = detailDishState.composition, fontSize = 14.sp, color = Color.Gray)
-        } else {// if combo
+        } else {
             ContentSimpleListComponent(detailDishState.dishes)
         }
     }

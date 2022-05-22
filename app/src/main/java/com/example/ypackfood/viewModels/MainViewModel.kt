@@ -75,7 +75,7 @@ class MainViewModel : ViewModel() {
                 val response = mainRepository.refreshToken(TokenData(Auth.authInfo.refreshToken))
                 if (response.isSuccessful) {
                     Log.d("refreshToken ok", response.body().toString())
-                    refreshState.postValue(NetworkResult.Success(response.body()!!))
+                    refreshState.postValue(NetworkResult.Success(response.body()!!.copy(personId = Auth.authInfo.personId)))
                 }
                 else if (response.code() != 500) {
                     Log.d("refreshToken not ok ", Auth.authInfo.toString())

@@ -8,6 +8,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.example.ypackfood.common.Auth
 import com.example.ypackfood.components.*
 import com.example.ypackfood.components.inOrder.OrderButtonComponent
 import com.example.ypackfood.models.commonData.Dish
@@ -31,6 +32,7 @@ fun ShoppingCartScreen(
     val requestState = cartViewModel.contentResp.observeAsState().value
     val deletingDishList = roomViewModel.deletingCartListState
     val createOrderState = orderViewModel.createOrderState.observeAsState().value
+    val shopListFiltered = shopList.filter { it.userId == Auth.authInfo.personId }
 
     LaunchedEffect(true) {
         cartViewModel.initContentResp()
@@ -47,13 +49,13 @@ fun ShoppingCartScreen(
     }
 
     LaunchedEffect(shopList) {
-        if (shopList.size > cartViewModel.dishesRoomState.size) {
+        if (shopListFiltered.size > cartViewModel.dishesRoomState.size) {
             cartViewModel.getContentByListId(
-                contentIdList = shopList.map { it.dishId }.toSet().toList(),
+                contentIdList = shopListFiltered.map { it.dishId }.toSet().toList(),
                 roomViewModel = roomViewModel
             )
         }
-        cartViewModel.setDishesRoom(shopList)
+        cartViewModel.setDishesRoom(shopListFiltered)
     }
 
     LaunchedEffect(deletingDishList) {
@@ -83,7 +85,7 @@ fun ShoppingCartScreen(
                 },
                 floatingActionButtonPosition = FabPosition.Center,
                 floatingActionButton = {
-                    if (!requestState?.data.isNullOrEmpty() && shopList.size == cartViewModel.dishesRoomState.size) {
+                    if (!requestState?.data.isNullOrEmpty() && shopListFiltered.size == cartViewModel.dishesRoomState.size) {
                         //val totalCost = cartViewModel.computeTotalPrice()
                         cartViewModel.computeTotalPrice()
                         OrderButtonComponent(
@@ -100,7 +102,7 @@ fun ShoppingCartScreen(
                     }
                 },
                 content = {
-                    ContentCart(requestState, shopList, cartViewModel, roomViewModel)
+                    ContentCart(requestState, shopListFiltered, cartViewModel, roomViewModel)
                 }
             )
         }

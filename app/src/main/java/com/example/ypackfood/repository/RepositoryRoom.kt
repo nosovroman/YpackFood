@@ -6,12 +6,7 @@ import com.example.ypackfood.room.dao.CartDao
 import com.example.ypackfood.room.entities.CartEntity
 
 class RepositoryRoom(private val cartDao: CartDao) {
-    var shopList: LiveData<List<CartEntity>> = cartDao.getShoppingCart(Auth.authInfo.personId)// = cartDao.getShoppingCart(Auth.authInfo.personId)
-
-    suspend fun initShopList() {
-        shopList = cartDao.getShoppingCart(Auth.authInfo.personId)
-    }
-
+    var shopList: LiveData<List<CartEntity>> = cartDao.getShoppingCart()
 
     // ------------------ ShoppingCart
     suspend fun addToCart(cartEntity: CartEntity) {
@@ -31,7 +26,7 @@ class RepositoryRoom(private val cartDao: CartDao) {
     }
 
     suspend fun deleteFromCartByListId(userId: Int, ids: List<Int>) {
-        return cartDao.deleteFromCartByListId(userId, ids)
+        return cartDao.deleteFromCartByListId(ids)
     }
 
     suspend fun deleteAllFromCart() {

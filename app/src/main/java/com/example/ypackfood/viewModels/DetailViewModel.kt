@@ -10,7 +10,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.ypackfood.common.Auth
 import com.example.ypackfood.common.Components
+import com.example.ypackfood.common.RequestTemplate
 import com.example.ypackfood.common.RequestTemplate.mainRepository
+import com.example.ypackfood.extensions.translateException
+import com.example.ypackfood.models.auth.AuthInfo
+import com.example.ypackfood.models.auth.TokenData
 import com.example.ypackfood.models.detailContent.DetailContent
 import com.example.ypackfood.room.entities.CartEntity
 import com.example.ypackfood.sealedClasses.NetworkResult
@@ -53,6 +57,40 @@ class DetailViewModel : ViewModel() {
     var detailDishState: MutableLiveData<NetworkResult<DetailContent>> = MutableLiveData()
     var favoritesState: MutableLiveData<NetworkResult<MutableList<Int>>> = MutableLiveData()
 
+    var refreshState: MutableLiveData<NetworkResult<AuthInfo>> = MutableLiveData()
+
+    fun initStates() {
+        detailDishState.postValue(null)
+        refreshState.postValue(null)
+        initCountWish()
+    }
+
+    fun refreshToken() {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                refreshState.postValue(NetworkResult.Loading(data = null))
+                Log.d("TokenRefresh with ", Auth.authInfo.refreshToken)
+                val response = mainRepository.refreshToken(TokenData(Auth.authInfo.refreshToken))
+                if (response.isSuccessful) {
+                    Log.d("refreshToken ok", response.body().toString())
+                    refreshState.postValue(NetworkResult.Success(response.body()!!.copy(personId = Auth.authInfo.personId)))
+                }
+                else if (response.code() != 500) {
+                    Log.d("refreshToken not ok ", Auth.authInfo.toString())
+
+                    val jsonString = response.errorBody()!!.string()
+                    val errorCode = RequestTemplate.getErrorFromJson(jsonString).errorCode.toString()
+                    refreshState.postValue(NetworkResult.HandledError(errorCode))
+                }
+            }
+            catch (e: Exception) {
+                Log.d("refreshToken error ", e.toString())
+                val error = e.translateException()
+                refreshState.postValue(NetworkResult.Error(error, null))
+            }
+        }
+    }
+
     fun getDetailContent(contentId: Int) {
         Log.d("requestDetail", "getDetailContent")
         viewModelScope.launch(Dispatchers.IO) {
@@ -62,14 +100,14 @@ class DetailViewModel : ViewModel() {
                 if (response.isSuccessful) {
                     detailDishState.postValue(NetworkResult.Success(response.body()!!))
                 }
-                else {
-                    Log.d("getDetailContent not ok ", response.message().toString())
-                    Log.d("getDetailContent not ok ", response.errorBody()?.string().toString())
-                    detailDishState.postValue(NetworkResult.Error(response.message()))
+                else if (response.code() != 500) {
+                    val jsonString = response.errorBody()!!.string()
+                    val errorCode = RequestTemplate.getErrorFromJson(jsonString).errorCode.toString()
+                    detailDishState.postValue(NetworkResult.HandledError(errorCode))
                 }
             } catch (e: Exception) {
-                Log.d("getDetailContent error ", e.toString() + "|||message: " + e.message)
-                detailDishState.postValue(NetworkResult.Error(e.message))
+                val error = e.translateException()
+                detailDishState.postValue(NetworkResult.Error(error))
             }
         }
     }
@@ -83,14 +121,14 @@ class DetailViewModel : ViewModel() {
                 if (response.isSuccessful) {
                     favoritesState.postValue(NetworkResult.Success(response.body()!!))
                 }
-                else {
-                    Log.d("getFavorites not ok ", response.message().toString())
-                    Log.d("getFavorites not ok ", response.errorBody()?.string().toString())
-                    favoritesState.postValue(NetworkResult.Error(response.message()))
+                else if (response.code() != 500) {
+                    val jsonString = response.errorBody()!!.string()
+                    val errorCode = RequestTemplate.getErrorFromJson(jsonString).errorCode.toString()
+                    favoritesState.postValue(NetworkResult.HandledError(errorCode))
                 }
             } catch (e: Exception) {
-                Log.d("getFavorites error ", e.toString() + "|||message: " + e.message)
-                favoritesState.postValue(NetworkResult.Error(e.message))
+                val error = e.translateException()
+                favoritesState.postValue(NetworkResult.Error(error))
             }
         }
     }
@@ -99,11 +137,9 @@ class DetailViewModel : ViewModel() {
         Log.d("changeFavorite addFavorite", "addFavorite")
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                //favoritesToggledState.postValue(NetworkResult.Loading())
                 val response = mainRepository.addFavorite(Auth.authInfo.accessToken, contentId)
                 if (response.isSuccessful) {
-                    //favoritesToggledState.postValue(NetworkResult.Success(response.body()!!))
-                    val newFavoritesList = favoritesState.value!!.data!!//.add(contentId)
+                    val newFavoritesList = favoritesState.value!!.data!!
                     newFavoritesList.add(contentId)
                     favoritesState.postValue(NetworkResult.Success(newFavoritesList))
                     Log.d("changeFavorite addFavorite ok ", newFavoritesList.toString())
@@ -112,14 +148,14 @@ class DetailViewModel : ViewModel() {
                         setEnabledIButton(true)
                     }
                 }
-                else {
-                    Log.d("changeFavorite addFavorite not ok ", response.message().toString())
-                    Log.d("changeFavorite addFavorite not ok ", response.errorBody()?.string().toString())
-                    //favoritesToggledState.postValue(NetworkResult.Error(response.message()))
+                else if (response.code() != 500) {
+                    val jsonString = response.errorBody()!!.string()
+                    val errorCode = RequestTemplate.getErrorFromJson(jsonString).errorCode.toString()
+                    favoritesState.postValue(NetworkResult.HandledError(errorCode))
                 }
             } catch (e: Exception) {
-                Log.d("changeFavorite addFavorite error ", e.toString() + "|||message: " + e.message)
-                //favoritesToggledState.postValue(NetworkResult.Error(e.message))
+                val error = e.translateException()
+                favoritesState.postValue(NetworkResult.Error(error))
             }
         }
     }
@@ -128,10 +164,8 @@ class DetailViewModel : ViewModel() {
         Log.d("changeFavorite deleteFavorite", "deleteFavorite")
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                //favoritesState.postValue(NetworkResult.Loading())
                 val response = mainRepository.deleteFavorite(Auth.authInfo.accessToken, contentId)
                 if (response.isSuccessful) {
-                    //favoritesState.postValue(NetworkResult.Success(response.body()!!))
                     val newFavoritesList = favoritesState.value!!.data!!//.add(contentId)
                     newFavoritesList.remove(contentId)
                     favoritesState.postValue(NetworkResult.Success(newFavoritesList))
@@ -142,13 +176,13 @@ class DetailViewModel : ViewModel() {
                     }
                 }
                 else {
-                    Log.d("changeFavorite deleteFavorite not ok ", response.message().toString())
-                    Log.d("changeFavorite deleteFavorite not ok ", response.errorBody()?.string().toString())
-                    //favoritesState.postValue(NetworkResult.Error(response.message()))
+                    val jsonString = response.errorBody()!!.string()
+                    val errorCode = RequestTemplate.getErrorFromJson(jsonString).errorCode.toString()
+                    favoritesState.postValue(NetworkResult.HandledError(errorCode))
                 }
             } catch (e: Exception) {
-                Log.d("changeFavorite deleteFavorite error ", e.toString() + "|||message: " + e.message)
-                //favoritesState.postValue(NetworkResult.Error(e.message))
+                val error = e.translateException()
+                favoritesState.postValue(NetworkResult.Error(error))
             }
         }
     }

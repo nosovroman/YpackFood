@@ -6,8 +6,8 @@ import com.example.ypackfood.room.entities.CartEntity
 
 @Dao
 interface CartDao {
-    @Query("SELECT * FROM CartEntity WHERE user_id = :userId")
-    fun getShoppingCart(userId: Int): LiveData<List<CartEntity>>
+    @Query("SELECT * FROM CartEntity")
+    fun getShoppingCart(): LiveData<List<CartEntity>>
 
     @Insert
     suspend fun addToCart(cartEntity: CartEntity)
@@ -21,8 +21,8 @@ interface CartDao {
     @Delete
     suspend fun deleteFromCart(cartEntity: CartEntity)
 
-    @Query("DELETE FROM CartEntity WHERE user_id = :userId AND dish_id IN (:ids)")
-    suspend fun deleteFromCartByListId(userId: Int, ids: List<Int>)
+    @Query("DELETE FROM CartEntity WHERE dish_id IN (:ids)")
+    suspend fun deleteFromCartByListId(ids: List<Int>)
 
     @Query("DELETE FROM CartEntity")
     suspend fun deleteAllFromCart()

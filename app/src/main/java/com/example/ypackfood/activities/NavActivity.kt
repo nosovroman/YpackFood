@@ -58,7 +58,7 @@ class NavActivity : ComponentActivity() {
                         )
                     ) { backStackEntry ->
                         backStackEntry.arguments?.getInt(Constants.NAV_KEY__CONTENT_ID)?.let { contentId ->
-                            DetailContentScreen(navController, detailViewModel, roomViewModel, contentId)
+                            DetailContentScreen(navController, detailViewModel, datastoreViewModel, roomViewModel, contentId)
                         }
                     }
                     composable(

@@ -66,7 +66,7 @@ fun MainScreen(
 
     val dishesState = mainViewModel.dishesState.observeAsState().value
     val actionsState = mainViewModel.actionsState.observeAsState().value
-    val shopList = roomViewModel.shopList.observeAsState().value
+    val shopList = roomViewModel.shopList.observeAsState(listOf()).value//?.filter { it.dishId == Auth.authInfo.personId }
     val refreshState = mainViewModel.refreshState.observeAsState().value
 
     LaunchedEffect(true) {
@@ -99,7 +99,7 @@ fun MainScreen(
             is NetworkResult.HandledError<*> -> {
                 when (val errorCode = dishesState.message.toString()) {
                     ErrorEnum.ACCESS_TOKEN_EXPIRED_OR_INVALID.title -> {
-                        Log.d("TokenRefresh ", "refreshing")
+                        Log.d("TokenRefresh", "refreshing")
                         mainViewModel.refreshToken()
                     }
                     ErrorEnum.AUTHENTICATION_REQUIRED.title -> {
@@ -109,9 +109,7 @@ fun MainScreen(
                             popUpTo(Screens.Main.route) { inclusive = true }
                         }
                     }
-                    else -> {
-                        Log.d("TokenRefresh ", "unhandled dishesState: $errorCode")
-                    }
+                    else -> {}
                 }
             }
             else -> {}
@@ -173,20 +171,20 @@ fun MainScreen(
                                         DishesColumnComponent(navController, item, index)
                                     }
                                 }
-                                is NetworkResult.HandledError<*> -> {
-                                    when (val errorCode = dishesState.message.toString()) {
-                                        ErrorEnum.AUTHENTICATION_REQUIRED.title, ErrorEnum.ACCESS_TOKEN_EXPIRED_OR_INVALID.title -> {
-                                            Log.d("dishesStateLog errorCode", errorCode)
-                                        }
-                                        else -> {
-                                            Log.d("dishesStateLog unhandled errorCode", errorCode)
-                                        }
-                                    }
-                                }
+//                                is NetworkResult.HandledError<*> -> {
+//                                    when (val errorCode = dishesState.message.toString()) {
+//                                        ErrorEnum.AUTHENTICATION_REQUIRED.title, ErrorEnum.ACCESS_TOKEN_EXPIRED_OR_INVALID.title -> {
+//                                            Log.d("dishesStateLog errorCode", errorCode)
+//                                        }
+//                                        else -> {
+//                                            Log.d("dishesStateLog unhandled errorCode", errorCode)
+//                                        }
+//                                    }
+//                                }
                                 is NetworkResult.Error<*> -> {
                                     item { ShowErrorComponent(message = dishesState.message, onButtonClick = { mainViewModel.getMainContent() }) }
                                 }
-                                else -> { Log.d("dishesStateLog elseBranchDishesState", dishesState.toString()) }
+                                else -> {}
                             }
                         }
                     )
@@ -216,7 +214,7 @@ fun MainScreen(
 
                             val modifierForAnimatedBackground = Modifier
                                 .background(
-                                    color = if (shopList.isNullOrEmpty()) {
+                                    color = if (shopList.filter { it.userId == Auth.authInfo.personId }.isNullOrEmpty()) {
                                         MaterialTheme.colors.primary
                                     } else {
                                         animatedBackground
