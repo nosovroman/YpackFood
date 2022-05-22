@@ -85,16 +85,9 @@ fun MainScreen(
                 mainViewModel.getMainContent()
             }
             is NetworkResult.HandledError<*> -> {
-                when (val errorCode = refreshState.message.toString()) {
-                    ErrorEnum.REFRESH_TOKEN_IS_EXPIRED.title, ErrorEnum.RESOURCE_NOT_FOUND.title, ErrorEnum.MUST_NOT_BE_EMPTY.title -> {
-                        Log.d("TokenRefresh with ", errorCode)
-                        navController.navigate(route = Screens.SignInUp.route) {
-                            popUpTo(Screens.Main.route) { inclusive = true }
-                        }
-                    }
-                    else -> {
-                        Log.d("TokenRefresh ", "Unhandled Error")
-                    }
+                Log.d("TokenRefresh HandledError ", refreshState.message.toString())
+                navController.navigate(route = Screens.SignInUp.route) {
+                    popUpTo(Screens.Main.route) { inclusive = true }
                 }
             }
             else -> {}
@@ -117,8 +110,7 @@ fun MainScreen(
                         }
                     }
                     else -> {
-                        Log.d("dishesStateLog unhandled errorCode", errorCode)
-                        Log.d("TokenRefresh ", "unhandled dishesState")
+                        Log.d("TokenRefresh ", "unhandled dishesState: $errorCode")
                     }
                 }
             }
@@ -161,16 +153,8 @@ fun MainScreen(
                                         }
                                     }
                                 }
-                                is NetworkResult.HandledError<*>, is NetworkResult.Error<*> -> {
-                                    if (refreshState.message.toString() !in listOf(
-                                            ErrorEnum.REFRESH_TOKEN_IS_EXPIRED.title,
-                                            ErrorEnum.RESOURCE_NOT_FOUND.title,
-                                            ErrorEnum.MUST_NOT_BE_EMPTY.title)// != ErrorEnum.REFRESH_TOKEN_IS_EXPIRED.title &&
-                                        //refreshState.message.toString() != ErrorEnum.RESOURCE_NOT_FOUND.title &&
-                                        //refreshState.message.toString() != ErrorEnum.MUST_NOT_BE_EMPTY.title
-                                        ) {
-                                            item { ShowErrorComponent(message = refreshState.message, onButtonClick = { mainViewModel.getMainContent() }) }
-                                    }
+                                is NetworkResult.Error<*> -> {
+                                    item { ShowErrorComponent(message = refreshState.message, onButtonClick = { mainViewModel.getMainContent() }) }
                                 }
                                 else -> {}
                             }

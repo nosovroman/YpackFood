@@ -44,8 +44,8 @@ fun SignInUpScreen(
 
     LaunchedEffect(true) {
         Log.d("registerStateInit", "registerStateInit")
-        signViewModel.registerStateInit()
         datastoreViewModel.clearAuthInfo()
+        signViewModel.registerStateInit()
     }
 
     LaunchedEffect(authInfoState) {
@@ -61,22 +61,12 @@ fun SignInUpScreen(
         if (registerState is NetworkResult.Success<*>) {
             Log.d("SignInUp", "${registerState.data}")
             Log.d("SignInUp", "registerState is NetworkResult.Success<*>")
-//            datastoreViewModel.setAuthInfoState(
-//                AuthInfo(
-//                    personId = registerState.data!!.personId,
-//                    accessToken = registerState.data.accessToken,
-//                    refreshToken = registerState.data.refreshToken,
-//                )
-//            )
             datastoreViewModel.updateAuthInfo(
                 idValue = registerState.data!!.personId,
                 tokenValue = registerState.data.accessToken,
                 refreshTokenValue = registerState.data.refreshToken
             )
             Log.d("SignInUp LaunchedEffect(registerState)", Auth.authInfo.toString())
-//            navController.navigate(route = Screens.Main.route) {
-//                popUpTo(Screens.SignInUp.route) { inclusive = true }
-//            }
         }
     }
 
