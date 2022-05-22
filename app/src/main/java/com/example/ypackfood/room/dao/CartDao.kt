@@ -24,8 +24,8 @@ interface CartDao {
     @Query("DELETE FROM CartEntity WHERE dish_id IN (:ids)")
     suspend fun deleteFromCartByListId(ids: List<Int>)
 
-    @Query("DELETE FROM CartEntity")
-    suspend fun deleteAllFromCart()
+    @Query("DELETE FROM CartEntity WHERE user_id = :userId")
+    suspend fun deleteAllFromCart(userId: Int)
 }
 
 /*

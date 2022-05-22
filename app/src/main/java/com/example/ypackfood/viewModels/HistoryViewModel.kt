@@ -13,6 +13,8 @@ import com.example.ypackfood.common.Constants.MAX_ORDERS_ON_PAGE
 import com.example.ypackfood.common.RequestTemplate
 import com.example.ypackfood.common.RequestTemplate.mainRepository
 import com.example.ypackfood.extensions.translateException
+import com.example.ypackfood.models.auth.AuthInfo
+import com.example.ypackfood.models.auth.TokenData
 import com.example.ypackfood.models.orders.OrderFull.OrderList
 import com.example.ypackfood.models.orders.OrderMin.DishForOrderGet
 import com.example.ypackfood.room.entities.CartEntity
@@ -61,9 +63,9 @@ class HistoryViewModel : ViewModel() {
     }
 
 
-    var detailOrderDialogState by mutableStateOf(false)//mutableListOf<DishForOrderGet>()
+    var detailOrderDialogState by mutableStateOf(false)
         private set
-    var chosenOrderDialogState by mutableStateOf(mutableListOf<DishForOrderGet>())//mutableListOf<DishForOrderGet>()
+    var chosenOrderDialogState by mutableStateOf(mutableListOf<DishForOrderGet>())
         private set
     fun setDetailOrderDialog(newState: Boolean, orderDishList: MutableList<DishForOrderGet>) {
         detailOrderDialogState = newState
@@ -80,8 +82,40 @@ class HistoryViewModel : ViewModel() {
         addedToCartState = newState
     }
 
+    var refreshState: MutableLiveData<NetworkResult<AuthInfo>> = MutableLiveData()
+
+    fun initStates() {
+        clearDetailOrderDialog()
+        refreshState.postValue(null)
+    }
+
+    fun refreshToken() {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                refreshState.postValue(NetworkResult.Loading())
+                Log.d("TokenRefresh with ", Auth.authInfo.refreshToken)
+                val response = mainRepository.refreshToken(TokenData(Auth.authInfo.refreshToken))
+                if (response.isSuccessful) {
+                    Log.d("refreshToken ok", response.body().toString())
+                    refreshState.postValue(NetworkResult.Success(response.body()!!.copy(personId = Auth.authInfo.personId)))
+                }
+                else if (response.code() != 500) {
+                    Log.d("refreshToken not ok ", Auth.authInfo.toString())
+
+                    val jsonString = response.errorBody()!!.string()
+                    val errorCode = RequestTemplate.getErrorFromJson(jsonString).errorCode.toString()
+                    refreshState.postValue(NetworkResult.HandledError(errorCode))
+                }
+            }
+            catch (e: Exception) {
+                Log.d("refreshToken error ", e.toString())
+                val error = e.translateException()
+                refreshState.postValue(NetworkResult.Error(error))
+            }
+        }
+    }
+
     fun getHistoryContent(page: Int) {
-        //val oldData = historyDishesState.value?.data ?: mutableListOf()
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 historyDishesState.postValue(NetworkResult.Loading())
@@ -94,7 +128,7 @@ class HistoryViewModel : ViewModel() {
                     }
                     Log.d("getHistoryContent ok", response.body().toString())
                 }
-                else {
+                else if (response.code() != 500) {
                     Log.d("getHistoryContent not ok ", Auth.authInfo.toString())
 
                     val jsonString = response.errorBody()!!.string()
@@ -104,7 +138,6 @@ class HistoryViewModel : ViewModel() {
                 }
             } catch (e: Exception) {
                 val error = e.translateException()
-                Log.d("getHistoryContent error ", e.toString())
                 historyDishesState.postValue(NetworkResult.Error(error))
             }
         }
@@ -132,5 +165,4 @@ class HistoryViewModel : ViewModel() {
 
         return resultCartList
     }
-
 }

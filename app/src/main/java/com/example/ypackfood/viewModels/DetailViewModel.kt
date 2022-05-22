@@ -68,7 +68,7 @@ class DetailViewModel : ViewModel() {
     fun refreshToken() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                refreshState.postValue(NetworkResult.Loading(data = null))
+                refreshState.postValue(NetworkResult.Loading())
                 Log.d("TokenRefresh with ", Auth.authInfo.refreshToken)
                 val response = mainRepository.refreshToken(TokenData(Auth.authInfo.refreshToken))
                 if (response.isSuccessful) {
@@ -86,7 +86,7 @@ class DetailViewModel : ViewModel() {
             catch (e: Exception) {
                 Log.d("refreshToken error ", e.toString())
                 val error = e.translateException()
-                refreshState.postValue(NetworkResult.Error(error, null))
+                refreshState.postValue(NetworkResult.Error(error))
             }
         }
     }

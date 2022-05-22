@@ -29,7 +29,7 @@ class RepositoryRoom(private val cartDao: CartDao) {
         return cartDao.deleteFromCartByListId(ids)
     }
 
-    suspend fun deleteAllFromCart() {
-        return cartDao.deleteAllFromCart()
+    suspend fun deleteAllFromCart(userId: Int) {
+        return cartDao.deleteAllFromCart(userId)
     }
 }
