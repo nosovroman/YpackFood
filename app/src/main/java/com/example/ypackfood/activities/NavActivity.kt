@@ -85,7 +85,7 @@ class NavActivity : ComponentActivity() {
                     }
                     composable(route = Screens.History.route) { HistoryScreen(navController, historyViewModel, datastoreViewModel, roomViewModel) }
                     composable(route = Screens.Profile.route) { ProfileScreen(navController, profileViewModel) }
-                    composable(route = Screens.Favorites.route) { FavoritesScreen(navController, favoritesViewModel, roomViewModel) }
+                    composable(route = Screens.Favorites.route) { FavoritesScreen(navController, favoritesViewModel, datastoreViewModel, roomViewModel) }
                     composable(route = Screens.Info.route) { InfoScreen(navController) }
                 }
             }

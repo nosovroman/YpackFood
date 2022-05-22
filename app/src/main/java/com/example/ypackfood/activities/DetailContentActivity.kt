@@ -140,7 +140,7 @@ fun DetailContentScreen(
             )
         },
         floatingActionButton = {
-            if (detailDishState is NetworkResult.Success<*>) {//if (!detailDishState?.data?.name.isNullOrEmpty()) {
+            if (!detailDishState?.data?.name.isNullOrEmpty()) {//if (!detailDishState?.data?.name.isNullOrEmpty()) detailDishState is NetworkResult.Success<*>
                 ShoppingRowComponent(
                     navController,
                     detailViewModel,
@@ -150,6 +150,18 @@ fun DetailContentScreen(
         },
         floatingActionButtonPosition = FabPosition.Center,
         content = {
+            when(refreshState) {
+                is NetworkResult.Error<*> -> {
+                    ShowErrorComponent(
+                        message = refreshState.message,
+                        onButtonClick = {
+                            detailViewModel.getDetailContent(contentId)
+                            detailViewModel.getFavoritesId()
+                        }
+                    )
+                }
+                else -> {}
+            }
             when(detailDishState) {
                 is NetworkResult.Loading<*> -> {
                     Column {
