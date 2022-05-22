@@ -99,8 +99,11 @@ fun SignInUpScreen(
                                         onClick = {
                                             signViewModel.authorizeUser(
                                                 AuthorizationData(
-                                                    phoneNumber = signViewModel.phoneFieldState,
-                                                    password = signViewModel.passwordFieldState)
+//                                                    phoneNumber = signViewModel.phoneFieldState,
+//                                                    password = signViewModel.passwordFieldState
+                                                    phoneNumber = "+79185254560",
+                                                    password = "qqqqqq"
+                                                )
                                             )
                                         }
                                     )
@@ -204,10 +207,11 @@ fun SignFormComponent(
                 text = buttonText,
                 shape = RoundedCornerShape(10.dp),
                 onClick = {
-                    if (signViewModel.validateFields(
-                            phone = signViewModel.phoneFieldState,
-                            password = signViewModel.passwordFieldState)
-                    ) onClick()
+//                    if (signViewModel.validateFields(
+//                            phone = signViewModel.phoneFieldState,
+//                            password = signViewModel.passwordFieldState)
+//                    )
+                      onClick()
                 }
             )
         }

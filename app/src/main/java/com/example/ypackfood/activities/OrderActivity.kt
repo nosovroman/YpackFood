@@ -1,6 +1,7 @@
 package com.example.ypackfood.activities
 
 import android.util.Log
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -11,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.core.text.isDigitsOnly
@@ -25,6 +27,7 @@ import com.example.ypackfood.enumClasses.getCityNames
 import com.example.ypackfood.enumClasses.getPaymentOptions
 import com.example.ypackfood.models.auth.AuthInfo
 import com.example.ypackfood.models.orders.OrderFull.Order
+import com.example.ypackfood.models.user.ProfileInfo
 import com.example.ypackfood.sealedClasses.*
 import com.example.ypackfood.viewModels.DatastoreViewModel
 import com.example.ypackfood.viewModels.OrderViewModel
@@ -40,6 +43,7 @@ fun OrderScreen(
 ) {
     val deliveryState = orderViewModel.deliveryState.observeAsState().value!!
     val createOrderState = orderViewModel.createOrderState.observeAsState().value
+    val profileState = orderViewModel.profileState.observeAsState().value
 
     LaunchedEffect(true) {
         orderViewModel.initStates()
@@ -51,6 +55,7 @@ fun OrderScreen(
             is NetworkResult.Success<*> -> {
                 Log.d("TokenRefresh success ", Auth.authInfo.refreshToken)
                 datastoreViewModel.setAuthInfoState(refreshState.data!!)
+                orderViewModel.createOrderState.postValue(null)
             }
             is NetworkResult.HandledError<*> -> {
                 Log.d("TokenRefresh HandledError ", refreshState.message.toString())
@@ -83,12 +88,13 @@ fun OrderScreen(
         }
     }
 
-    OrderContent(createOrderState, orderViewModel, refreshState, cartViewModel, deliveryState, totalCost)
+    OrderContent(createOrderState, profileState, orderViewModel, refreshState, cartViewModel, deliveryState, totalCost)
 }
 
 @Composable
 fun OrderContent(
     createOrderState: NetworkResult<Order>?,
+    profileState:  NetworkResult<ProfileInfo>?,
     orderViewModel: OrderViewModel,
     refreshState:  NetworkResult<AuthInfo>?,
     cartViewModel: ShoppingCartViewModel,
@@ -130,11 +136,11 @@ fun OrderContent(
             )
         }
         null -> {
+            val addressOptionState = orderViewModel.addressOptionState.observeAsState().value!!
             LazyColumn (
                 modifier = Modifier.padding(horizontal = 20.dp, vertical = 5.dp),
                 content = {
                     item {
-                        //OrderAddressComponent(orderViewModel = orderViewModel, deliveryState = deliveryState)
                         Column {
                             TabRowComponent(
                                 currentOption = deliveryState,
@@ -147,33 +153,71 @@ fun OrderContent(
                                         text = orderViewModel.getAddress(),
                                         modifier = Modifier.clickable { orderViewModel.setDeliveryDialog(true) }
                                     )
+                                    Text(text = "Цена доставки $DELIVERY_COST")
                                     if (orderViewModel.deliveryDialogState) {
                                         val cities = getCityNames()
                                         AlertDialogComponent(
                                             title = "Адрес доставки",
                                             body = {
                                                 Column {
-                                                    Text(text = "Город")
-                                                    DropdownMenuComponent(
-                                                        chosenItemTitle = orderViewModel.chosenCityState,
-                                                        expanded = orderViewModel.expandedMenuCityState,
-                                                        onMenuClick = { orderViewModel.setExpandedMenuCity(true) },
-                                                        items = cities,
-                                                        onItemClick = {
-                                                                cityName -> orderViewModel.setChosenCity(cityName)
-                                                            orderViewModel.setExpandedMenuCity(false)
-                                                        },
-                                                        onDismissRequest = { orderViewModel.setExpandedMenuCity(false) }
+                                                    TabRowComponent(
+                                                        currentOption = addressOptionState,
+                                                        listOptions = AddressOptions.getOptions(),
+                                                        onClick = {
+                                                                newChosenOption -> orderViewModel.addressOptionState.postValue(newChosenOption)
+                                                                if (newChosenOption is AddressOptions.OLD_ADDRESS) orderViewModel.getProfile()
+                                                        }
                                                     )
-                                                    Spacer(modifier = Modifier.height(10.dp))
-                                                    Text(text = "Улица, дом, квартира")
-                                                    TextFieldComponent(
-                                                        modifier = Modifier.fillMaxWidth(),
-                                                        currentValue = orderViewModel.addressFieldState,
-                                                        onValueChange = { newAddress -> orderViewModel.setAddressField(newAddress) }
-                                                    )
-                                                }
+                                                    when(addressOptionState) {
+                                                        is AddressOptions.NEW_ADDRESS -> {
+                                                            Column {
+                                                                Text(text = "Город")
+                                                                DropdownMenuComponent(
+                                                                    chosenItemTitle = orderViewModel.chosenCityState,
+                                                                    expanded = orderViewModel.expandedMenuCityState,
+                                                                    onMenuClick = { orderViewModel.setExpandedMenuCity(true) },
+                                                                    items = cities,
+                                                                    onItemClick = {
+                                                                            cityName -> orderViewModel.setChosenCity(cityName)
+                                                                        orderViewModel.setExpandedMenuCity(false)
+                                                                    },
+                                                                    onDismissRequest = { orderViewModel.setExpandedMenuCity(false) }
+                                                                )
+                                                                Spacer(modifier = Modifier.height(10.dp))
+                                                                Text(text = "Улица, дом, квартира")
+                                                                TextFieldComponent(
+                                                                    modifier = Modifier.fillMaxWidth(),
+                                                                    currentValue = orderViewModel.addressFieldState,
+                                                                    onValueChange = { newAddress -> orderViewModel.setAddressField(newAddress) }
+                                                                )
+                                                            }
+                                                        }
+                                                        is AddressOptions.OLD_ADDRESS -> {
+                                                            when(profileState) {
+                                                                is NetworkResult.Success<*> -> {
+                                                                    val addressList = profileState.data!!.addresses.map { it.address }
+                                                                    Column {
+                                                                        Text(text = "Список адресов")
+                                                                        DropdownMenuComponent(
+                                                                            chosenItemTitle = profileState.data.addresses.firstOrNull()?.address ?: "",//[0].address ?: " ",
+                                                                            expanded = orderViewModel.expandedAddressState,
+                                                                            onMenuClick = { orderViewModel.setExpandedAddress(true) },
+                                                                            items = addressList,
+                                                                            onItemClick = {
+                                                                                    address -> orderViewModel.setChosenAddress(address)
+                                                                                    orderViewModel.setExpandedMenuCity(false)
+                                                                            },
+                                                                            onDismissRequest = { orderViewModel.setExpandedAddress(false) }
+                                                                        )
+                                                                    }
+                                                                }
+                                                                else -> {}
+                                                            }
 
+                                                        }
+                                                        else -> {Text("KVA")}
+                                                    }
+                                                }
                                             },
                                             onClickConfirm = { orderViewModel.setConfirmAddress() },
                                             onClickDismiss = { orderViewModel.setDismissAddress() }
@@ -311,61 +355,3 @@ fun OrderContent(
         else -> {}
     }
 }
-
-//@Composable
-//fun OrderAddressComponent(orderViewModel: OrderViewModel, deliveryState: TabRowSwitchable) {
-//    Column {
-//        TabRowComponent(
-//            currentOption = deliveryState,
-//            listOptions = DeliveryOptions.getOptions(),
-//            onClick = { newChosenOption -> orderViewModel.deliveryState.postValue(newChosenOption) }
-//        )
-//        when(deliveryState) {
-//            is DeliveryOptions.DELIVERY -> {
-//                TextRectangleComponent(
-//                    text = orderViewModel.getAddress(),
-//                    modifier = Modifier.clickable { orderViewModel.setDeliveryDialog(true) }
-//                )
-//                if (orderViewModel.deliveryDialogState) {
-//                    val cities = getCityNames()
-//                    AlertDialogComponent(
-//                        title = "Адрес доставки",
-//                        body = {
-//                            Column {
-//                                Text(text = "Город")
-//                                DropdownMenuComponent(
-//                                    chosenItemTitle = orderViewModel.chosenCityState,
-//                                    expanded = orderViewModel.expandedMenuCityState,
-//                                    onMenuClick = { orderViewModel.setExpandedMenuCity(true) },
-//                                    items = cities,
-//                                    onItemClick = {
-//                                        cityName -> orderViewModel.setChosenCity(cityName)
-//                                        orderViewModel.setExpandedMenuCity(false)
-//                                    },
-//                                    onDismissRequest = { orderViewModel.setExpandedMenuCity(false) }
-//                                )
-//                                Spacer(modifier = Modifier.height(10.dp))
-//                                Text(text = "Улица, дом, квартира")
-//                                TextFieldComponent(
-//                                    modifier = Modifier.fillMaxWidth(),
-//                                    currentValue = orderViewModel.addressFieldState,
-//                                    onValueChange = { newAddress -> orderViewModel.setAddressField(newAddress) }
-//                                )
-//                            }
-//
-//                        },
-//                        onClickConfirm = { orderViewModel.setConfirmAddress() },
-//                        onClickDismiss = { orderViewModel.setDismissAddress() }
-//                    )
-//                }
-//            }
-//            is DeliveryOptions.PICKUP -> {
-//                TextRectangleComponent(
-//                    text = Constants.YPACK_ADDRESS,
-//                    //modifier = Modifier.clickable { orderViewModel.setDeliveryDialog(true) }
-//                )
-//            }
-//            else -> {}
-//        }
-//    }
-//}

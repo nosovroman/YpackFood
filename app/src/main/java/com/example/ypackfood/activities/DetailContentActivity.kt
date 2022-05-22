@@ -198,7 +198,7 @@ fun ShoppingRowComponent(
     Row(
         verticalAlignment = Alignment.CenterVertically,
         content = {
-            val detailDishState = detailViewModel.detailDishState.value!!.data!!
+            val detailDishState = detailViewModel.detailDishState.value?.data!!
             CounterComponent(
                 count = detailViewModel.countWishDishes,
                 unit = "шт.",

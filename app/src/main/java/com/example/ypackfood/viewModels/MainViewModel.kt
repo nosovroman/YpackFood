@@ -10,9 +10,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.ypackfood.common.Auth
-import com.example.ypackfood.common.Constants.ERROR_SERVER
-import com.example.ypackfood.common.Constants.SOCKET_TIMEOUT_EXCEPTION
-import com.example.ypackfood.common.Constants.UNKNOWN_HOST_EXCEPTION
 import com.example.ypackfood.common.RequestTemplate
 import com.example.ypackfood.common.RequestTemplate.mainRepository
 import com.example.ypackfood.extensions.translateException
@@ -24,8 +21,6 @@ import com.example.ypackfood.sealedClasses.NetworkResult
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.lang.Exception
-import java.net.SocketTimeoutException
-import java.net.UnknownHostException
 
 class MainViewModel : ViewModel() {
     lateinit var listContentState: LazyListState
@@ -64,6 +59,7 @@ class MainViewModel : ViewModel() {
 
     fun initStates() {
         dishesState.postValue(null)
+        actionsState.postValue(null)
         refreshState.postValue(null)
     }
 
@@ -88,7 +84,7 @@ class MainViewModel : ViewModel() {
             catch (e: Exception) {
                 Log.d("refreshToken error ", e.toString())
                 val error = e.translateException()
-                refreshState.postValue(NetworkResult.Error(error, null))
+                refreshState.postValue(NetworkResult.Error(error))
             }
         }
     }
@@ -99,58 +95,52 @@ class MainViewModel : ViewModel() {
                 dishesState.postValue(NetworkResult.Loading())
                 val response = mainRepository.getMainContent(Auth.authInfo.accessToken)
                 if (response.isSuccessful) {
-                    Log.d("getMainContent ok", response.body().toString())
-                    dishesState.postValue(NetworkResult.Success(response.body()!!))
+                    if (!response.body().isNullOrEmpty()) {
+                        dishesState.postValue(NetworkResult.Success(response.body()!!))
+                    } else {
+                        dishesState.postValue(NetworkResult.Empty())
+                    }
+                    Log.d("getMainContent ok", "response.body().toString()")
                 }
                 else if (response.code() != 500) {
                     Log.d("getMainContent not ok ", Auth.authInfo.toString())
 
                     val jsonString = response.errorBody()!!.string()
                     val errorCode = RequestTemplate.getErrorFromJson(jsonString).errorCode.toString()
-                    Log.d("getMainContent errorCode", errorCode)
                     dishesState.postValue(NetworkResult.HandledError(errorCode))
                 }
             }
             catch (e: Exception) {
-                Log.d("getMainContent error ", e.toString())
-                when (e) {
-                    is SocketTimeoutException -> { dishesState.postValue(NetworkResult.Error(SOCKET_TIMEOUT_EXCEPTION)) }
-                    is UnknownHostException -> { dishesState.postValue(NetworkResult.Error(UNKNOWN_HOST_EXCEPTION)) }
-                    else -> { dishesState.postValue(NetworkResult.Error(ERROR_SERVER)) }
-                }
+                val error = e.translateException()
+                dishesState.postValue(NetworkResult.Error(error))
             }
         }
     }
 
-//    fun getActionsContent(navController: NavHostController) {
-//        Log.d("getActionsContent", "getActionsContent")
-//        val oldData = actionsState.value?.data ?: mutableListOf()
-//        viewModelScope.launch(Dispatchers.IO) {
-//            try {
-//                actionsState.postValue(NetworkResult.Loading(oldData))
-//                val response = mainRepository.getActions(Auth.authInfo.token)
-//                if (response.isSuccessful) {
-//                    actionsState.postValue(NetworkResult.Success(response.body()!!))
-//                    Log.d("getActionsContent ok ", response.body().toString())
-//                }
-//                else {
-//
-//                    val jsonString = response.errorBody()!!.string()
-//                    val errorCode = RequestTemplate.getErrorFromJson(jsonString).errorCode
-//                    when (errorCode) {
-//                        ErrorEnum.TOKEN_EXPIRED_OR_INVALID.title -> {
-//                            navController.navigate(route = Screens.SignInUp.route)
-//                        }
-//                    }
-//
-//                    Log.d("getActionsContent not ok ", response.message().toString())
-//                    Log.d("getActionsContent not ok ", response.errorBody().toString())
-//                    actionsState.postValue(NetworkResult.Error(response.message(), oldData))
-//                }
-//            } catch (e: Exception) {
-//                Log.d("getActionsContent error ", e.toString())
-//                actionsState.postValue(NetworkResult.Error(ERROR_INTERNET, oldData))
-//            }
-//        }
-//    }
+    fun getActionsContent() {
+        Log.d("getActionsContent", "getActionsContent")
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                actionsState.postValue(NetworkResult.Loading())
+                val response = mainRepository.getActions(Auth.authInfo.accessToken)
+                if (response.isSuccessful) {
+                    if (!response.body().isNullOrEmpty()) {
+                        actionsState.postValue(NetworkResult.Success(response.body()!!))
+                    } else {
+                        actionsState.postValue(NetworkResult.Empty())
+                    }
+                    Log.d("getActionsContent ok ", "response.body().toString()")
+                }
+                else if (response.code() != 500) {
+                    Log.d("getActionsContent not ok ", Auth.authInfo.toString())
+                    val jsonString = response.errorBody()!!.string()
+                    val errorCode = RequestTemplate.getErrorFromJson(jsonString).errorCode.toString()
+                    actionsState.postValue(NetworkResult.HandledError(errorCode))
+                }
+            } catch (e: Exception) {
+                val error = e.translateException()
+                actionsState.postValue(NetworkResult.Error(error))
+            }
+        }
+    }
 }

@@ -30,8 +30,10 @@ import com.example.ypackfood.common.Constants
 import com.example.ypackfood.common.Constants.TOOLBAR_HEIGHT
 import com.example.ypackfood.components.*
 import com.example.ypackfood.components.inOrder.ContentListComponent2
+import com.example.ypackfood.components.specific.ActionsRowComponent
 import com.example.ypackfood.components.specific.DishesColumnComponent
 import com.example.ypackfood.enumClasses.ErrorEnum
+import com.example.ypackfood.models.actionsContent.ActionsItem
 import com.example.ypackfood.models.mainContent.Category
 import com.example.ypackfood.sealedClasses.NetworkResult
 import com.example.ypackfood.sealedClasses.Screens
@@ -74,7 +76,7 @@ fun MainScreen(
         Log.d("dishesStateLog", "Launched")
         mainViewModel.initStates()
         mainViewModel.getMainContent()
-        //mainViewModel.getActionsContent(navController)
+        mainViewModel.getActionsContent()
     }
 
     LaunchedEffect(refreshState) {
@@ -83,6 +85,7 @@ fun MainScreen(
                 Log.d("TokenRefresh success ", Auth.authInfo.refreshToken)
                 datastoreViewModel.setAuthInfoState(refreshState.data!!)
                 mainViewModel.getMainContent()
+                mainViewModel.getActionsContent()
             }
             is NetworkResult.HandledError<*> -> {
                 Log.d("TokenRefresh HandledError ", refreshState.message.toString())
@@ -116,6 +119,28 @@ fun MainScreen(
         }
     }
 
+    LaunchedEffect(actionsState) {
+        when (actionsState) {
+            is NetworkResult.HandledError<*> -> {
+                when (val errorCode = actionsState.message.toString()) {
+                    ErrorEnum.ACCESS_TOKEN_EXPIRED_OR_INVALID.title -> {
+                        Log.d("TokenRefresh", "refreshing")
+                        mainViewModel.refreshToken()
+                    }
+                    ErrorEnum.AUTHENTICATION_REQUIRED.title -> {
+                        Log.d("actionsStateLog errorCode", errorCode)
+                        Log.d("TokenRefresh actionsState", "Logout")
+                        navController.navigate(route = Screens.SignInUp.route) {
+                            popUpTo(Screens.Main.route) { inclusive = true }
+                        }
+                    }
+                    else -> {}
+                }
+            }
+            else -> {}
+        }
+    }
+
     Scaffold(
         scaffoldState = mainViewModel.scaffoldState,
         drawerContent = {
@@ -135,24 +160,13 @@ fun MainScreen(
                         navController = navController,
                         mainViewModel = mainViewModel,
                         itemsOfList = {
-//                            item {
-//                                RequestStateComponent(
-//                                    requestState = actionsState,
-//                                    bySuccess = { ActionsRowComponent(navController, actionsState!!.data as MutableList<ActionsItem>) },
-//                                    byError = { ShowErrorComponent(message = actionsState?.message, onButtonClick = { mainViewModel.getActionsContent(navController) }) }
-//                                )
-//                            }
-                            when(refreshState) {
-                                is NetworkResult.Loading<*> -> {
-                                    item {
-                                        Column {
-                                            Spacer(modifier = Modifier.height(Constants.TOOLBAR_HEIGHT + 15.dp))
-                                            LoadingBarComponent()
-                                        }
-                                    }
+
+                            when(actionsState) {
+                                is NetworkResult.Success<*> -> {
+                                    item { ActionsRowComponent(navController, actionsState.data as MutableList<ActionsItem>) }
                                 }
                                 is NetworkResult.Error<*> -> {
-                                    item { ShowErrorComponent(message = refreshState.message, onButtonClick = { mainViewModel.getMainContent() }) }
+                                    item { ShowErrorComponent(message = actionsState.message, onButtonClick = { mainViewModel.getActionsContent() }) }
                                 }
                                 else -> {}
                             }
@@ -161,7 +175,7 @@ fun MainScreen(
                                 is NetworkResult.Loading<*> -> {
                                     item {
                                         Column {
-                                            Spacer(modifier = Modifier.height(Constants.TOOLBAR_HEIGHT + 15.dp))
+                                            Spacer(modifier = Modifier.height(TOOLBAR_HEIGHT + 15.dp))
                                             LoadingBarComponent()
                                         }
                                     }
@@ -171,16 +185,6 @@ fun MainScreen(
                                         DishesColumnComponent(navController, item, index)
                                     }
                                 }
-//                                is NetworkResult.HandledError<*> -> {
-//                                    when (val errorCode = dishesState.message.toString()) {
-//                                        ErrorEnum.AUTHENTICATION_REQUIRED.title, ErrorEnum.ACCESS_TOKEN_EXPIRED_OR_INVALID.title -> {
-//                                            Log.d("dishesStateLog errorCode", errorCode)
-//                                        }
-//                                        else -> {
-//                                            Log.d("dishesStateLog unhandled errorCode", errorCode)
-//                                        }
-//                                    }
-//                                }
                                 is NetworkResult.Error<*> -> {
                                     item { ShowErrorComponent(message = dishesState.message, onButtonClick = { mainViewModel.getMainContent() }) }
                                 }
@@ -190,17 +194,22 @@ fun MainScreen(
                     )
                     CategoriesRowComponent(mainViewModel)
 
-
-//                    RequestStateComponent(
-//                        requestState = dishesState,
-//                        byError = {
-//                            ShowErrorComponent(message = dishesState?.message, onButtonClick = { mainViewModel.getMainContent(navController) })
-//                        }
-//                    )
+                    when(refreshState) {
+                        is NetworkResult.Loading<*> -> {
+                            Column {
+                                Spacer(modifier = Modifier.height(TOOLBAR_HEIGHT + 15.dp))
+                                LoadingBarComponent()
+                            }
+                        }
+                        is NetworkResult.Error<*> -> {
+                            ShowErrorComponent(message = refreshState.message, onButtonClick = { mainViewModel.getMainContent() })
+                        }
+                        else -> {}
+                    }
 
                     ToolbarScrollComponent(
-                        navController,
-                        mainViewModel,
+                        navController = navController,
+                        mainViewModel = mainViewModel,
                         rightIcon = {
                             val infiniteTransition = rememberInfiniteTransition()
                             val animatedBackground by infiniteTransition.animateColor (

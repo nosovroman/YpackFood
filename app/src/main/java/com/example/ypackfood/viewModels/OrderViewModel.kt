@@ -22,6 +22,7 @@ import com.example.ypackfood.models.auth.TokenData
 import com.example.ypackfood.models.commonData.CartDish
 import com.example.ypackfood.models.orders.OrderFull.Order
 import com.example.ypackfood.models.orders.OrderMin.*
+import com.example.ypackfood.models.user.ProfileInfo
 import com.example.ypackfood.sealedClasses.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -32,10 +33,12 @@ class OrderViewModel : ViewModel() {
     var createOrderState: MutableLiveData<NetworkResult<Order>> = MutableLiveData()
 
     var refreshState: MutableLiveData<NetworkResult<AuthInfo>> = MutableLiveData()
+    var profileState: MutableLiveData<NetworkResult<ProfileInfo>> = MutableLiveData()
 
     fun initStates() {
         createOrderState.postValue(null)
         refreshState.postValue(null)
+        profileState.postValue(null)
     }
 
     fun refreshToken() {
@@ -82,6 +85,28 @@ class OrderViewModel : ViewModel() {
             } catch (e: Exception) {
                 val error = e.translateException()
                 createOrderState.postValue(NetworkResult.Error(error))
+            }
+        }
+    }
+
+    fun getProfile() {
+        Log.d("getProfile", "getProfile")
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                profileState.postValue(NetworkResult.Loading())
+                val response = mainRepository.getProfile(Auth.authInfo.accessToken)
+                Log.d("getProfile", "get response")
+                if (response.isSuccessful) {
+                    profileState.postValue(NetworkResult.Success(response.body()!!))
+                }
+                else if (response.code() != 500) {
+                    val jsonString = response.errorBody()!!.string()
+                    val errorCode = RequestTemplate.getErrorFromJson(jsonString).errorCode.toString()
+                    profileState.postValue(NetworkResult.HandledError(errorCode))
+                }
+            } catch (e: Exception) {
+                val error = e.translateException()
+                profileState.postValue(NetworkResult.Error(error))
             }
         }
     }
@@ -147,13 +172,23 @@ class OrderViewModel : ViewModel() {
 
         // DELIVERY CHOOSING
     var deliveryState: MutableLiveData<TabRowSwitchable> = MutableLiveData(DeliveryOptions.DELIVERY())
-    fun setDelivery(newState: TabRowSwitchable) {
-        deliveryState.postValue(newState)
-    }
     var deliveryDialogState by mutableStateOf(false)
         private set
     fun setDeliveryDialog(newState: Boolean) {
         deliveryDialogState = newState
+    }
+
+        // ADDRESS CHOOSING
+    var addressOptionState: MutableLiveData<TabRowSwitchable> = MutableLiveData(AddressOptions.NEW_ADDRESS())
+    var chosenAddressState by mutableStateOf(getCityNames()[0])
+        private set
+    fun setChosenAddress(newCity: String) {
+        chosenAddressState = newCity
+    }
+    var expandedAddressState by mutableStateOf(false)
+        private set
+    fun setExpandedAddress(isExpanded: Boolean) {
+        expandedAddressState = isExpanded
     }
 
         // TIME CHOOSING

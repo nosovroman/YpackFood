@@ -18,6 +18,7 @@ import com.example.ypackfood.models.auth.AuthInfo
 import com.example.ypackfood.models.auth.TokenData
 import com.example.ypackfood.models.commonData.CartDish
 import com.example.ypackfood.models.commonData.Dish
+import com.example.ypackfood.models.detailContent.DetailContent
 import com.example.ypackfood.room.entities.CartEntity
 import com.example.ypackfood.sealedClasses.NetworkResult
 
@@ -52,6 +53,10 @@ class ShoppingCartViewModel : ViewModel() {
         val shopListFiltered = shopList.filter { it.dishId in dishMap }
         val resultDishList = shopListFiltered.map {
             val dishInfo = dishMap[it.dishId]!!
+            val changedPrice: Boolean = run {
+                //dishInfo.por
+                true
+            }
             CartDish(
                 shoppingCartId = it.shoppingCartId!!,
                 dishId = it.dishId,
@@ -64,7 +69,7 @@ class ShoppingCartViewModel : ViewModel() {
                 composition = dishInfo.composition,
                 urlPicture = dishInfo.picturePaths.large,
                 addons = null,
-                changedPrice = it.dishPrice == dishInfo.basePortion.priceNow.price
+                changedPrice = changedPrice //it.dishPrice == dishInfo.basePortion.priceNow.price
             )
         }
 

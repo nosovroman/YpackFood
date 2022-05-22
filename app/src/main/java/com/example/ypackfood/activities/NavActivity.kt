@@ -68,7 +68,7 @@ class NavActivity : ComponentActivity() {
                         )
                     ) { backStackEntry ->
                         backStackEntry.arguments?.getInt(Constants.NAV_KEY__OFFER_ID)?.let { offerId ->
-                            OffersScreen(navController, offerViewModel, offerId)
+                            OffersScreen(navController, offerViewModel, datastoreViewModel, roomViewModel, offerId)
                         }
                     }
                     //composable(route = Screens.ShoppingCart.route) { ShoppingCartScreen(navController, shoppingCartViewModel, roomViewModel) }

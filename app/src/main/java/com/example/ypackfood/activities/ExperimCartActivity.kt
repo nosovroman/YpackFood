@@ -2,6 +2,8 @@ package com.example.ypackfood.activities
 
 import android.util.Log
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
@@ -12,6 +14,7 @@ import com.example.ypackfood.common.Auth
 import com.example.ypackfood.common.Constants
 import com.example.ypackfood.components.*
 import com.example.ypackfood.components.inOrder.OrderButtonComponent
+import com.example.ypackfood.components.inOrder.ShCartCardComponent
 import com.example.ypackfood.enumClasses.ErrorEnum
 import com.example.ypackfood.models.commonData.Dish
 import com.example.ypackfood.room.entities.CartEntity
@@ -183,11 +186,15 @@ fun ShoppingCartScreen(
                                             shopList = cartViewModel.dishesRoomState
                                         )
 
-                                        ContentSimpleListComponent2(
-                                            contentList = cartViewModel.resultDishState,
-                                            cartViewModel = cartViewModel,
-                                            roomViewModel = roomViewModel
-                                        )
+                                        LazyColumn {
+                                            items (cartViewModel.resultDishState) { item ->
+                                                ShCartCardComponent(
+                                                    cartDish = item,
+                                                    cartViewModel = cartViewModel,
+                                                    roomViewModel = roomViewModel
+                                                )
+                                            }
+                                        }
 
                                         Spacer(modifier = Modifier.height(50.dp))
                                     }
@@ -210,68 +217,8 @@ fun ShoppingCartScreen(
                             }
                         }
                     )
-                    //ContentCart(cartState, shopListFiltered, cartViewModel, roomViewModel)
                 }
             )
         }
     )
 }
-
-//@Composable
-//fun ContentCart(
-//    requestState: NetworkResult<MutableList<Dish>>?,
-//    shopList: List<CartEntity>,
-//    cartViewModel: ShoppingCartViewModel,
-//    roomViewModel: RoomViewModel
-//) {
-//    Column (
-//        modifier = Modifier.padding(horizontal = 15.dp),
-//        content = {
-//            when(refreshState) {
-//                is NetworkResult.Error<*> -> {
-//                    ShowErrorComponent(message = refreshState.message, onButtonClick = { favoritesViewModel.getFavorites() })
-//                }
-//                else -> {}
-//            }
-//            when (requestState) {
-//                is NetworkResult.Loading<*> -> {
-//                    Column {
-//                        Spacer(modifier = Modifier.height(Constants.TOOLBAR_HEIGHT + 15.dp))
-//                        LoadingBarComponent()
-//                    }
-//                }
-//                is NetworkResult.Success<*> -> { //if (!requestState?.data.isNullOrEmpty() && shopList.size == cartViewModel.dishesRoomState.size) { }
-//                    if (shopList.size == cartViewModel.dishesRoomState.size) {
-//                        cartViewModel.composeDishInfo(
-//                            dishList = requestState.data!!,
-//                            shopList = cartViewModel.dishesRoomState
-//                        )
-//
-//                        ContentSimpleListComponent2(
-//                            contentList = cartViewModel.resultDishState,
-//                            cartViewModel = cartViewModel,
-//                            roomViewModel = roomViewModel
-//                        )
-//
-//                        Spacer(modifier = Modifier.height(50.dp))
-//                    }
-//                }
-//                is NetworkResult.Empty<*> -> {
-//                    EmptyContentComponent(message = "Корзина пуста")
-//                }
-//                is NetworkResult.Error<*> -> {
-//                    ShowErrorComponent(
-//                        message = requestState.message,
-//                        onButtonClick = {
-//                            cartViewModel.getContentByListId(
-//                                contentIdList = cartViewModel.dishesRoomState.map { it.dishId }.toSet().toList(),
-//                                roomViewModel = roomViewModel
-//                            )
-//                        }
-//                    )
-//                }
-//                else -> {}
-//            }
-//        }
-//    )
-//}

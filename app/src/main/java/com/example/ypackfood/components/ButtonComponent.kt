@@ -24,3 +24,18 @@ fun ButtonComponent(
         shape = shape
     )
 }
+
+@Composable
+fun ButtonComponent2(
+    modifier: Modifier = Modifier,
+    text: @Composable() () -> Unit,
+    onClick: () -> Unit,
+    shape: CornerBasedShape = RoundedCornerShape(20.dp)
+) {
+    Button(
+        modifier = modifier.fillMaxWidth(),
+        onClick = onClick,
+        content = { text() },
+        shape = shape
+    )
+}
