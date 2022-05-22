@@ -10,7 +10,7 @@ import androidx.compose.ui.Modifier
 
 @Composable
 fun DropdownMenuComponent(
-    chosenItemTitle: String,
+    chosenItemTitle: String = "",
     expanded: Boolean,
     onMenuClick: () -> Unit,
     items: List<String>,

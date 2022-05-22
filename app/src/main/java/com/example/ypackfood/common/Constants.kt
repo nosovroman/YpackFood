@@ -23,6 +23,8 @@ object Constants {
     const val PERSON_ID_DEFAULT = -1
     const val TOKEN_DEFAULT = ""
 
+    const val CHOSE_ADDRESS = "Выберите адрес"
+
     val fontFamily = FontFamily(
         Font(R.font.beauty_font_one)
     )

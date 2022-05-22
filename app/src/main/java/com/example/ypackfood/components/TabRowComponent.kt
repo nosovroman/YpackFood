@@ -3,6 +3,7 @@ package com.example.ypackfood.components
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.CornerBasedShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Tab
@@ -18,7 +19,8 @@ import com.example.ypackfood.sealedClasses.TabRowSwitchable
 fun TabRowComponent(
     currentOption: TabRowSwitchable,
     listOptions: List<TabRowSwitchable>,
-    onClick: (newChosenOption: TabRowSwitchable) -> Unit
+    onClick: (newChosenOption: TabRowSwitchable) -> Unit,
+    shape: CornerBasedShape = RoundedCornerShape(topStart = 10.dp, topEnd = 10.dp)
 ) {
     val state = currentOption.index
 
@@ -39,7 +41,7 @@ fun TabRowComponent(
                 modifier = Modifier
                     .background(
                         color = if (state == index) MaterialTheme.colors.primary else Color.Transparent,
-                        shape = RoundedCornerShape(topStart = 10.dp, topEnd = 10.dp)
+                        shape = shape
                     )
             )
         }

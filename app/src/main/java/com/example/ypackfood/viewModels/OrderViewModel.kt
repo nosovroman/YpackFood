@@ -8,6 +8,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.ypackfood.common.Auth
+import com.example.ypackfood.common.Constants
+import com.example.ypackfood.common.Constants.CHOSE_ADDRESS
 import com.example.ypackfood.common.Constants.END_DELIVERY
 import com.example.ypackfood.common.Constants.START_DELIVERY
 import com.example.ypackfood.common.RequestTemplate
@@ -157,6 +159,9 @@ class OrderViewModel : ViewModel() {
     fun checkTimeIsNotEmpty(): Boolean = hourState != "00"
     fun checkAddressIsNotEmpty(): Boolean = addressState.isNotBlank()
 
+    fun computeResultTotalCost(totalCost: Int): Int = if (checkIsDELIVERY()) totalCost + Constants.DELIVERY_COST else totalCost
+
+
         // EMPTY FIELDS ALERT
     var emptyFieldMsgState by mutableStateOf("")
         private set
@@ -180,7 +185,7 @@ class OrderViewModel : ViewModel() {
 
         // ADDRESS CHOOSING
     var addressOptionState: MutableLiveData<TabRowSwitchable> = MutableLiveData(AddressOptions.NEW_ADDRESS())
-    var chosenAddressState by mutableStateOf(getCityNames()[0])
+    var chosenAddressState by mutableStateOf(CHOSE_ADDRESS)
         private set
     fun setChosenAddress(newCity: String) {
         chosenAddressState = newCity
@@ -234,14 +239,32 @@ class OrderViewModel : ViewModel() {
         private set
     var addressState by mutableStateOf("")
         private set
-    fun setConfirmAddress() {
-        cityState = chosenCityState
-        addressState = addressFieldState
+    fun setConfirmAddress(addressOptionState: TabRowSwitchable) {
+        when(addressOptionState) {
+            is AddressOptions.NEW_ADDRESS -> {
+                cityState = chosenCityState
+                addressState = addressFieldState
+            }
+            is AddressOptions.OLD_ADDRESS -> {
+                if (chosenAddressState != CHOSE_ADDRESS) {
+                    cityState = chosenAddressState.substringBefore(",")
+                    addressState = chosenAddressState.substringAfter(", ")
+                }
+            }
+        }
+
         setDeliveryDialog(false)
     }
-    fun setDismissAddress() {
-        setChosenCity(cityState)
-        setAddressField(addressState)
+    fun setDismissAddress(addressOptionState: TabRowSwitchable) {
+        when(addressOptionState) {
+            is AddressOptions.NEW_ADDRESS -> {
+                setChosenCity(cityState)
+                setAddressField(addressState)
+            }
+            is AddressOptions.OLD_ADDRESS -> {
+            }
+        }
+
         setDeliveryDialog(false)
     }
     fun getAddress(): String {

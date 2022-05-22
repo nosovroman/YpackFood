@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
@@ -56,11 +57,39 @@ fun OrderScreen(
                 Log.d("TokenRefresh success ", Auth.authInfo.refreshToken)
                 datastoreViewModel.setAuthInfoState(refreshState.data!!)
                 orderViewModel.createOrderState.postValue(null)
+                if (profileState is NetworkResult.HandledError<*>) {
+                    when (val errorCode = profileState.message.toString()) {
+                        ErrorEnum.ACCESS_TOKEN_EXPIRED_OR_INVALID.title -> {
+                            orderViewModel.getProfile()
+                        }
+                    }
+                }
             }
             is NetworkResult.HandledError<*> -> {
                 Log.d("TokenRefresh HandledError ", refreshState.message.toString())
                 navController.navigate(route = Screens.SignInUp.route) {
                     popUpTo(Screens.ShoppingCart.route) { inclusive = true }
+                }
+            }
+            else -> {}
+        }
+    }
+
+    LaunchedEffect(profileState) {
+        when (profileState) {
+            is NetworkResult.HandledError<*> -> {
+                when (val errorCode = profileState.message.toString()) {
+                    ErrorEnum.ACCESS_TOKEN_EXPIRED_OR_INVALID.title -> {
+                        Log.d("TokenRefresh", "refreshing")
+                        orderViewModel.refreshToken()
+                    }
+                    ErrorEnum.AUTHENTICATION_REQUIRED.title -> {
+                        Log.d("TokenRefresh favoritesState Logout", errorCode)
+                        navController.navigate(route = Screens.SignInUp.route) {
+                            popUpTo(Screens.ShoppingCart.route) { inclusive = true }
+                        }
+                    }
+                    else -> {}
                 }
             }
             else -> {}
@@ -166,7 +195,8 @@ fun OrderContent(
                                                         onClick = {
                                                                 newChosenOption -> orderViewModel.addressOptionState.postValue(newChosenOption)
                                                                 if (newChosenOption is AddressOptions.OLD_ADDRESS) orderViewModel.getProfile()
-                                                        }
+                                                        },
+                                                        shape = RoundedCornerShape(10.dp)
                                                     )
                                                     when(addressOptionState) {
                                                         is AddressOptions.NEW_ADDRESS -> {
@@ -194,33 +224,43 @@ fun OrderContent(
                                                         }
                                                         is AddressOptions.OLD_ADDRESS -> {
                                                             when(profileState) {
+                                                                is NetworkResult.Loading<*> -> {
+                                                                    //Spacer(modifier = Modifier.height(Constants.TOOLBAR_HEIGHT + 15.dp))
+                                                                    LoadingBarComponent()
+                                                                }
                                                                 is NetworkResult.Success<*> -> {
                                                                     val addressList = profileState.data!!.addresses.map { it.address }
                                                                     Column {
-                                                                        Text(text = "Список адресов")
                                                                         DropdownMenuComponent(
-                                                                            chosenItemTitle = profileState.data.addresses.firstOrNull()?.address ?: "",//[0].address ?: " ",
+                                                                            chosenItemTitle = orderViewModel.chosenAddressState, //profileState.data.addresses.firstOrNull()?.address ?: "",//[0].address ?: " ",
                                                                             expanded = orderViewModel.expandedAddressState,
                                                                             onMenuClick = { orderViewModel.setExpandedAddress(true) },
                                                                             items = addressList,
                                                                             onItemClick = {
                                                                                     address -> orderViewModel.setChosenAddress(address)
-                                                                                    orderViewModel.setExpandedMenuCity(false)
+                                                                                    orderViewModel.setExpandedAddress(false)
                                                                             },
                                                                             onDismissRequest = { orderViewModel.setExpandedAddress(false) }
                                                                         )
                                                                     }
                                                                 }
+                                                                is NetworkResult.Error<*> -> {
+                                                                    Log.d("NetworkResult", "error")
+                                                                    ShowErrorComponent(
+                                                                        message = profileState.message,
+                                                                        onButtonClick = { orderViewModel.getProfile() }
+                                                                    )
+                                                                }
                                                                 else -> {}
                                                             }
 
                                                         }
-                                                        else -> {Text("KVA")}
+                                                        else -> {}
                                                     }
                                                 }
                                             },
-                                            onClickConfirm = { orderViewModel.setConfirmAddress() },
-                                            onClickDismiss = { orderViewModel.setDismissAddress() }
+                                            onClickConfirm = { orderViewModel.setConfirmAddress(addressOptionState) },
+                                            onClickDismiss = { orderViewModel.setDismissAddress(addressOptionState) }
                                         )
                                     }
                                 }
@@ -331,12 +371,16 @@ fun OrderContent(
                         }
                     }
                     item {
-                        val totalCostResult = if (orderViewModel.checkIsDELIVERY()) totalCost + DELIVERY_COST else totalCost
-                        val addressMerged = "${orderViewModel.cityState}, ${orderViewModel.addressState}"
+                        val totalCostResult = orderViewModel.computeResultTotalCost(totalCost)
+                        //val addressMerged = "${orderViewModel.cityState}, ${orderViewModel.addressState}"
                         if (totalCostResult > 0) {
                             ButtonComponent(
                                 text = "Оформить на $totalCostResult ₽",
-                                onClick = { orderViewModel.makeOrder(dishMinList = cartViewModel.resultDishState, addressMerged = addressMerged, totalCost = totalCostResult) },
+                                onClick = { orderViewModel.makeOrder(
+                                    dishMinList = cartViewModel.resultDishState,
+                                    addressMerged = orderViewModel.getAddress(),//addressMerged,
+                                    totalCost = totalCostResult
+                                ) },
                             )
                         }
                     }
