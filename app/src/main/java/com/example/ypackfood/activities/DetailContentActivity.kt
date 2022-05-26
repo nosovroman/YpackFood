@@ -19,6 +19,7 @@ import com.example.ypackfood.common.Auth
 import com.example.ypackfood.common.Components
 import com.example.ypackfood.common.Constants
 import com.example.ypackfood.common.Constants.STANDARD_PADDING
+import com.example.ypackfood.common.RequestTemplate.buildDishInfo
 import com.example.ypackfood.components.*
 import com.example.ypackfood.enumClasses.ErrorEnum
 import com.example.ypackfood.sealedClasses.NetworkResult
@@ -210,7 +211,7 @@ fun ShoppingRowComponent(
                 onClick = {
                     val chosenPortion = detailDishState.portions[detailViewModel.indexOptionState]
                     roomViewModel.addToCart(
-                        detailViewModel.buildDishInfo(
+                        buildDishInfo(
                             dishId = detailDishState.id,
                             portionId = chosenPortion.id,
                             priceId = chosenPortion.priceNow.id,
