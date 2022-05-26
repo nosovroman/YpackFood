@@ -116,9 +116,13 @@ class OrderViewModel : ViewModel() {
     fun makeOrder(dishMinList: List<CartDish>, addressMerged: String, totalCost: Int) {
         if (checkIsPICKUP() || checkAddressIsNotEmpty()) {
             if (checkIsFaster() || checkIsForTime() && checkTimeIsNotEmpty()) {
-                validateTime()
-                emptyFieldMsgState = ""
-                createOrder(composeOrder(dishMinList, addressMerged, totalCost))
+                if (beOnTime()) {
+                    emptyFieldMsgState = ""
+                    createOrder(composeOrder(dishMinList, addressMerged, totalCost))
+                } else {
+                    emptyFieldMsgState = "Мы не сможем выполнить заказ к этому времени"
+                    setEmptyDataDialog(true)
+                }
             } else {
                 emptyFieldMsgState = "Установите время доставки"
                 setEmptyDataDialog(true)
@@ -306,7 +310,7 @@ class OrderViewModel : ViewModel() {
             val chosenHour = hoursFieldState.toInt()
             val chosenMinute = minutesFieldState.toInt()
 
-            if ((chosenHour in START_DELIVERY until END_DELIVERY || chosenHour == END_DELIVERY && chosenMinute == 0)) {
+            if (timeInWorkTime(chosenHour, chosenMinute)) {
                     setConfirmTime(chosenHour, chosenMinute)
             } else {
                 errorEnteringTime = "Неверное время доставки"
@@ -316,12 +320,37 @@ class OrderViewModel : ViewModel() {
         }
     }
 
-    fun validateTime() {
+    fun timeInWorkTime(hour: Int, minute: Int): Boolean {
+        return (hour in START_DELIVERY until END_DELIVERY || hour == END_DELIVERY && minute == 0)
+    }
+
+//    fun beOnTime(): Boolean {
+//        val currentTime = getCurrentTime()
+//        val minTimeForOrder = computeMinTimeForOrder(currentTime.first, currentTime.second)
+//
+//        val wishTimeOrder = convertToMinutes(hourState.toInt(), minuteState.toInt())
+//        if (wishTimeOrder > minTimeForOrder) {
+//            val hourMinute = convertToHourMinute(minTimeForOrder)
+//            val resultHour = hourMinute.first.toTimeString()
+//            val resultMinute = hourMinute.second.toTimeString()
+//            hourState = resultHour
+//            minuteState = resultMinute
+//
+//            setHoursField(resultHour)
+//            setMinutesField(resultMinute)
+//
+//            return true
+//        }
+//
+//        return false
+//    }
+
+    fun beOnTime(): Boolean {
         val currentTime = getCurrentTime()
         val minTimeForOrder = computeMinTimeForOrder(currentTime.first, currentTime.second)
-        val wishTimeOrder = convertToMinutes(hourState.toInt(), minuteState.toInt())
-        if (wishTimeOrder < minTimeForOrder) {
-            val hourMinute = convertToHours(minTimeForOrder)
+
+        if (checkIsFaster()) {
+            val hourMinute = convertToHourMinute(minTimeForOrder)
             val resultHour = hourMinute.first.toTimeString()
             val resultMinute = hourMinute.second.toTimeString()
             hourState = resultHour
@@ -330,10 +359,17 @@ class OrderViewModel : ViewModel() {
             setHoursField(resultHour)
             setMinutesField(resultMinute)
         }
+        Log.d("hourState", hourState)
+        Log.d("hourState, min", minuteState)
+        Log.d("hourState, timeInWork", timeInWorkTime(hourState.toInt(), minuteState.toInt()).toString())
+
+        val wishTimeOrder = convertToMinutes(hourState.toInt(), minuteState.toInt())
+
+        return wishTimeOrder >= minTimeForOrder && timeInWorkTime(hourState.toInt(), minuteState.toInt())
     }
 
     fun convertToMinutes(hours: Int, minutes: Int): Int = hours * 60 + minutes
-    fun convertToHours(minutes: Int): Pair<Int, Int> = Pair(minutes / 60, minutes % 60)
+    fun convertToHourMinute(minutes: Int): Pair<Int, Int> = Pair(minutes / 60, minutes % 60)
     fun computeMinTimeForOrder(currentHours: Int, currentMinutes: Int): Int = convertToMinutes(currentHours, currentMinutes) + 45
 
 

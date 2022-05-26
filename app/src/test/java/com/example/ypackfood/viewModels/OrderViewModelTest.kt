@@ -2,7 +2,6 @@ package com.example.ypackfood.viewModels
 
 import com.example.ypackfood.models.commonData.CartDish
 import com.example.ypackfood.models.orders.OrderMin.*
-import com.example.ypackfood.sealedClasses.DeliveryOptions
 import org.junit.Assert.*
 
 import org.junit.Test
@@ -132,9 +131,9 @@ class OrderViewModelTest {
 
     @Test
     fun convertToHours() {
-        val hours = orderViewModel.convertToHours(90)
+        val hours = orderViewModel.convertToHourMinute(90)
         val wishedHours = Pair(1, 30)
-        val hours2 = orderViewModel.convertToHours(30)
+        val hours2 = orderViewModel.convertToHourMinute(30)
         val wishedHours2 = Pair(0, 30)
 
         val result1 = hours == wishedHours

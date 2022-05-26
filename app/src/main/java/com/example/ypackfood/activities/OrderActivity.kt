@@ -198,6 +198,7 @@ fun OrderContent(
                                                         },
                                                         shape = RoundedCornerShape(10.dp)
                                                     )
+                                                    Spacer(Modifier.height(5.dp))
                                                     when(addressOptionState) {
                                                         is AddressOptions.NEW_ADDRESS -> {
                                                             Column {
