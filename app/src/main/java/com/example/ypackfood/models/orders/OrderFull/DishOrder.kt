@@ -1,9 +1,8 @@
-package com.example.ypackfood.models.orders.OrderFull.temp
+package com.example.ypackfood.models.orders.OrderFull
 
 import com.example.ypackfood.models.commonData.BasePortion
 import com.example.ypackfood.models.commonData.Dish
 import com.example.ypackfood.models.commonData.PicturePaths
-import com.example.ypackfood.models.detailContent.Addon
 
 data class DishOrder(
     val category: String,
@@ -12,6 +11,5 @@ data class DishOrder(
     val id: Int,
     val name: String,
     val picturePaths: PicturePaths,
-    val portion: BasePortion,
-    val addons: List<Addon>,
+    val portion: BasePortion
 )

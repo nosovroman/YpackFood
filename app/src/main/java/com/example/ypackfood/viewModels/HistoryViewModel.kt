@@ -8,7 +8,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.ypackfood.common.Auth
-import com.example.ypackfood.common.Constants
 import com.example.ypackfood.common.Constants.MAX_ORDERS_ON_PAGE
 import com.example.ypackfood.common.RequestTemplate
 import com.example.ypackfood.common.RequestTemplate.mainRepository
@@ -16,7 +15,7 @@ import com.example.ypackfood.extensions.translateException
 import com.example.ypackfood.models.auth.AuthInfo
 import com.example.ypackfood.models.auth.TokenData
 import com.example.ypackfood.models.orders.OrderFull.OrderList
-import com.example.ypackfood.models.orders.OrderMin.DishForOrderGet
+import com.example.ypackfood.models.orders.common.DishForOrderGet
 import com.example.ypackfood.room.entities.CartEntity
 import com.example.ypackfood.sealedClasses.NetworkResult
 import kotlinx.coroutines.Dispatchers
@@ -51,7 +50,7 @@ class HistoryViewModel : ViewModel() {
     fun setTimerForStatusUpdate() {
         viewModelScope.launch (Dispatchers.IO) {
             try {
-                val timer = Timer().schedule(2000) {
+                Timer().schedule(2000) {
                     Log.d("Timer", "SetupButton")
                     setUpdateButton(true)
                     this.cancel()
@@ -63,18 +62,16 @@ class HistoryViewModel : ViewModel() {
     }
 
 
-    var detailOrderDialogState by mutableStateOf(false)
-        private set
+    private var detailOrderDialogState by mutableStateOf(false)
     var chosenOrderDialogState by mutableStateOf(mutableListOf<DishForOrderGet>())
         private set
     fun setDetailOrderDialog(newState: Boolean, orderDishList: MutableList<DishForOrderGet>) {
         detailOrderDialogState = newState
         chosenOrderDialogState = orderDishList
     }
-    fun clearDetailOrderDialog() {
+    private fun clearDetailOrderDialog() {
         setDetailOrderDialog(false, mutableListOf())
     }
-    fun detailOrderDialogIsEmpty() = !detailOrderDialogState
 
     var addedToCartState by mutableStateOf(false)
         private set
@@ -146,7 +143,7 @@ class HistoryViewModel : ViewModel() {
     fun buildCartEntity(dishForOrderGet: List<DishForOrderGet>): List<CartEntity> {
         val dishList = dishForOrderGet.map { it.dish }
         val resultCartList = mutableListOf<CartEntity>()
-        dishList.forEachIndexed() { index, elem ->
+        dishList.forEachIndexed { index, elem ->
             resultCartList.add(
                 with (elem) {
                     //Log.d("DetailContentDishList", it.toString())
@@ -156,8 +153,7 @@ class HistoryViewModel : ViewModel() {
                         portionId = portion.id,
                         dishPriceId = portion.priceNow.id,
                         dishPrice = portion.priceNow.price,
-                        dishCount = dishForOrderGet[index].count ?: 1,
-                        dishAddons = null
+                        dishCount = dishForOrderGet[index].count,
                     )
                 }
             )

@@ -7,31 +7,23 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.ypackfood.common.Auth
 import com.example.ypackfood.common.Constants
-import com.example.ypackfood.common.Constants.ERROR_SERVER
-import com.example.ypackfood.common.Constants.SOCKET_TIMEOUT_EXCEPTION
-import com.example.ypackfood.common.Constants.UNKNOWN_HOST_EXCEPTION
 import com.example.ypackfood.common.RequestTemplate
 import com.example.ypackfood.common.RequestTemplate.mainRepository
-import com.example.ypackfood.enumClasses.ErrorEnum
 import com.example.ypackfood.extensions.isDigitsOnly
 import com.example.ypackfood.extensions.translateException
 import com.example.ypackfood.models.auth.AuthInfo
 import com.example.ypackfood.models.auth.AuthorizationData
 import com.example.ypackfood.models.auth.RegistrationData
-import com.example.ypackfood.models.detailAction.DetailAction
 import com.example.ypackfood.sealedClasses.NetworkResult
-import com.example.ypackfood.sealedClasses.SignOptions
+import com.example.ypackfood.sealedClasses.SignInUpOptions
 import com.example.ypackfood.sealedClasses.TabRowSwitchable
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.lang.Exception
-import java.net.SocketTimeoutException
-import java.net.UnknownHostException
 
 class SignInUpViewModel : ViewModel() {
-    var signSwitcherState: MutableLiveData<TabRowSwitchable> = MutableLiveData(SignOptions.SignIn())
+    var signSwitcherState: MutableLiveData<TabRowSwitchable> = MutableLiveData(SignInUpOptions.SignIn())
 
     var registerState: MutableLiveData<NetworkResult<AuthInfo>> = MutableLiveData()
     fun registerStateInit() {

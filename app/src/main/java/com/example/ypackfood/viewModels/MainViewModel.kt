@@ -16,7 +16,7 @@ import com.example.ypackfood.extensions.translateException
 import com.example.ypackfood.models.actionsContent.ActionsItem
 import com.example.ypackfood.models.auth.AuthInfo
 import com.example.ypackfood.models.auth.TokenData
-import com.example.ypackfood.models.mainContent.Category
+import com.example.ypackfood.models.mainContent.FilteredDishes
 import com.example.ypackfood.sealedClasses.NetworkResult
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -53,7 +53,7 @@ class MainViewModel : ViewModel() {
         return action+dishes
     }
 
-    var dishesState: MutableLiveData<NetworkResult<MutableList<Category>>> = MutableLiveData()
+    var dishesState: MutableLiveData<NetworkResult<MutableList<FilteredDishes>>> = MutableLiveData()
     var actionsState: MutableLiveData<NetworkResult<MutableList<ActionsItem>>> = MutableLiveData()
     var refreshState: MutableLiveData<NetworkResult<AuthInfo>> = MutableLiveData()
 

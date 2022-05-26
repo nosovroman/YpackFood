@@ -10,7 +10,7 @@ import com.example.ypackfood.models.commonData.Dish
 import com.example.ypackfood.models.commonData.Status
 import com.example.ypackfood.models.detailAction.DetailAction
 import com.example.ypackfood.models.detailContent.DetailContent
-import com.example.ypackfood.models.mainContent.Category
+import com.example.ypackfood.models.mainContent.FilteredDishes
 import com.example.ypackfood.models.orders.OrderFull.Order
 import com.example.ypackfood.models.orders.OrderFull.OrderList
 import com.example.ypackfood.models.orders.OrderMin.OrderMin
@@ -21,7 +21,7 @@ import retrofit2.http.*
 interface ApiService {
         // Блюдо
     @GET("client/dishes/actual/categories")
-    suspend fun getMainContent(@Header(HEADER_AUTH) token: String): Response<MutableList<Category>>
+    suspend fun getMainContent(@Header(HEADER_AUTH) token: String): Response<MutableList<FilteredDishes>>
 
     @GET("client/dishes/{dishId}")
     suspend fun getDetailContent(

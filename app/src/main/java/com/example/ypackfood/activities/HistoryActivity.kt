@@ -1,15 +1,12 @@
 package com.example.ypackfood.activities
 
 import android.util.Log
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.NavigateBefore
@@ -19,7 +16,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.ypackfood.common.Auth
@@ -29,8 +25,7 @@ import com.example.ypackfood.common.Constants.STANDARD_PADDING
 import com.example.ypackfood.common.Constants.TITLE_SIZE
 import com.example.ypackfood.components.*
 import com.example.ypackfood.enumClasses.ErrorEnum
-import com.example.ypackfood.models.orders.OrderFull.Order
-import com.example.ypackfood.models.orders.OrderMin.DishForOrderGet
+import com.example.ypackfood.models.orders.common.DishForOrderGet
 import com.example.ypackfood.sealedClasses.NetworkResult
 import com.example.ypackfood.sealedClasses.Screens
 import com.example.ypackfood.viewModels.DatastoreViewModel

@@ -5,8 +5,7 @@ import com.example.ypackfood.enumClasses.MainDrawer.*
 import com.example.ypackfood.sealedClasses.Screens
 
 enum class MainDrawer(val itemName: String, val icon: Int, val route: String) {
-    //MENU("Меню", R.drawable.ic_menu, Screens.Main.route),
-    ORDERS("Мои заказы", R.drawable.ic_orders, Screens.History.route),
+    ORDERS("Мои заказы", R.drawable.ic_history, Screens.History.route),
     FAVORITES("Избранное", R.drawable.ic_favorite, Screens.Favorites.route),
     PROFILE("Профиль", R.drawable.ic_profile, Screens.Profile.route),
     INFO("О нас", R.drawable.ic_info, Screens.Info.route),

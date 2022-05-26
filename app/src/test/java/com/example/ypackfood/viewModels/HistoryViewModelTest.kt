@@ -28,7 +28,6 @@ class HistoryViewModelTest {
 
     val listOfDetail = listOf(
         DetailContent(
-            addons = mutableListOf(),
             allergens = "",
             basePortion = BasePortion(id=10, priceNow = Price(11, 450)),
             composition = composition,

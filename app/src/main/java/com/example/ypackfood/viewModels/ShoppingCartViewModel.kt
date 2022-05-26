@@ -9,7 +9,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.ypackfood.common.Auth
-import com.example.ypackfood.common.RequestTemplate
 import com.example.ypackfood.common.RequestTemplate.getErrorFromJson
 import com.example.ypackfood.common.RequestTemplate.mainRepository
 import com.example.ypackfood.enumClasses.ErrorEnum
@@ -18,7 +17,6 @@ import com.example.ypackfood.models.auth.AuthInfo
 import com.example.ypackfood.models.auth.TokenData
 import com.example.ypackfood.models.commonData.CartDish
 import com.example.ypackfood.models.commonData.Dish
-import com.example.ypackfood.models.detailContent.DetailContent
 import com.example.ypackfood.room.entities.CartEntity
 import com.example.ypackfood.sealedClasses.NetworkResult
 
@@ -68,7 +66,6 @@ class ShoppingCartViewModel : ViewModel() {
                 category = dishInfo.category,
                 composition = dishInfo.composition,
                 urlPicture = dishInfo.picturePaths.large,
-                addons = null,
                 changedPrice = changedPrice //it.dishPrice == dishInfo.basePortion.priceNow.price
             )
         }
@@ -112,7 +109,7 @@ class ShoppingCartViewModel : ViewModel() {
                     Log.d("refreshToken not ok ", Auth.authInfo.toString())
 
                     val jsonString = response.errorBody()!!.string()
-                    val errorCode = RequestTemplate.getErrorFromJson(jsonString).errorCode.toString()
+                    val errorCode = getErrorFromJson(jsonString).errorCode.toString()
                     refreshState.postValue(NetworkResult.HandledError(errorCode))
                 }
             }

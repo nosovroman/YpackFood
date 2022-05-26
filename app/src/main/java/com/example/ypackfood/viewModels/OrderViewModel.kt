@@ -24,6 +24,7 @@ import com.example.ypackfood.models.auth.TokenData
 import com.example.ypackfood.models.commonData.CartDish
 import com.example.ypackfood.models.orders.OrderFull.Order
 import com.example.ypackfood.models.orders.OrderMin.*
+import com.example.ypackfood.models.orders.common.DishForOrderPost
 import com.example.ypackfood.models.user.ProfileInfo
 import com.example.ypackfood.sealedClasses.*
 import kotlinx.coroutines.Dispatchers
@@ -139,7 +140,7 @@ class OrderViewModel : ViewModel() {
                 count = it.count,
                 dish = DishMin(
                     id = it.dishId,
-                    portion = BasePortionMin(id = it.portionId, price = PriceNowMin(it.priceId))
+                    portion = BasePortionMin(id = it.portionId, price = PriceMin(it.priceId))
                 )
             )
         }

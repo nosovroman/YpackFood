@@ -11,7 +11,6 @@ data class CartDish(
     val category: String,
     val composition: String,
     val urlPicture: String,
-    val addons: String? = null,
 
     val changedPrice: Boolean = false
 )

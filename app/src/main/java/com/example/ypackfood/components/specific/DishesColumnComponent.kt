@@ -6,14 +6,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.example.ypackfood.common.Constants
 import com.example.ypackfood.components.ContentCardComponent
-import com.example.ypackfood.models.mainContent.Category
+import com.example.ypackfood.models.mainContent.FilteredDishes
 import com.example.ypackfood.sealedClasses.Screens
 
 @Composable
-fun DishesColumnComponent(navController: NavHostController, category: Category, index: Int) {
-    for (content in category.dishes) {
+fun DishesColumnComponent(navController: NavHostController, filteredDishes: FilteredDishes, index: Int) {
+    for (content in filteredDishes.dishes) {
         with (content) {
             ContentCardComponent(
                 cardName = name + id,

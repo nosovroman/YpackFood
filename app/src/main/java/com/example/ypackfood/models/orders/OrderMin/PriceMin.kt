@@ -1,5 +1,5 @@
 package com.example.ypackfood.models.orders.OrderMin
 
-data class PriceNowMin(
+data class PriceMin(
     val id: Int
 )

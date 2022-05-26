@@ -5,7 +5,6 @@ import com.example.ypackfood.models.commonData.Dish
 import com.example.ypackfood.models.commonData.PicturePaths
 
 data class DetailContent(
-    val addons: List<Addon>,
     val allergens: String,
     val basePortion: BasePortion,
     val portion: BasePortion?,

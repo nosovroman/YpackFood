@@ -1,13 +1,5 @@
 package com.example.ypackfood.sealedClasses
 
-interface TabRowSwitchable {
-    val title: String
-    val index: Int
-    fun getByIndex(index: Int): TabRowSwitchable {
-        return DeliveryOptions.DELIVERY()
-    }
-}
-
 sealed class DeliveryOptions(title: String, index: Int) : TabRowSwitchable {
     class DELIVERY(override val title: String = "Доставка", override val index: Int = 0) : DeliveryOptions(title, index)
     class PICKUP(override val title: String = "Самовывоз", override val index: Int = 1) : DeliveryOptions(title, index)
@@ -15,22 +7,6 @@ sealed class DeliveryOptions(title: String, index: Int) : TabRowSwitchable {
     companion object {
         fun getOptions(): List<DeliveryOptions> {
             return listOf(DELIVERY(), PICKUP())
-        }
-    }
-
-    override fun getByIndex(index: Int): TabRowSwitchable {
-        val options = getOptions()
-        return options.find { it.index == index }!!
-    }
-}
-
-sealed class AddressOptions(title: String, index: Int) : TabRowSwitchable {
-    class NEW_ADDRESS(override val title: String = "Новый", override val index: Int = 0) : AddressOptions(title, index)
-    class OLD_ADDRESS(override val title: String = "Из списка", override val index: Int = 1) : AddressOptions(title, index)
-
-    companion object {
-        fun getOptions(): List<AddressOptions> {
-            return listOf(NEW_ADDRESS(), OLD_ADDRESS())
         }
     }
 

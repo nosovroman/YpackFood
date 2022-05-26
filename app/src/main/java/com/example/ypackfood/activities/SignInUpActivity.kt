@@ -21,12 +21,11 @@ import com.example.ypackfood.R
 import com.example.ypackfood.common.Auth
 import com.example.ypackfood.components.*
 import com.example.ypackfood.extensions.translateError
-import com.example.ypackfood.models.auth.AuthInfo
 import com.example.ypackfood.models.auth.AuthorizationData
 import com.example.ypackfood.models.auth.RegistrationData
 import com.example.ypackfood.sealedClasses.NetworkResult
 import com.example.ypackfood.sealedClasses.Screens
-import com.example.ypackfood.sealedClasses.SignOptions
+import com.example.ypackfood.sealedClasses.SignInUpOptions
 import com.example.ypackfood.viewModels.DatastoreViewModel
 import com.example.ypackfood.viewModels.SignInUpViewModel
 
@@ -85,14 +84,14 @@ fun SignInUpScreen(
                         is NetworkResult.HandledError<*>, is NetworkResult.Error<*>, null -> {
                             TabRowComponent(
                                 currentOption = signState,
-                                listOptions = SignOptions.getOptions(),
+                                listOptions = SignInUpOptions.getOptions(),
                                 onClick = { newChosenOption ->
                                     signViewModel.signSwitcherState.postValue(newChosenOption)
                                     signViewModel.clearErrorEntering()
                                 }
                             )
                             when(signState) {
-                                is SignOptions.SignIn -> {
+                                is SignInUpOptions.SignIn -> {
                                     SignFormComponent(
                                         signViewModel = signViewModel,
                                         buttonText = stringResource(R.string.sign_in_btn),
@@ -108,7 +107,7 @@ fun SignInUpScreen(
                                         }
                                     )
                                 }
-                                is SignOptions.SignUp -> {
+                                is SignInUpOptions.SignUp -> {
                                     SignUpFormComponent(
                                         signViewModel = signViewModel,
                                         buttonText = stringResource(R.string.sign_up_btn),

@@ -16,8 +16,6 @@ import com.example.ypackfood.components.*
 import com.example.ypackfood.components.inOrder.OrderButtonComponent
 import com.example.ypackfood.components.inOrder.ShCartCardComponent
 import com.example.ypackfood.enumClasses.ErrorEnum
-import com.example.ypackfood.models.commonData.Dish
-import com.example.ypackfood.room.entities.CartEntity
 import com.example.ypackfood.sealedClasses.NetworkResult
 import com.example.ypackfood.sealedClasses.Screens
 import com.example.ypackfood.viewModels.DatastoreViewModel

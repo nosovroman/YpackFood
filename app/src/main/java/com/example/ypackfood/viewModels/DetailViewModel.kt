@@ -44,12 +44,11 @@ class DetailViewModel : ViewModel() {
 
     var enabledIButtonState by mutableStateOf(true)
         private set
-    fun setEnabledIButton(newState: Boolean) {
+    private fun setEnabledIButton(newState: Boolean) {
         enabledIButtonState = newState
     }
 
-    var currentIconState by mutableStateOf(Components.defaultIcon)
-        private set
+    private var currentIconState by mutableStateOf(Components.defaultIcon)
     fun setCurrentIcon(newState: ImageVector) {
         currentIconState = newState
     }
@@ -133,7 +132,7 @@ class DetailViewModel : ViewModel() {
         }
     }
 
-    fun addFavorite(contentId: Int) {
+    private fun addFavorite(contentId: Int) {
         Log.d("changeFavorite addFavorite", "addFavorite")
         viewModelScope.launch(Dispatchers.IO) {
             try {
@@ -160,7 +159,7 @@ class DetailViewModel : ViewModel() {
         }
     }
 
-    fun deleteFavorite(contentId: Int) {
+    private fun deleteFavorite(contentId: Int) {
         Log.d("changeFavorite deleteFavorite", "deleteFavorite")
         viewModelScope.launch(Dispatchers.IO) {
             try {
@@ -206,17 +205,5 @@ class DetailViewModel : ViewModel() {
             Components.outlinedFavoriteIcon
         }
         return currentIconState
-    }
-
-    fun buildDishInfo(dishId: Int, portionId: Int, priceId: Int, price: Int, count: Int, addons: String? = null): CartEntity {
-        return CartEntity(
-            dishId = dishId,
-            userId = Auth.authInfo.personId,
-            portionId = portionId,
-            dishPriceId = priceId,
-            dishPrice = price,
-            dishCount = count,
-            dishAddons = addons
-        )
     }
 }

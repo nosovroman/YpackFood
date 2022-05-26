@@ -16,7 +16,7 @@ class OrderViewModelTest {
         val count = 2
         val portionId = 15
         val priceId = 10
-        val portion = BasePortionMin(id = portionId, price = PriceNowMin(priceId))
+        val portion = BasePortionMin(id = portionId, price = PriceMin(priceId))
         val dishMinList = listOf(
             CartDish(
                 shoppingCartId = 1,

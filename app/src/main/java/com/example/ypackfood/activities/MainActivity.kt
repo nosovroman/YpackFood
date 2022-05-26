@@ -26,7 +26,6 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.ypackfood.common.Auth
-import com.example.ypackfood.common.Constants
 import com.example.ypackfood.common.Constants.TOOLBAR_HEIGHT
 import com.example.ypackfood.components.*
 import com.example.ypackfood.components.inOrder.ContentListComponent2
@@ -34,7 +33,7 @@ import com.example.ypackfood.components.specific.ActionsRowComponent
 import com.example.ypackfood.components.specific.DishesColumnComponent
 import com.example.ypackfood.enumClasses.ErrorEnum
 import com.example.ypackfood.models.actionsContent.ActionsItem
-import com.example.ypackfood.models.mainContent.Category
+import com.example.ypackfood.models.mainContent.FilteredDishes
 import com.example.ypackfood.sealedClasses.NetworkResult
 import com.example.ypackfood.sealedClasses.Screens
 import com.example.ypackfood.ui.theme.Orange
@@ -181,7 +180,7 @@ fun MainScreen(
                                     }
                                 }
                                 is NetworkResult.Success<*> -> {
-                                    itemsIndexed(dishesState.data as MutableList<Category>) { index, item ->
+                                    itemsIndexed(dishesState.data as MutableList<FilteredDishes>) { index, item ->
                                         DishesColumnComponent(navController, item, index)
                                     }
                                 }
