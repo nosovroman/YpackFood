@@ -1,5 +1,6 @@
 package com.example.ypackfood.viewModels
 
+import com.example.ypackfood.common.Auth
 import com.example.ypackfood.models.commonData.*
 import com.example.ypackfood.room.entities.CartEntity
 import org.junit.Assert.*
@@ -14,6 +15,7 @@ class ShoppingCartViewModelTest {
     val portionId = 10
     val dishPriceId = 12
     val dishPrice = 100
+    val userId = Auth.authInfo.personId
     val shoppingCartId = 1
     val name = "Салат Цезарь"
     val category = "Салаты"
@@ -34,68 +36,55 @@ class ShoppingCartViewModelTest {
             )
         )
     )
+    val cartEntity = CartEntity(
+        dishId = dishId,
+        userId = userId,
+        dishCount = dishCount,
+        portionId = portionId,
+        dishPriceId = dishPriceId,
+        dishPrice = dishPrice,
+        shoppingCartId = shoppingCartId
+    )
 
-    val listOfCart = listOf(
-        CartEntity(
+    // ---
+    @Test
+    fun composeDishInfo() {
+        val cartDish = CartDish(
+            shoppingCartId = shoppingCartId,
             dishId = dishId,
+            name = name,
+            portionId = portionId,
+            priceId = dishPriceId,
+            price = dishPrice,
+            count = dishCount,
+            category = category,
+            composition = composition,
+            urlPicture = urlPicture,
+            changedPrice = true
+        )
+
+        val cartEntity = CartEntity(
+            dishId = dishId,
+            userId = userId,
             dishCount = dishCount,
             portionId = portionId,
             dishPriceId = dishPriceId,
             dishPrice = dishPrice,
             shoppingCartId = shoppingCartId
-        ),
-        CartEntity(
-            dishId = dishId,
-            dishCount = dishCount,
-            portionId = portionId,
-            dishPriceId = dishPriceId,
-            dishPrice = dishPrice,
-            shoppingCartId = shoppingCartId+1
         )
-    )
 
-    // changedPrice
-    @Test
-    fun composeDishInfo() {
+        val wishedList = listOf(cartDish, cartDish.copy(shoppingCartId = shoppingCartId+1))
+        val listOfCart = listOf(cartEntity, cartEntity.copy(shoppingCartId = shoppingCartId+1))
+
         cartViewModel.composeDishInfo(listOfDish, listOfCart)
         val result = cartViewModel.resultDishState
-
-        val wishedList = listOf(
-            CartDish(
-                shoppingCartId = shoppingCartId,
-                dishId = dishId,
-                name = name,
-                portionId = portionId,
-                priceId = dishPriceId,
-                price = dishPrice,
-                count = dishCount,
-                category = category,
-                composition = composition,
-                urlPicture = urlPicture,
-                addons = null,
-                changedPrice = true
-            ),
-            CartDish(
-                shoppingCartId = shoppingCartId+1,
-                dishId = dishId,
-                name = name,
-                portionId = portionId,
-                priceId = dishPriceId,
-                price = dishPrice,
-                count = dishCount,
-                category = category,
-                composition = composition,
-                urlPicture = urlPicture,
-                addons = null,
-                changedPrice = true
-            )
-        )
 
         assertTrue(result == wishedList)
     }
 
     @Test
     fun computeTotalPrice() {
+        val listOfCart = listOf(cartEntity, cartEntity.copy(shoppingCartId = shoppingCartId+1))
         cartViewModel.setDishesRoom(listOfCart)
         cartViewModel.computeTotalPrice()
         val totalPrice = cartViewModel.totalPriceState

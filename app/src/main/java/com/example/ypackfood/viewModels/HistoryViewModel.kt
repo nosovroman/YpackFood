@@ -146,7 +146,6 @@ class HistoryViewModel : ViewModel() {
         dishList.forEachIndexed { index, elem ->
             resultCartList.add(
                 with (elem) {
-                    //Log.d("DetailContentDishList", it.toString())
                     CartEntity(
                         dishId = id,
                         userId = Auth.authInfo.personId,

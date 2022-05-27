@@ -195,19 +195,3 @@ fun OffersScreen(
         }
     )
 }
-
-//@Composable
-//fun OfferDescription(offerViewModel: OfferViewModel, modifier: Modifier = Modifier) {
-//    val response = offerViewModel.actionState.value!!.data!!
-//
-//    Column(modifier = modifier) {
-//        Spacer(modifier = Modifier.height(20.dp))
-//        Text(text = "Описание", fontSize = 16.sp)
-//        Text(text = response.name, fontSize = 14.sp, color = Color.Gray)
-//
-//        if (response.dishes.isNotEmpty()) {
-//            ContentSimpleListComponent(contentList = response.dishes)
-//            Spacer(modifier = Modifier.size(100.dp))
-//        }
-//    }
-//}

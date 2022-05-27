@@ -38,6 +38,7 @@ object Constants {
     const val HEADER_AUTH = "Authorization"
 
     const val TIME_ORDER_MESSAGE = "Заказать можно с $START_DELIVERY:00 до $END_DELIVERY:00, минимальное время ожидания 45 минут (установится автоматически при попытке заказа за меньший интервал времени)."
+    const val MIN_TIME_ORDER = 45
 
     const val NAV_KEY__CONTENT_ID = "contentId"
     const val NAV_KEY__OFFER_ID = "offerId"

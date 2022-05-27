@@ -1,7 +1,10 @@
 package com.example.ypackfood.viewModels
 
+import com.example.ypackfood.common.Constants.MIN_TIME_ORDER
 import com.example.ypackfood.models.commonData.CartDish
 import com.example.ypackfood.models.orders.OrderMin.*
+import com.example.ypackfood.models.orders.common.DishForOrderPost
+import com.example.ypackfood.sealedClasses.DeliveryOptions
 import org.junit.Assert.*
 
 import org.junit.Test
@@ -9,45 +12,52 @@ import org.junit.Test
 class OrderViewModelTest {
     private val orderViewModel = OrderViewModel()
 
-    // only Delivery
+    //---
     @Test
     fun composeOrder() {
+        val composition = "Салат Айсберг, куриная грудка, помидорки, перепелиные яйца, соус Цезарь"
+        val urlPicture = "https://pictures/cesar.com"
+        val category = "Салаты"
+        val name = "Салат Цезарь"
         val dishId = 12
+        val shoppingCartId = 1
         val count = 2
+        val price = 320
         val portionId = 15
         val priceId = 10
         val portion = BasePortionMin(id = portionId, price = PriceMin(priceId))
+        val addressMerged = "г. Каменск-Шахтинский, пер. Коммунистический, д. 106"
+        val totalCost = price*count
+
         val dishMinList = listOf(
             CartDish(
-                shoppingCartId = 1,
+                shoppingCartId = shoppingCartId,
                 dishId = dishId,
-                name = "Салат Цезарь",
+                name = name,
                 portionId = portionId,
                 priceId = priceId,
-                price = 320,
+                price = price,
                 count = count,
-                category = "Салаты",
-                composition = "Салат Айсберг, куриная грудка, помидорки, перепелиные яйца, соус Цезарь",
-                urlPicture = "https://pictures/cesar.com"
-            )
-        )
-        val addressMerged = "г. Каменск-Шахтинский, пер. Коммунистический, д. 106"
-        val totalCost = 640
-        val dishesMin = listOf(
-            DishMin(
-                id = dishId,
-                count = count,
-                portion = portion
+                category = category,
+                composition = composition,
+                urlPicture = urlPicture
             )
         )
 
-        val orderMin = orderViewModel.composeOrder(
+        val dishesMin = listOf(
+            DishForOrderPost(
+                count = count,
+                dish = DishMin(id = dishId, portion = portion)
+            )
+        )
+
+        val resultComposeDelivery = orderViewModel.composeOrder(
             dishMinList = dishMinList,
             addressMerged = addressMerged,
             totalCost = totalCost,
+            deliveryState = DeliveryOptions.DELIVERY()
         )
-
-        val wishedOrder = OrderMin(
+        val wishedOrderDelivery = OrderMin(
             deliveryTime = "00:00",
             totalPrice = totalCost,
             address = AddressMin(address = addressMerged),
@@ -55,47 +65,57 @@ class OrderViewModelTest {
             wayToGet = "DELIVERY"
         )
 
-        assertTrue(orderMin == wishedOrder)
+        val resultComposePickup = orderViewModel.composeOrder(
+            dishMinList = dishMinList,
+            addressMerged = addressMerged,
+            totalCost = totalCost,
+            deliveryState = DeliveryOptions.PICKUP()
+        )
+        val wishedOrderPickup = OrderMin(
+            deliveryTime = "00:00",
+            totalPrice = totalCost,
+            address = null,
+            dishes = dishesMin,
+            wayToGet = "PICKUP"
+        )
+
+        assertTrue("incorrect composing with Delivery", resultComposeDelivery == wishedOrderDelivery)
+        assertTrue("incorrect composing with Pickup",resultComposePickup == wishedOrderPickup)
     }
 
     @Test
     fun setHoursField() {
-        orderViewModel.setHoursField("0")
-        val result1 = orderViewModel.hoursFieldState
+        orderViewModel.setHoursField("23")
+        assertTrue(orderViewModel.hoursFieldState == "23")
+        orderViewModel.setHoursField("1")
+        assertTrue(orderViewModel.hoursFieldState == "1")
+        orderViewModel.setHoursField(".")
+        assertTrue("must be only digits",orderViewModel.hoursFieldState == "1")
         orderViewModel.setHoursField("24")
-        val result2 = orderViewModel.hoursFieldState
-        orderViewModel.setHoursField("10")
-        val result3 = orderViewModel.hoursFieldState
+        assertTrue("incorrect two-digit hour",orderViewModel.hoursFieldState == "23")
         orderViewModel.setHoursField("05")
-        val result4 = orderViewModel.hoursFieldState
-
-        assertTrue(
-            result1 == "0" &&
-            result2 == "23" &&
-            result3 == "10" &&
-            result4 == "05"
-        )
+        assertTrue(orderViewModel.hoursFieldState == "05")
+        orderViewModel.setHoursField("120")
+        assertTrue("incorrect three-digit hour",orderViewModel.hoursFieldState == "05")
     }
 
     @Test
     fun setMinutesField() {
+        orderViewModel.setMinutesField("59")
+        assertTrue(orderViewModel.minutesFieldState == "59")
+        orderViewModel.setHoursField(".")
+        assertTrue("must be only digits",orderViewModel.minutesFieldState == "59")
         orderViewModel.setMinutesField("0")
-        val result1 = orderViewModel.minutesFieldState
+        assertTrue(orderViewModel.minutesFieldState == "0")
         orderViewModel.setMinutesField("60")
-        val result2 = orderViewModel.minutesFieldState
-        orderViewModel.setMinutesField("10")
-        val result3 = orderViewModel.minutesFieldState
+        assertTrue("incorrect two-digit minute",orderViewModel.minutesFieldState == "59")
         orderViewModel.setMinutesField("05")
-        val result4 = orderViewModel.minutesFieldState
-
-        assertTrue(
-            result1 == "0" &&
-            result2 == "59" &&
-            result3 == "10" &&
-            result4 == "05"
-        )
+        assertTrue(orderViewModel.minutesFieldState == "05")
+        orderViewModel.setMinutesField("120")
+        assertTrue("incorrect three-digit minute",orderViewModel.minutesFieldState == "05")
     }
 
+    // ---
     @Test
     fun tryConfirmTime() {
         orderViewModel.setHoursField("15")
@@ -118,35 +138,27 @@ class OrderViewModelTest {
 
     @Test
     fun convertToMinutes() {
-        val minutes = orderViewModel.convertToMinutes(1, 30)
-        val wishedMinutes = 90
-        val minutes2 = orderViewModel.convertToMinutes(0, 30)
-        val wishedMinutes2 = 30
-
-        val result1 = minutes == wishedMinutes
-        val result2 = minutes2 == wishedMinutes2
-
-        assertTrue(result1 && result2)
+        var minutes = orderViewModel.convertToMinutes(1, 30)
+        assertTrue("incorrect computing hour", minutes == 90)
+        minutes = orderViewModel.convertToMinutes(0, 33)
+        assertTrue("incorrect computing minutes with hour = 0",minutes == 33)
+        minutes = orderViewModel.convertToMinutes(2, 0)
+        assertTrue("incorrect computing minutes with minute = 0",minutes == 120)
     }
 
     @Test
     fun convertToHours() {
-        val hours = orderViewModel.convertToHourMinute(90)
-        val wishedHours = Pair(1, 30)
-        val hours2 = orderViewModel.convertToHourMinute(30)
-        val wishedHours2 = Pair(0, 30)
-
-        val result1 = hours == wishedHours
-        val result2 = hours2 == wishedHours2
-
-        assertTrue(result1 && result2)
+        var hours = orderViewModel.convertToHourMinute(90)
+        assertTrue("incorrect computing with hour = 90", hours == Pair(1, 30))
+        hours = orderViewModel.convertToHourMinute(33)
+        assertTrue("incorrect computing with hour = 33", hours == Pair(0, 33))
+        hours = orderViewModel.convertToHourMinute(120)
+        assertTrue("incorrect computing with hour = 120", hours == Pair(2, 0))
     }
 
     @Test
     fun computeMinTimeForOrder() {
         val minTime = orderViewModel.computeMinTimeForOrder(10, 15)
-        val wishedTime = 660
-
-        assertTrue(minTime == wishedTime)
+        assertTrue(minTime == orderViewModel.convertToMinutes(10, 15) + MIN_TIME_ORDER)
     }
 }

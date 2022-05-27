@@ -197,10 +197,7 @@ fun ShoppingCartScreen(
                                         Spacer(modifier = Modifier.height(50.dp))
                                     }
                                 }
-//                                is NetworkResult.Empty<*> -> {
-//                                    EmptyContentComponent(message = "Корзина пуста")
-//                                }
-                                is NetworkResult.Error<*> -> {
+                                is NetworkResult.Error<*>, is NetworkResult.HandledError<*> -> {
                                     ShowErrorComponent(
                                         message = cartState.message,
                                         onButtonClick = {

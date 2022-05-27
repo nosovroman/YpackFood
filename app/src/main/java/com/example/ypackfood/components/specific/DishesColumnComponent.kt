@@ -15,7 +15,7 @@ fun DishesColumnComponent(navController: NavHostController, filteredDishes: Filt
     for (content in filteredDishes.dishes) {
         with (content) {
             ContentCardComponent(
-                cardName = name + id,
+                cardName = name,
                 hint = basePortion.size,
                 description = composition,
                 price = basePortion.priceNow.price,

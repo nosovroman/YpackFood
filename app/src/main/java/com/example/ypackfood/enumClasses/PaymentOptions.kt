@@ -1,6 +1,6 @@
 package com.example.ypackfood.enumClasses
 
-import com.example.ypackfood.enumClasses.PaymentOptions.COURIER_CARD
+import com.example.ypackfood.enumClasses.PaymentOptions.*
 
 enum class PaymentOptions(val paymentTitle: String) {
     READY_MONEY("Наличными"),
@@ -8,5 +8,5 @@ enum class PaymentOptions(val paymentTitle: String) {
 }
 
 fun getPaymentOptions():  List<String> {
-    return listOf(PaymentOptions.READY_MONEY.paymentTitle, COURIER_CARD.paymentTitle)
+    return listOf(READY_MONEY.paymentTitle, COURIER_CARD.paymentTitle)
 }

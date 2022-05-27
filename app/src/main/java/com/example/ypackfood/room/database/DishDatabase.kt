@@ -10,7 +10,6 @@ import com.example.ypackfood.room.entities.CartEntity
 
 @Database(entities = [CartEntity::class], version = 9)
 abstract class DishDatabase : RoomDatabase() {
-    //abstract fun favoritesDao(): FavoritesDao
     abstract fun shoppingCartDao(): CartDao
 
     companion object {

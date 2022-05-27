@@ -8,7 +8,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.*
 import com.example.ypackfood.common.Auth
-import com.example.ypackfood.common.Components
 import com.example.ypackfood.repository.RepositoryRoom
 import com.example.ypackfood.room.database.DishDatabase
 import com.example.ypackfood.room.entities.CartEntity
@@ -19,19 +18,10 @@ class RoomViewModel(application: Application) : AndroidViewModel(application) {
     var shopList: LiveData<List<CartEntity>>
     private var repositoryRoom: RepositoryRoom
 
-    var currentIcon by mutableStateOf(Components.defaultIcon)
-        private set
-
     var deletingCartListState by mutableStateOf(listOf<Int>())
         private set
     fun setDeletingCartList(newState: List<Int>) {
         deletingCartListState = newState
-    }
-
-    var deletingFavListState by mutableStateOf(listOf<Int>())
-        private set
-    fun setDeletingFavList(newState: List<Int>) {
-        deletingFavListState = newState
     }
 
     init {

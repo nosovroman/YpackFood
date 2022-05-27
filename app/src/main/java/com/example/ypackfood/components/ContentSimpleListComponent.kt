@@ -12,7 +12,7 @@ import com.example.ypackfood.models.commonData.Dish
 import com.example.ypackfood.sealedClasses.Screens
 
 @Composable
-fun ContentSimpleListComponent(
+fun SimpleListComponent(
     contentList: List<Dish>,
     showPrice: Boolean = false,
     onItemClick: (id: Int) -> Unit = {}

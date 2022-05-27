@@ -239,7 +239,7 @@ fun DetailDescription(detailViewModel: DetailViewModel, modifier: Modifier = Mod
 
     Column(modifier = modifier) {
         Spacer(modifier = Modifier.height(20.dp))
-        Text(text = detailDishState.name+detailDishState.id+detailDishState.category, fontSize = 16.sp)
+        Text(text = detailDishState.name, fontSize = 16.sp)
         Spacer(modifier = Modifier.height(10.dp))
 
         if (!isCombo) {
@@ -253,24 +253,25 @@ fun DetailDescription(detailViewModel: DetailViewModel, modifier: Modifier = Mod
                         .border(1.dp, color = Color.LightGray, shape = RoundedCornerShape(10.dp)),
                     backgroundColor = Color.Transparent,
                     indicator = {  },
-                    divider = {  }
-                ) {
-                    val portionList = detailDishState.portions
-                    portionList.forEachIndexed { index, item ->
-                        Tab(
-                            text = { Text(item.size!!) },
-                            selected = state == index,
-                            onClick = { detailViewModel.setIndexOption(index) },
-                            selectedContentColor = Color.White,
-                            unselectedContentColor = MaterialTheme.colors.onBackground,
-                            modifier = Modifier
-                                .background(
-                                    color = if (state == index) MaterialTheme.colors.primary else Color.Transparent,
-                                    shape = RoundedCornerShape(10.dp)
-                                )
-                        )
+                    divider = {  },
+                    tabs = {
+                        val portionList = detailDishState.portions
+                        portionList.forEachIndexed { index, item ->
+                            Tab(
+                                text = { Text(item.size!!) },
+                                selected = state == index,
+                                onClick = { detailViewModel.setIndexOption(index) },
+                                selectedContentColor = Color.White,
+                                unselectedContentColor = MaterialTheme.colors.onBackground,
+                                modifier = Modifier
+                                    .background(
+                                        color = if (state == index) MaterialTheme.colors.primary else Color.Transparent,
+                                        shape = RoundedCornerShape(10.dp)
+                                    )
+                            )
+                        }
                     }
-                }
+                )
             } else {
                 Text(text = detailDishState.portions[0].size!!, fontSize = 14.sp, color = Color.Gray)
                 Spacer(modifier = Modifier.height(10.dp))
@@ -284,7 +285,7 @@ fun DetailDescription(detailViewModel: DetailViewModel, modifier: Modifier = Mod
             Text(text = "Состав", fontSize = 16.sp)
             Text(text = detailDishState.composition, fontSize = 14.sp, color = Color.Gray)
         } else {
-            ContentSimpleListComponent(detailDishState.dishes)
+            SimpleListComponent(detailDishState.dishes)
         }
     }
 }

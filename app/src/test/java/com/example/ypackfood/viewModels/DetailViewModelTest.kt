@@ -26,46 +26,16 @@ class DetailViewModelTest {
             listOfFavorites = listOfFavorites
         )
 
-        assertTrue(
-            filledIcon == Components.filledFavoriteIcon &&
-            outlinedIcon == Components.outlinedFavoriteIcon
-        )
-    }
-
-    @Test
-    fun buildDishInfo() {
-        val dishId = 1
-        val portionId = 10
-        val priceId = 13
-        val price = 1500
-        val count = 5
-
-
-        val composedCart = detailViewModel.buildDishInfo(
-            dishId = dishId,
-            portionId = portionId,
-            priceId = priceId,
-            price = price,
-            count = count
-        )
-
-        val wishedCart = CartEntity(
-            dishId = dishId,
-            portionId = portionId,
-            dishPriceId = priceId,
-            dishPrice = price,
-            dishCount = count
-        )
-
-        assertTrue(composedCart == wishedCart)
+        assertTrue("existing element not found",filledIcon == Components.filledFavoriteIcon)
+        assertFalse("found not existing element",outlinedIcon != Components.outlinedFavoriteIcon)
     }
 
     @Test
     fun incrementCounter() {
         val incremented = 2
         detailViewModel.initCountWish()
-
         detailViewModel.incrementCounter()
+
         assertTrue(detailViewModel.countWishDishes == incremented)
     }
 
@@ -73,8 +43,8 @@ class DetailViewModelTest {
     fun decrementCounter() {
         val decremented = 0
         detailViewModel.initCountWish()
-
         detailViewModel.decrementCounter()
+
         assertTrue(detailViewModel.countWishDishes == decremented)
     }
 }

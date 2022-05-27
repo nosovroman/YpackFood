@@ -21,14 +21,13 @@ import com.example.ypackfood.sealedClasses.NetworkResult
 import com.example.ypackfood.sealedClasses.Screens
 import com.example.ypackfood.viewModels.DatastoreViewModel
 import com.example.ypackfood.viewModels.FavoritesViewModel
-import com.example.ypackfood.viewModels.RoomViewModel
 
 @Composable
 fun FavoritesScreen(
     navController: NavHostController,
     favoritesViewModel: FavoritesViewModel,
-    datastoreViewModel: DatastoreViewModel,
-    roomViewModel: RoomViewModel) {
+    datastoreViewModel: DatastoreViewModel
+) {
 
     val favoritesState = favoritesViewModel.favoritesState.observeAsState().value
 
@@ -95,8 +94,8 @@ fun FavoritesScreen(
                     }
                     is NetworkResult.Success<*> -> {
                         Log.d("networkAnswer", "Display data")
-                        ContentSimpleListComponent(
-                            contentList = favoritesState.data!! as List<Dish>,
+                        SimpleListComponent(
+                            contentList = favoritesState.data as List<Dish>,
                             showPrice = true,
                             onItemClick = { id -> navController.navigate(route = Screens.DetailContent.createRoute(contentId = id)) }
                         )

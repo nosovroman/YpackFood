@@ -16,7 +16,6 @@ import com.example.ypackfood.extensions.translateException
 import com.example.ypackfood.models.auth.AuthInfo
 import com.example.ypackfood.models.auth.TokenData
 import com.example.ypackfood.models.detailContent.DetailContent
-import com.example.ypackfood.room.entities.CartEntity
 import com.example.ypackfood.sealedClasses.NetworkResult
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -165,7 +164,7 @@ class DetailViewModel : ViewModel() {
             try {
                 val response = mainRepository.deleteFavorite(Auth.authInfo.accessToken, contentId)
                 if (response.isSuccessful) {
-                    val newFavoritesList = favoritesState.value!!.data!!//.add(contentId)
+                    val newFavoritesList = favoritesState.value!!.data!!
                     newFavoritesList.remove(contentId)
                     favoritesState.postValue(NetworkResult.Success(newFavoritesList))
                     Log.d("changeFavorite deleteFavorite ok ", newFavoritesList.toString())

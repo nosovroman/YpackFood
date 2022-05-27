@@ -138,7 +138,7 @@ class ShoppingCartViewModel : ViewModel() {
                     else if (response.code() != 500) {
                         val jsonString = response.errorBody()!!.string()
                         val errorRes = getErrorFromJson(jsonString)
-                        if (errorRes.message == ErrorEnum.RESOURCE_NOT_FOUND.title) { //"Некоторые блюда были исключены из меню ресторана"
+                        if (errorRes.message == ErrorEnum.RESOURCE_NOT_FOUND.title) {
                             roomViewModel.setDeletingCartList(errorRes.ids!!)
                         }
                         cartState.postValue(NetworkResult.HandledError(errorRes.errorCode.toString()))

@@ -29,21 +29,22 @@ fun TabRowComponent(
         modifier = Modifier.padding(horizontal = 20.dp).height(40.dp),
         backgroundColor = Color.Transparent,
         indicator = {  },
-        divider = {  }
-    ) {
-        listOptions.forEachIndexed { index, item ->
-            Tab(
-                text = { Text(item.title) },
-                selected = state == index,
-                onClick = { onClick(currentOption.getByIndex(index)) },
-                selectedContentColor = Color.White,
-                unselectedContentColor = MaterialTheme.colors.onBackground,
-                modifier = Modifier
-                    .background(
-                        color = if (state == index) MaterialTheme.colors.primary else Color.Transparent,
-                        shape = shape
-                    )
-            )
+        divider = {  },
+        tabs = {
+            listOptions.forEachIndexed { index, item ->
+                Tab(
+                    text = { Text(item.title) },
+                    selected = state == index,
+                    onClick = { onClick(currentOption.getByIndex(index)) },
+                    selectedContentColor = Color.White,
+                    unselectedContentColor = MaterialTheme.colors.onBackground,
+                    modifier = Modifier
+                        .background(
+                            color = if (state == index) MaterialTheme.colors.primary else Color.Transparent,
+                            shape = shape
+                        )
+                )
+            }
         }
-    }
+    )
 }

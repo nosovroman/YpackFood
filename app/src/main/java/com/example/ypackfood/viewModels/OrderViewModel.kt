@@ -11,6 +11,7 @@ import com.example.ypackfood.common.Auth
 import com.example.ypackfood.common.Constants
 import com.example.ypackfood.common.Constants.CHOSE_ADDRESS
 import com.example.ypackfood.common.Constants.END_DELIVERY
+import com.example.ypackfood.common.Constants.MIN_TIME_ORDER
 import com.example.ypackfood.common.Constants.START_DELIVERY
 import com.example.ypackfood.common.RequestTemplate
 import com.example.ypackfood.common.RequestTemplate.mainRepository
@@ -119,7 +120,7 @@ class OrderViewModel : ViewModel() {
             if (checkIsFaster() || checkIsForTime() && checkTimeIsNotEmpty()) {
                 if (beOnTime()) {
                     emptyFieldMsgState = ""
-                    createOrder(composeOrder(dishMinList, addressMerged, totalCost))
+                    createOrder(composeOrder(dishMinList, addressMerged, totalCost, deliveryState.value!!))
                 } else {
                     emptyFieldMsgState = "Мы не сможем выполнить заказ к этому времени"
                     setEmptyDataDialog(true)
@@ -134,7 +135,12 @@ class OrderViewModel : ViewModel() {
         }
     }
 
-    fun composeOrder(dishMinList: List<CartDish>, addressMerged: String, totalCost: Int): OrderMin {
+    fun composeOrder(
+        dishMinList: List<CartDish>,
+        addressMerged: String,
+        totalCost: Int,
+        deliveryState: TabRowSwitchable
+    ): OrderMin {
         val dishesMin = dishMinList.map {
             DishForOrderPost(
                 count = it.count,
@@ -145,7 +151,7 @@ class OrderViewModel : ViewModel() {
             )
         }
 
-        val address = if (deliveryState.value is DeliveryOptions.DELIVERY) AddressMin(address = addressMerged)
+        val address = if (deliveryState is DeliveryOptions.DELIVERY) AddressMin(address = addressMerged)
         else null
 
         return OrderMin(
@@ -153,7 +159,7 @@ class OrderViewModel : ViewModel() {
             totalPrice = totalCost,
             address = address,
             dishes = dishesMin,
-            wayToGet = deliveryState.value?.javaClass?.simpleName.toString()
+            wayToGet = deliveryState.javaClass.simpleName.toString()
         )
     }
 
@@ -182,6 +188,9 @@ class OrderViewModel : ViewModel() {
 
         // DELIVERY CHOOSING
     var deliveryState: MutableLiveData<TabRowSwitchable> = MutableLiveData(DeliveryOptions.DELIVERY())
+    fun setDelivery() {
+        deliveryState.postValue(DeliveryOptions.PICKUP())
+    }
     var deliveryDialogState by mutableStateOf(false)
         private set
     fun setDeliveryDialog(newState: Boolean) {
@@ -312,7 +321,7 @@ class OrderViewModel : ViewModel() {
             val chosenMinute = minutesFieldState.toInt()
 
             if (timeInWorkTime(chosenHour, chosenMinute)) {
-                    setConfirmTime(chosenHour, chosenMinute)
+                setConfirmTime(chosenHour, chosenMinute)
             } else {
                 errorEnteringTime = "Неверное время доставки"
             }
@@ -371,7 +380,7 @@ class OrderViewModel : ViewModel() {
 
     fun convertToMinutes(hours: Int, minutes: Int): Int = hours * 60 + minutes
     fun convertToHourMinute(minutes: Int): Pair<Int, Int> = Pair(minutes / 60, minutes % 60)
-    fun computeMinTimeForOrder(currentHours: Int, currentMinutes: Int): Int = convertToMinutes(currentHours, currentMinutes) + 45
+    fun computeMinTimeForOrder(currentHours: Int, currentMinutes: Int): Int = convertToMinutes(currentHours, currentMinutes) + MIN_TIME_ORDER
 
 
         // ADDRESS_FIELD
