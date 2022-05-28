@@ -4,7 +4,7 @@ import com.example.ypackfood.common.Constants
 
 sealed class Screens(val route: String, val title: String = Constants.APP_NAME_RUS) {
     object Main: Screens(route = "MainScreen")
-    object DetailContent: Screens(route = "DetailContentScreen/{${Constants.NAV_KEY__CONTENT_ID}}") {
+    object DetailContent: Screens(route = "DetailContentScreen/{${Constants.NAV_KEY__CONTENT_ID}}", title = "Блюдо") {
         fun createRoute(contentId: Int) = this.route.replace(oldValue = "{${Constants.NAV_KEY__CONTENT_ID}}", newValue = contentId.toString())
     }
     object SignInUp: Screens(route = "SignInUpScreen")

@@ -44,7 +44,7 @@ fun ContentCardComponent(
                 Text(text = description, fontSize = 14.sp)
                 if (price != -1) {
                     Text(
-                        text = "от $price ₽",
+                        text = "$price ₽",
                         modifier = Modifier
                             .padding(top = 5.dp)
                             .border(
@@ -52,7 +52,7 @@ fun ContentCardComponent(
                                 color = MaterialTheme.colors.secondary,
                                 shape = CircleShape
                             )
-                            .padding(horizontal = 10.dp, vertical = 5.dp)
+                            .padding(horizontal = 20.dp, vertical = 5.dp)
                     )
                 }
             }

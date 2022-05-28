@@ -37,6 +37,6 @@ fun PictureOneComponent(
         modifier = modifier
             .size(size)
             .clip(RoundedCornerShape(corner))
-            .border(1.dp, color = Color.Cyan)
+            //.border(1.dp, color = Color.Cyan)
     )
 }

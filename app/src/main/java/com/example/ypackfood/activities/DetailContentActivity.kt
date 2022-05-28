@@ -19,7 +19,7 @@ import com.example.ypackfood.common.Auth
 import com.example.ypackfood.common.Components
 import com.example.ypackfood.common.Constants
 import com.example.ypackfood.common.Constants.STANDARD_PADDING
-import com.example.ypackfood.common.RequestTemplate.buildDishInfo
+import com.example.ypackfood.common.RequestTemplate.composeCartInfo
 import com.example.ypackfood.components.*
 import com.example.ypackfood.enumClasses.ErrorEnum
 import com.example.ypackfood.sealedClasses.NetworkResult
@@ -111,6 +111,7 @@ fun DetailContentScreen(
     Scaffold (
         topBar = {
             ToolbarComponent(
+                title = Screens.DetailContent.title,
                 navController = navController,
                 rightIcon = {
                     when (favoritesState) {
@@ -140,7 +141,7 @@ fun DetailContentScreen(
                 },
             )
         },
-        floatingActionButton = {
+        bottomBar = {
             if (!detailDishState?.data?.name.isNullOrEmpty()) {//if (!detailDishState?.data?.name.isNullOrEmpty()) detailDishState is NetworkResult.Success<*>
                 ShoppingRowComponent(
                     navController,
@@ -149,7 +150,16 @@ fun DetailContentScreen(
                 )
             }
         },
-        floatingActionButtonPosition = FabPosition.Center,
+//        floatingActionButton = {
+//            if (!detailDishState?.data?.name.isNullOrEmpty()) {//if (!detailDishState?.data?.name.isNullOrEmpty()) detailDishState is NetworkResult.Success<*>
+//                ShoppingRowComponent(
+//                    navController,
+//                    detailViewModel,
+//                    roomViewModel
+//                )
+//            }
+//        },
+//        floatingActionButtonPosition = FabPosition.Center,
         content = {
             when(refreshState) {
                 is NetworkResult.Error<*> -> {
@@ -174,10 +184,11 @@ fun DetailContentScreen(
                 is NetworkResult.Success<*> -> {
                     Log.d("networkAnswer", "Display data")
                     Column (
-                        modifier = Modifier.verticalScroll(scrollState),
+                        modifier = Modifier.padding(bottom = 50.dp).verticalScroll(scrollState),
                         content = {
                             PictureTwoComponent(url = detailDishState.data!!.picturePaths.large)
                             DetailDescription(detailViewModel, Modifier.padding(horizontal = STANDARD_PADDING))
+                            //Spacer(modifier = Modifier.height(55.dp).background(color = Color.Gray))
                         }
                     )
                 }
@@ -197,7 +208,9 @@ fun ShoppingRowComponent(
     roomViewModel: RoomViewModel
 ) {
     Row(
+        modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center,
         content = {
             val detailDishState = detailViewModel.detailDishState.value?.data!!
             CounterComponent(
@@ -211,7 +224,7 @@ fun ShoppingRowComponent(
                 onClick = {
                     val chosenPortion = detailDishState.portions[detailViewModel.indexOptionState]
                     roomViewModel.addToCart(
-                        buildDishInfo(
+                        composeCartInfo(
                             dishId = detailDishState.id,
                             portionId = chosenPortion.id,
                             priceId = chosenPortion.priceNow.id,
@@ -277,13 +290,18 @@ fun DetailDescription(detailViewModel: DetailViewModel, modifier: Modifier = Mod
                 Spacer(modifier = Modifier.height(10.dp))
             }
         }
-        Text(text = "Описание", fontSize = 16.sp)
-        Text(text = detailDishState.description, fontSize = 14.sp, color = Color.Gray)
-        Spacer(modifier = Modifier.height(10.dp))
+        if (!detailDishState.description.isNullOrBlank()) {
+            Text(text = "Описание", fontSize = 16.sp)
+            Text(text = detailDishState.description, fontSize = 14.sp, color = Color.Gray)
+            Spacer(modifier = Modifier.height(10.dp))
+        }
+
 
         if (!isCombo) {
-            Text(text = "Состав", fontSize = 16.sp)
-            Text(text = detailDishState.composition, fontSize = 14.sp, color = Color.Gray)
+            if (!detailDishState.composition.isNullOrBlank()) {
+                Text(text = "Состав", fontSize = 16.sp)
+                Text(text = detailDishState.composition, fontSize = 14.sp, color = Color.Gray)
+            }
         } else {
             SimpleListComponent(detailDishState.dishes)
         }

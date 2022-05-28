@@ -96,7 +96,7 @@ fun FavoritesScreen(
                         Log.d("networkAnswer", "Display data")
                         SimpleListComponent(
                             contentList = favoritesState.data as List<Dish>,
-                            showPrice = true,
+                            //showPrice = true,
                             onItemClick = { id -> navController.navigate(route = Screens.DetailContent.createRoute(contentId = id)) }
                         )
                     }

@@ -41,8 +41,8 @@ class HistoryViewModelTest {
     )
 
     @Test
-    fun buildCartEntity() {
-        val result = historyViewModel.buildCartEntity(listOfDetail)
+    fun composeCartEntities() {
+        val result = historyViewModel.composeCartEntities(listOfDetail)
 
         val wishedList = listOf(
             CartEntity(

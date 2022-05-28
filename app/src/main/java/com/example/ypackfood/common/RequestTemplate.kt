@@ -13,7 +13,7 @@ object RequestTemplate {
         return Gson().fromJson(jsonString, ErrorResponse::class.java)
     }
 
-    fun buildDishInfo(dishId: Int, portionId: Int, priceId: Int, price: Int, count: Int): CartEntity {
+    fun composeCartInfo(dishId: Int, portionId: Int, priceId: Int, price: Int, count: Int): CartEntity {
         return CartEntity(
             dishId = dishId,
             userId = Auth.authInfo.personId,

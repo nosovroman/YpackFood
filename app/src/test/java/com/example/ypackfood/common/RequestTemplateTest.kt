@@ -1,8 +1,7 @@
 package com.example.ypackfood.common
 
-import android.util.Log
 import com.example.ypackfood.common.Constants.PERSON_ID_DEFAULT
-import com.example.ypackfood.common.RequestTemplate.buildDishInfo
+import com.example.ypackfood.common.RequestTemplate.composeCartInfo
 import com.example.ypackfood.room.entities.CartEntity
 import org.junit.Assert.*
 
@@ -11,7 +10,7 @@ import org.junit.Test
 class RequestTemplateTest {
 
     @Test
-    fun buildDishInfoTest() {
+    fun composeCartInfo() {
         val dishId = 1
         val userId = PERSON_ID_DEFAULT
         val portionId = 10
@@ -20,7 +19,7 @@ class RequestTemplateTest {
         val count = 5
 
 
-        val composedCart = buildDishInfo(
+        val composedCart = composeCartInfo(
             dishId = dishId,
             portionId = portionId,
             priceId = priceId,

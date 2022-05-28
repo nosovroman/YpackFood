@@ -1,6 +1,8 @@
 package com.example.ypackfood.components
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
@@ -17,8 +19,8 @@ fun SimpleListComponent(
     showPrice: Boolean = false,
     onItemClick: (id: Int) -> Unit = {}
 ) {
-    Column {
-        contentList.forEach { content ->
+    LazyColumn() {
+        items(contentList) {content ->
             with(content) {
                 ContentCardComponent (
                     cardName = name,
@@ -30,6 +32,18 @@ fun SimpleListComponent(
                 )
             }
         }
+//        contentList.forEach { content ->
+//            with(content) {
+//                ContentCardComponent (
+//                    cardName = name,
+//                    hint = basePortion.size,
+//                    description = composition,
+//                    urlPicture = picturePaths.large,
+//                    price = if (showPrice) basePortion.priceNow.price else -1,
+//                    onCardClick = { onItemClick(id) }
+//                )
+//            }
+//        }
     }
 }
 

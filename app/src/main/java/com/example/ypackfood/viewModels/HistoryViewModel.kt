@@ -140,7 +140,7 @@ class HistoryViewModel : ViewModel() {
         }
     }
 
-    fun buildCartEntity(dishForOrderGet: List<DishForOrderGet>): List<CartEntity> {
+    fun composeCartEntities(dishForOrderGet: List<DishForOrderGet>): List<CartEntity> {
         val dishList = dishForOrderGet.map { it.dish }
         val resultCartList = mutableListOf<CartEntity>()
         dishList.forEachIndexed { index, elem ->

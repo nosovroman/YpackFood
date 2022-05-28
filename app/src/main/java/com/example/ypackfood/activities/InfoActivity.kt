@@ -50,7 +50,8 @@ fun InfoScreen(
 
                 item {
                     Text(text = "Наши контакты", fontSize = titleSize)
-                    Text(text = "+7 (86365) 445-48-25", fontSize = contentSize, color = Color.Gray)
+                    Text(text = "8800551196", fontSize = contentSize, color = Color.Gray)
+                    Text(text = "+7863303386", fontSize = contentSize, color = Color.Gray)
                     Spacer(modifier = Modifier.height(space))
                 }
 

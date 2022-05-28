@@ -179,7 +179,7 @@ fun HistoryScreen(
                                                     },
                                                     onButtonClick = {
                                                         roomViewModel.addToCartMany(
-                                                            historyViewModel.buildCartEntity(item.dishes)
+                                                            historyViewModel.composeCartEntities(item.dishes)
                                                         )
                                                         historyViewModel.setAddedToCart(true)
                                                     }
@@ -286,17 +286,24 @@ fun HistoryCardComponent(
             .fillMaxWidth()
             .clickable { onCardClick() },
         content = {
-            Text(text = "Заказ № $orderNumber | $status")
+            //Text(text = "Заказ № $orderNumber | $status")
+            Text(text = "Заказ № $orderNumber | Ожидайте звонка в течение 5 минут")
             PictureRowComponent(imageList)
             Text(text = time)
             Text(text = "Сумма: $totalPrice ₽")
-            Button(
+            ButtonComponent(
+                text = "Повторить заказ",
                 onClick = {
                     Log.d("History onclick ", listOfId.toString())
                     onButtonClick()
-                },
-                content = { Text(text = "Повторить заказ") }
+                }
             )
+//            Button(
+//                onClick = {
+//
+//                },
+//                content = { Text(text = "Повторить заказ") }
+//            )
         }
     )
 }
@@ -306,6 +313,7 @@ fun PictureRowComponent(imageList: List<String>) {
     LazyRow {
         items(imageList) { url ->
             PictureOneComponent(size = 55.dp, url = url)
+            Spacer(modifier = Modifier.width(5.dp))
         }
     }
 }

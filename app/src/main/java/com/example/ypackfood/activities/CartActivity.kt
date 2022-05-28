@@ -116,7 +116,7 @@ fun ShoppingCartScreen(
     ModalBottomSheetLayout(
         sheetState = bottomState,
         sheetContent = {
-            Box(modifier = Modifier.height(420.dp)) {
+            Box(modifier = Modifier.height(440.dp)) {
                 OrderScreen(
                     navController = navController,
                     orderViewModel = orderViewModel,
