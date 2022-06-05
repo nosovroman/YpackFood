@@ -68,3 +68,25 @@ fun ContentListComponentActions(
         }
     }
 }
+
+@Composable
+fun ContentListComponentCombo(
+    contentList: List<Dish>,
+    showPrice: Boolean = false,
+    onItemClick: (id: Int) -> Unit = {}
+) {
+    Column {
+        contentList.forEach { content ->
+            with(content) {
+                ContentCardComponent (
+                    cardName = name,
+                    hint = basePortion.size,
+                    description = composition,
+                    urlPicture = picturePaths.large,
+                    price = if (showPrice) basePortion.priceNow.price else -1,
+                    onCardClick = { onItemClick(id) }
+                )
+            }
+        }
+    }
+}

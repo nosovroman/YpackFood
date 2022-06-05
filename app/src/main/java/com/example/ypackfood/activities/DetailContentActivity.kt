@@ -303,7 +303,12 @@ fun DetailDescription(detailViewModel: DetailViewModel, modifier: Modifier = Mod
                 Text(text = detailDishState.composition, fontSize = 14.sp, color = Color.Gray)
             }
         } else {
-            SimpleListComponent(detailDishState.dishes)
+            //SimpleListComponent(detailDishState.dishes)
+            if (!detailDishState.composition.isNullOrBlank()) {
+                Text(text = "Состав", fontSize = 16.sp)
+                Text(text = detailDishState.composition, fontSize = 14.sp, color = Color.Gray)
+            }
+            ContentListComponentCombo(detailDishState.dishes)
         }
     }
 }
