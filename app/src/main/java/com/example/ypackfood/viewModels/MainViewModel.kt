@@ -10,6 +10,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.ypackfood.common.Auth
+import com.example.ypackfood.common.Constants.ERROR_SERVER
 import com.example.ypackfood.common.RequestTemplate
 import com.example.ypackfood.common.RequestTemplate.mainRepository
 import com.example.ypackfood.extensions.translateException
@@ -69,16 +70,21 @@ class MainViewModel : ViewModel() {
                 refreshState.postValue(NetworkResult.Loading(data = null))
                 Log.d("TokenRefresh with ", Auth.authInfo.refreshToken)
                 val response = mainRepository.refreshToken(TokenData(Auth.authInfo.refreshToken))
-                if (response.isSuccessful) {
-                    Log.d("refreshToken ok", response.body().toString())
-                    refreshState.postValue(NetworkResult.Success(response.body()!!.copy(personId = Auth.authInfo.personId)))
-                }
-                else if (response.code() != 500) {
-                    Log.d("refreshToken not ok ", Auth.authInfo.toString())
+                when {
+                    response.isSuccessful -> {
+                        Log.d("refreshToken ok", response.body().toString())
+                        refreshState.postValue(NetworkResult.Success(response.body()!!.copy(personId = Auth.authInfo.personId)))
+                    }
+                    response.code() != 500 -> {
+                        Log.d("refreshToken not ok ", Auth.authInfo.toString())
 
-                    val jsonString = response.errorBody()!!.string()
-                    val errorCode = RequestTemplate.getErrorFromJson(jsonString).errorCode.toString()
-                    refreshState.postValue(NetworkResult.HandledError(errorCode, null))
+                        val jsonString = response.errorBody()!!.string()
+                        val errorCode = RequestTemplate.getErrorFromJson(jsonString).errorCode.toString()
+                        refreshState.postValue(NetworkResult.HandledError(errorCode, null))
+                    }
+                    else -> {
+                        refreshState.postValue(NetworkResult.Error(ERROR_SERVER))
+                    }
                 }
             }
             catch (e: Exception) {
@@ -94,20 +100,25 @@ class MainViewModel : ViewModel() {
             try {
                 dishesState.postValue(NetworkResult.Loading())
                 val response = mainRepository.getMainContent(Auth.authInfo.accessToken)
-                if (response.isSuccessful) {
-                    if (!response.body().isNullOrEmpty()) {
-                        dishesState.postValue(NetworkResult.Success(response.body()!!))
-                    } else {
-                        dishesState.postValue(NetworkResult.Empty())
+                when {
+                    response.isSuccessful -> {
+                        if (!response.body().isNullOrEmpty()) {
+                            dishesState.postValue(NetworkResult.Success(response.body()!!))
+                        } else {
+                            dishesState.postValue(NetworkResult.Empty())
+                        }
+                        Log.d("getMainContent ok", "response.body().toString()")
                     }
-                    Log.d("getMainContent ok", "response.body().toString()")
-                }
-                else if (response.code() != 500) {
-                    Log.d("getMainContent not ok ", Auth.authInfo.toString())
+                    response.code() != 500 -> {
+                        Log.d("getMainContent not ok ", Auth.authInfo.toString())
 
-                    val jsonString = response.errorBody()!!.string()
-                    val errorCode = RequestTemplate.getErrorFromJson(jsonString).errorCode.toString()
-                    dishesState.postValue(NetworkResult.HandledError(errorCode))
+                        val jsonString = response.errorBody()!!.string()
+                        val errorCode = RequestTemplate.getErrorFromJson(jsonString).errorCode.toString()
+                        dishesState.postValue(NetworkResult.HandledError(errorCode))
+                    }
+                    else -> {
+                        refreshState.postValue(NetworkResult.Error(ERROR_SERVER))
+                    }
                 }
             }
             catch (e: Exception) {
@@ -123,19 +134,24 @@ class MainViewModel : ViewModel() {
             try {
                 actionsState.postValue(NetworkResult.Loading())
                 val response = mainRepository.getActions(Auth.authInfo.accessToken)
-                if (response.isSuccessful) {
-                    if (!response.body().isNullOrEmpty()) {
-                        actionsState.postValue(NetworkResult.Success(response.body()!!))
-                    } else {
-                        actionsState.postValue(NetworkResult.Empty())
+                when {
+                    response.isSuccessful -> {
+                        if (!response.body().isNullOrEmpty()) {
+                            actionsState.postValue(NetworkResult.Success(response.body()!!))
+                        } else {
+                            actionsState.postValue(NetworkResult.Empty())
+                        }
+                        Log.d("getActionsContent ok ", "response.body().toString()")
                     }
-                    Log.d("getActionsContent ok ", "response.body().toString()")
-                }
-                else if (response.code() != 500) {
-                    Log.d("getActionsContent not ok ", Auth.authInfo.toString())
-                    val jsonString = response.errorBody()!!.string()
-                    val errorCode = RequestTemplate.getErrorFromJson(jsonString).errorCode.toString()
-                    actionsState.postValue(NetworkResult.HandledError(errorCode))
+                    response.code() != 500 -> {
+                        Log.d("getActionsContent not ok ", Auth.authInfo.toString())
+                        val jsonString = response.errorBody()!!.string()
+                        val errorCode = RequestTemplate.getErrorFromJson(jsonString).errorCode.toString()
+                        actionsState.postValue(NetworkResult.HandledError(errorCode))
+                    }
+                    else -> {
+                        refreshState.postValue(NetworkResult.Error(ERROR_SERVER))
+                    }
                 }
             } catch (e: Exception) {
                 val error = e.translateException()

@@ -1,6 +1,5 @@
 package com.example.ypackfood.viewModels
 
-
 import android.app.Application
 import android.util.Log
 import androidx.datastore.preferences.core.clear

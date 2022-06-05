@@ -30,6 +30,12 @@ class SignInUpViewModel : ViewModel() {
         registerState.postValue(null)
     }
 
+    var checkBoxState by mutableStateOf(false)
+        private set
+    fun setCheckBox() {
+        checkBoxState = !checkBoxState
+    }
+
     var errorEnteringState by mutableStateOf("")
         private set
     fun setErrorEntering(newState: String) {
@@ -63,10 +69,15 @@ class SignInUpViewModel : ViewModel() {
         return validatePhone(phone) && validatePassword(password)
     }
 
-    fun validateFields(name: String, phone: String, password: String): Boolean {
-        return validateName(name) && validatePhone(phone) && validatePassword(password)
+    fun validateFields(name: String, phone: String, password: String, checkBox: Boolean): Boolean {
+        return validateName(name) && validatePhone(phone) && validatePassword(password) && validateCheckBox(checkBox)
     }
 
+    fun validateCheckBox(checkBox: Boolean): Boolean {
+        return (checkBox).also {
+            if (!it) setErrorEntering("Необходимо дать согласие на обработку персональных данных")
+        }
+    }
 
     fun validatePassword(password: String): Boolean {
         return (password.trim().length >= Constants.MIN_PASSWORD_LEN).also {

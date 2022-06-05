@@ -87,7 +87,6 @@ interface ApiService {
         @Header(HEADER_AUTH) token: String,
         @Query("page") page: Int
     ): Response<OrderList>
-    //suspend fun getHistory(@Header(HEADER_AUTH) token: String): Response<MutableList<Order>>
 
 
         // Авторизация

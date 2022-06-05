@@ -2,9 +2,11 @@ package com.example.ypackfood.activities
 
 import android.util.Log
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.Checkbox
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
@@ -12,6 +14,8 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -19,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.ypackfood.R
 import com.example.ypackfood.common.Auth
+import com.example.ypackfood.common.Constants
 import com.example.ypackfood.components.*
 import com.example.ypackfood.extensions.translateError
 import com.example.ypackfood.models.auth.AuthorizationData
@@ -236,6 +241,8 @@ fun SignUpFormComponent(
             Spacer(modifier = Modifier.height(10.dp))
             FieldsComponent(signViewModel, signViewModel.errorEnteringState)
             Spacer(modifier = Modifier.height(10.dp))
+            CheckboxComponent(signViewModel)
+            Spacer(modifier = Modifier.height(10.dp))
             ButtonComponent(
                 text = buttonText,
                 shape = RoundedCornerShape(10.dp),
@@ -243,10 +250,33 @@ fun SignUpFormComponent(
                     if (signViewModel.validateFields(
                             name = signViewModel.userFieldState,
                             phone = signViewModel.phoneFieldState,
-                            password = signViewModel.passwordFieldState)
+                            password = signViewModel.passwordFieldState,
+                            checkBox = signViewModel.checkBoxState
+                        )
                     )  onClick()
                 }
             )
         }
     )
+}
+
+@Composable
+fun CheckboxComponent(signViewModel: SignInUpViewModel) {
+    val uriHandler = LocalUriHandler.current
+    Row (
+        modifier = Modifier.fillMaxWidth()
+            ) {
+        Checkbox(
+            checked = signViewModel.checkBoxState,
+            onCheckedChange = { signViewModel.setCheckBox() }
+        )
+        Text(
+            modifier = Modifier.clickable {
+                uriHandler.openUri(Constants.PDPP)
+            },
+            text = "Согласен на обработку персональных данных",
+            color = Color.Blue,
+        )
+        //Text(text = "Согласен на обработку персональных данных")
+    }
 }

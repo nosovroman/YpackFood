@@ -46,7 +46,6 @@ class ShoppingCartViewModelTest {
         shoppingCartId = shoppingCartId
     )
 
-    // ---
     @Test
     fun composeDishInfo() {
         val cartDish = CartDish(

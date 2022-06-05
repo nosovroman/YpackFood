@@ -12,7 +12,6 @@ import org.junit.Test
 class OrderViewModelTest {
     private val orderViewModel = OrderViewModel()
 
-    //---
     @Test
     fun composeOrder() {
         val composition = "Салат Айсберг, куриная грудка, помидорки, перепелиные яйца, соус Цезарь"
