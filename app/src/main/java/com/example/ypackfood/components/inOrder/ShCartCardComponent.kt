@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.ypackfood.common.Auth
@@ -29,6 +30,10 @@ fun ShCartCardComponent(
             Spacer(modifier = Modifier.width(15.dp))
             Column {
                 Text(text = cartDish.name, fontSize = 16.sp)
+                Text(text = "1 шт / ${cartDish.portionSize}", fontSize = 12.sp, color = Color.Gray)
+                if (cartDish.changedPrice) {
+                    Text(text = "Цена изменилась. Актуальная цена:", fontSize = 14.sp)
+                }
                 Text(
                     text = "${cartDish.price * cartDish.count} ₽",
                     fontSize = 14.sp

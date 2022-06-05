@@ -33,7 +33,7 @@ interface ApiService {
     suspend fun getContentByListId(
         @Header(HEADER_AUTH) token: String,
         @Query("ids") contentIdList: List<Int>
-    ): Response<MutableList<Dish>>
+    ): Response<MutableList<DetailContent>>//Response<MutableList<Dish>>
 
 
         // Акции

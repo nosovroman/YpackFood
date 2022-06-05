@@ -166,7 +166,7 @@ fun FieldsComponent(
             )
             if (errorMessage.isNotBlank()) {
                 Spacer(modifier = Modifier.height(5.dp))
-                Text(text = errorMessage.translateError())//signViewModel.translateError(errorMessage))
+                Text(text = errorMessage.translateError())
                 Spacer(modifier = Modifier.height(5.dp))
             }
         }
@@ -263,9 +263,7 @@ fun SignUpFormComponent(
 @Composable
 fun CheckboxComponent(signViewModel: SignInUpViewModel) {
     val uriHandler = LocalUriHandler.current
-    Row (
-        modifier = Modifier.fillMaxWidth()
-            ) {
+    Row (modifier = Modifier.fillMaxWidth()) {
         Checkbox(
             checked = signViewModel.checkBoxState,
             onCheckedChange = { signViewModel.setCheckBox() }
@@ -277,6 +275,5 @@ fun CheckboxComponent(signViewModel: SignInUpViewModel) {
             text = "Согласен на обработку персональных данных",
             color = Color.Blue,
         )
-        //Text(text = "Согласен на обработку персональных данных")
     }
 }

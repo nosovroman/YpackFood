@@ -5,6 +5,7 @@ data class CartDish(
     val dishId: Int,
     val name: String,
     val portionId: Int,
+    val portionSize: String = "",
     val priceId: Int,
     val price: Int,
     val count: Int,

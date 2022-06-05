@@ -184,7 +184,7 @@ fun ShoppingCartScreen(
                                             shopList = cartViewModel.dishesRoomState
                                         )
 
-                                        LazyColumn {
+                                        LazyColumn (modifier = Modifier.padding(bottom = 80.dp)) {
                                             items (cartViewModel.resultDishState) { item ->
                                                 ShCartCardComponent(
                                                     cartDish = item,

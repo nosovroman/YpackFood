@@ -16,7 +16,7 @@ import com.example.ypackfood.extensions.translateException
 import com.example.ypackfood.models.auth.AuthInfo
 import com.example.ypackfood.models.auth.TokenData
 import com.example.ypackfood.models.commonData.CartDish
-import com.example.ypackfood.models.commonData.Dish
+import com.example.ypackfood.models.detailContent.DetailContent
 import com.example.ypackfood.room.entities.CartEntity
 import com.example.ypackfood.sealedClasses.NetworkResult
 
@@ -43,25 +43,27 @@ class ShoppingCartViewModel : ViewModel() {
         private set
     private fun setResultDish(newList: List<CartDish>) {
         resultDishState = newList
+        computeTotalPrice()
     }
 
-    fun composeDishInfo(dishList: List<Dish>, shopList: List<CartEntity>) {
+    fun composeDishInfo(dishList: List<DetailContent>, shopList: List<CartEntity>) {
         val dishMap = dishList.associateBy { it.id }
 
         val shopListFiltered = shopList.filter { it.dishId in dishMap }
         val resultDishList = shopListFiltered.map {
             val dishInfo = dishMap[it.dishId]!!
-            val changedPrice: Boolean = run {
-                //dishInfo.por
-                true
-            }
+            val portion = dishInfo.portions.find { portion -> portion.id == it.portionId }
+            val priceActual = portion!!.priceNow.price
+            val changedPrice: Boolean = it.dishPrice != priceActual
+
             CartDish(
                 shoppingCartId = it.shoppingCartId!!,
                 dishId = it.dishId,
                 name = dishInfo.name,
                 portionId = it.portionId,
+                portionSize = portion.size ?: "",
                 priceId = it.dishPriceId,
-                price = it.dishPrice,//dishInfo.basePortion.priceNow.price,
+                price = priceActual,//it.dishPrice,//dishInfo.basePortion.priceNow.price,
                 count = it.dishCount,
                 category = dishInfo.category,
                 composition = dishInfo.composition,
@@ -73,7 +75,7 @@ class ShoppingCartViewModel : ViewModel() {
         setResultDish(resultDishList)
     }
 
-    var cartState: MutableLiveData<NetworkResult<MutableList<Dish>>> = MutableLiveData()
+    var cartState: MutableLiveData<NetworkResult<MutableList<DetailContent>>> = MutableLiveData()
 
 //    fun initContentResp() {
 //        cartState.postValue(NetworkResult.Empty())
@@ -81,9 +83,12 @@ class ShoppingCartViewModel : ViewModel() {
 
     fun computeTotalPrice() {
         var totalPrice = 0
-        dishesRoomState.forEach{
-            totalPrice += it.dishPrice * it.dishCount
+        resultDishState.forEach{
+            totalPrice += it.price * it.count
         }
+//        dishesRoomState.forEach{
+//            totalPrice += it.dishPrice * it.dishCount
+//        }
 
         setTotalPrice(totalPrice)
     }
@@ -130,7 +135,7 @@ class ShoppingCartViewModel : ViewModel() {
                     val response = mainRepository.getContentByListId(Auth.authInfo.accessToken, contentIdList)
                     if (response.isSuccessful) {
                         if (!response.body().isNullOrEmpty()) {
-                            cartState.postValue(NetworkResult.Success(response.body()!!))
+                            cartState.postValue(NetworkResult.Success(response.body()!! as MutableList<DetailContent>))
                         } else {
                             cartState.postValue(NetworkResult.Empty())
                         }
