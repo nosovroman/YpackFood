@@ -122,7 +122,6 @@ fun HistoryScreen(
                 content = {
                     DetailOrder(
                         contentList = historyViewModel.chosenOrderDialogState,
-                        historyViewModel = historyViewModel
                     )
                 }
             )
@@ -157,7 +156,7 @@ fun HistoryScreen(
                                 is NetworkResult.Success<*> -> {
                                     LazyColumn (
                                         content = {
-                                            itemsIndexed(historyDishesState.data!!.orders) { index, item ->
+                                            itemsIndexed(historyDishesState.data!!.orders) { _, item ->
                                                 Log.d("NetworkResult ok", item.toString())
                                                 Spacer(modifier = Modifier.height(10.dp))
                                                 HistoryCardComponent(
@@ -240,8 +239,7 @@ fun HistoryScreen(
 
 @Composable
 fun DetailOrder(
-    contentList: List<DishForOrderGet>,
-    historyViewModel: HistoryViewModel
+    contentList: List<DishForOrderGet>
 ) {
     Spacer(modifier = Modifier.height(10.dp))
     Text("Просмотр блюд заказа", fontSize = TITLE_SIZE)
