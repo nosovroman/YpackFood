@@ -11,7 +11,7 @@ object Constants {
     const val APP_NAME_RUS = "Боярин"
     const val YPACK_ADDRESS = "Старая Станица, парк Лога"
     val TOOLBAR_HEIGHT = 48.dp
-    const val START_DELIVERY = 2
+    const val START_DELIVERY = 13
     const val END_DELIVERY = 23
     const val MIN_PASSWORD_LEN = 6
     const val MAX_ORDERS_ON_PAGE = 10
