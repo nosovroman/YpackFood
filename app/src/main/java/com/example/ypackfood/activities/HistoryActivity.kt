@@ -238,14 +238,6 @@ fun HistoryScreen(
     )
 }
 
-//@Composable
-//fun PageControllerComponent(historyViewModel: HistoryViewModel) {
-//    CounterComponent(
-//        count = historyViewModel.currentPageState,
-//        upperLimit = historyViewModel.
-//    )
-//}
-
 @Composable
 fun DetailOrder(
     contentList: List<DishForOrderGet>,
@@ -286,8 +278,7 @@ fun HistoryCardComponent(
             .fillMaxWidth()
             .clickable { onCardClick() },
         content = {
-            //Text(text = "Заказ № $orderNumber | $status")
-            Text(text = "Заказ № $orderNumber | Ожидайте звонка в течение 5 минут")
+            Text(text = "Заказ № $orderNumber | $status")
             PictureRowComponent(imageList)
             Text(text = time)
             Text(text = "Сумма: $totalPrice ₽")
@@ -298,12 +289,6 @@ fun HistoryCardComponent(
                     onButtonClick()
                 }
             )
-//            Button(
-//                onClick = {
-//
-//                },
-//                content = { Text(text = "Повторить заказ") }
-//            )
         }
     )
 }
