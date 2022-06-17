@@ -122,7 +122,6 @@ fun HistoryScreen(
                 content = {
                     DetailOrder(
                         contentList = historyViewModel.chosenOrderDialogState,
-                        historyViewModel = historyViewModel
                     )
                 }
             )
@@ -157,7 +156,7 @@ fun HistoryScreen(
                                 is NetworkResult.Success<*> -> {
                                     LazyColumn (
                                         content = {
-                                            itemsIndexed(historyDishesState.data!!.orders) { index, item ->
+                                            itemsIndexed(historyDishesState.data!!.orders) { _, item ->
                                                 Log.d("NetworkResult ok", item.toString())
                                                 Spacer(modifier = Modifier.height(10.dp))
                                                 HistoryCardComponent(
@@ -238,18 +237,9 @@ fun HistoryScreen(
     )
 }
 
-//@Composable
-//fun PageControllerComponent(historyViewModel: HistoryViewModel) {
-//    CounterComponent(
-//        count = historyViewModel.currentPageState,
-//        upperLimit = historyViewModel.
-//    )
-//}
-
 @Composable
 fun DetailOrder(
-    contentList: List<DishForOrderGet>,
-    historyViewModel: HistoryViewModel
+    contentList: List<DishForOrderGet>
 ) {
     Spacer(modifier = Modifier.height(10.dp))
     Text("Просмотр блюд заказа", fontSize = TITLE_SIZE)
@@ -286,8 +276,7 @@ fun HistoryCardComponent(
             .fillMaxWidth()
             .clickable { onCardClick() },
         content = {
-            //Text(text = "Заказ № $orderNumber | $status")
-            Text(text = "Заказ № $orderNumber | Ожидайте звонка в течение 5 минут")
+            Text(text = "Заказ № $orderNumber | $status")
             PictureRowComponent(imageList)
             Text(text = time)
             Text(text = "Сумма: $totalPrice ₽")
@@ -298,12 +287,6 @@ fun HistoryCardComponent(
                     onButtonClick()
                 }
             )
-//            Button(
-//                onClick = {
-//
-//                },
-//                content = { Text(text = "Повторить заказ") }
-//            )
         }
     )
 }

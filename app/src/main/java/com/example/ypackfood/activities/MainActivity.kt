@@ -54,7 +54,7 @@ fun MainScreen(
     mainViewModel.scaffoldStateInit(rememberScaffoldState())
 
     val toolbarHeightPx = with(LocalDensity.current) { TOOLBAR_HEIGHT.roundToPx().toFloat() }
-    val nestedScrollConnection = remember {
+    val nestedScrollConnection = remember {     // официальная документация Android Developers https://developer.android.com/jetpack/compose/gestures
         object : NestedScrollConnection {
             override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
                 val delta = available.y
@@ -67,7 +67,7 @@ fun MainScreen(
 
     val dishesState = mainViewModel.dishesState.observeAsState().value
     val actionsState = mainViewModel.actionsState.observeAsState().value
-    val shopList = roomViewModel.shopList.observeAsState(listOf()).value//?.filter { it.dishId == Auth.authInfo.personId }
+    val shopList = roomViewModel.shopList.observeAsState(listOf()).value
     val refreshState = mainViewModel.refreshState.observeAsState().value
 
     LaunchedEffect(true) {
