@@ -15,3 +15,4 @@
   - Retrofit
   - Moshi, GSON
   - JUnit
+  - Методология Agile
